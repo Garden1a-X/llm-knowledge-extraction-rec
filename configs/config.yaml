@@ -1,0 +1,72 @@
+# Main Configuration File
+
+# Data paths
+data:
+  raw_data_path: "data/raw"
+  processed_data_path: "data/processed"
+  graph_data_path: "data/graphs"
+
+  # Dataset settings
+  dataset_name: "amazon_videogames"
+  demo_mode: true  # Set to false for full dataset
+  demo_num_users: 20
+  demo_num_products: 200
+  full_num_products: 26000
+
+# Knowledge Point Types (10 types)
+knowledge_types:
+  - "Functionality"
+  - "Compatibility"
+  - "Components"
+  - "User Demographics"
+  - "Usage Scenarios"
+  - "Game Features"
+  - "Technical Specifications"
+  - "Content Additions"
+  - "Performance Metrics"
+  - "Others"
+
+# Clustering settings
+clustering:
+  method: "hdbscan"  # Options: "hdbscan", "kmeans"
+  embedding_model: "bge"  # Options: "bertopic", "bge"
+
+  # HDBSCAN parameters
+  hdbscan:
+    min_cluster_size: 5
+    min_samples: 3
+    metric: "euclidean"
+
+  # K-means parameters
+  kmeans:
+    n_clusters: 20
+    max_iter: 300
+    random_state: 42
+
+  # BGE model settings
+  bge:
+    model_name: "BAAI/bge-large-en-v1.5"
+    batch_size: 32
+
+  # BERTopic settings
+  bertopic:
+    language: "english"
+    min_topic_size: 10
+
+# Graph construction settings
+graph:
+  backend: "networkx"  # Options: "networkx", "neo4j"
+
+  # Neo4j settings (if using Neo4j)
+  neo4j:
+    uri: "bolt://localhost:7687"
+    user: "neo4j"
+    password: "password"
+
+# Logging
+logging:
+  level: "INFO"  # Options: "DEBUG", "INFO", "WARNING", "ERROR"
+  log_file: "logs/app.log"
+
+# Random seed for reproducibility
+random_seed: 42

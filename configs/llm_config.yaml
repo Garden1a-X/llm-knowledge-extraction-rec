@@ -1,0 +1,80 @@
+# LLM Configuration for Knowledge Extraction
+
+llm:
+  # LLM provider: "openai", "anthropic", "local"
+  provider: "openai"
+
+  # OpenAI settings
+  openai:
+    model: "gpt-4"
+    api_key_env: "OPENAI_API_KEY"
+    temperature: 0.7
+    max_tokens: 2000
+    top_p: 1.0
+    frequency_penalty: 0.0
+    presence_penalty: 0.0
+
+  # Anthropic (Claude) settings
+  anthropic:
+    model: "claude-3-opus-20240229"
+    api_key_env: "ANTHROPIC_API_KEY"
+    temperature: 0.7
+    max_tokens: 2000
+
+  # Local LLM settings (if using local models)
+  local:
+    model_path: "models/llama-2-7b"
+    device: "cuda"  # Options: "cuda", "cpu"
+    load_in_8bit: false
+
+# Prompt templates
+prompts:
+  # Product knowledge extraction prompt
+  product_knowledge:
+    system_prompt: |
+      You are an expert at extracting structured knowledge from product descriptions.
+      Extract knowledge points from the given product and classify them into the provided categories.
+
+    user_prompt_template: |
+      Product Title: {title}
+      Product Description: {description}
+
+      Please extract knowledge points for this product and classify them into these categories:
+      {knowledge_types}
+
+      For each knowledge point, provide:
+      1. Type: one of the categories above
+      2. Content: a concise description of the knowledge point
+      3. Confidence: a score from 0 to 1
+
+      Return the result in JSON format.
+
+  # User interest extraction prompt
+  user_interest:
+    system_prompt: |
+      You are an expert at understanding user preferences from their interaction history.
+      Extract user interests based on their product interactions and the product knowledge graph.
+
+    user_prompt_template: |
+      User ID: {user_id}
+      Interaction History: {interaction_history}
+      Product Knowledge Graph: {product_graph}
+      User Interest Graph: {user_graph}
+
+      Please extract the user's interests, categorizing them as:
+      - Long-term interests (persistent preferences)
+      - Short-term interests (recent trends)
+
+      Return the result in JSON format.
+
+# Rate limiting
+rate_limiting:
+  requests_per_minute: 60
+  retry_attempts: 3
+  retry_delay: 5  # seconds
+
+# Batch processing
+batch:
+  enabled: true
+  batch_size: 10
+  parallel_workers: 4
