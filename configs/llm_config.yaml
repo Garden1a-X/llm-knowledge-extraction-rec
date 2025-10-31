@@ -29,54 +29,61 @@ llm:
 
 # Prompt templates
 prompts:
-  # Movie knowledge extraction prompt (text-only)
-  movie_knowledge_text:
+  # Visual knowledge extraction from movie poster (PRIMARY METHOD)
+  poster_visual_knowledge:
     system_prompt: |
-      You are an expert film analyst with deep knowledge of cinema.
-      Extract structured knowledge points from the given movie information and classify them into the provided categories.
+      You are an expert in visual design and film poster analysis.
+      Your task is to analyze movie posters and extract visual knowledge points.
+      Focus ONLY on visual features that can be observed from the poster image.
+      Do NOT infer content based on the movie title or your prior knowledge of the film.
 
     user_prompt_template: |
-      Movie Title: {title}
-      Genres: {genres}
+      Movie ID: {movie_id}
+      Movie Title: {title} (for reference only - focus on visual analysis)
 
-      Please extract knowledge points for this movie and classify them into these categories:
-      {knowledge_types}
-
-      For each knowledge point, provide:
-      1. Type: one of the categories above (Genre, Theme, Cinematography, Narrative, Emotion, Setting, Character, Visual_Style, Pace, Others)
-      2. Content: a concise, specific description of the knowledge point
-      3. Confidence: a score from 0 to 1
-
-      Return the result as a JSON array of objects with fields: type, content, confidence.
-
-  # Movie knowledge extraction with poster (multimodal)
-  movie_knowledge_multimodal:
-    system_prompt: |
-      You are an expert film analyst with deep knowledge of cinema and visual design.
-      Extract structured knowledge points from the given movie information AND its poster image.
-      Combine textual and visual information to provide comprehensive knowledge extraction.
-
-    user_prompt_template: |
-      Movie Title: {title}
-      Genres: {genres}
       [Movie Poster Image Attached]
 
-      Please analyze both the text and the poster image to extract knowledge points.
-      Classify them into these categories: {knowledge_types}
+      Analyze the poster image and extract visual knowledge points in these categories:
+      {knowledge_types}
 
-      For visual elements from the poster, pay attention to:
-      - Color palette and mood
-      - Visual composition and style
-      - Character presentation
-      - Genre indicators
+      For each category, describe what you observe:
+      - Color_Palette: Dominant colors, color temperature (warm/cool), saturation, contrast
+      - Visual_Mood: The atmosphere or feeling conveyed by the visual design
+      - Composition: How elements are arranged (symmetry, balance, focal points)
+      - Lighting: Light and shadow effects, lighting style
+      - Texture: Visual texture, grain, smoothness, style effects
+      - Character_Presentation: How people are shown (if any)
+      - Era_Style: Visual indicators of time period or era
+      - Genre_Visual: Visual elements that suggest genre (action, horror, romance, etc.)
+      - Typography: Font style, text treatment, logo design
+      - Others: Any other distinctive visual features
 
-      For each knowledge point, provide:
-      1. Type: one of the categories above
-      2. Content: a concise description
-      3. Source: "text", "visual", or "both"
-      4. Confidence: a score from 0 to 1
+      Return a JSON array with objects containing:
+      - type: category name (from above)
+      - content: specific description of the visual feature
+      - confidence: 0.0-1.0 (how confident you are about this observation)
 
-      Return the result as a JSON array of objects.
+      Example:
+      [
+        {{"type": "Color_Palette", "content": "Dominant warm orange and red tones with high saturation", "confidence": 0.95}},
+        {{"type": "Visual_Mood", "content": "Intense and dramatic atmosphere", "confidence": 0.9}},
+        {{"type": "Composition", "content": "Central character with symmetrical background elements", "confidence": 0.85}}
+      ]
+
+  # Batch visual extraction for demo (小数据集测试)
+  poster_visual_batch:
+    system_prompt: |
+      You are analyzing a batch of movie posters to extract visual features.
+      Focus on visual elements only, not on plot or story.
+
+    user_prompt_template: |
+      Analyze these {num_posters} movie posters and extract visual knowledge points.
+
+      For each poster, provide:
+      - movie_id
+      - visual_features: array of {{type, content, confidence}}
+
+      Focus on observable visual characteristics only.
 
   # User interest extraction prompt
   user_interest:

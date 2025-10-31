@@ -18,18 +18,19 @@ data:
   min_rating_positive: 4  # Ratings >= 4 are positive interactions
   max_rating_negative: 2  # Ratings <= 2 are negative interactions
 
-# Knowledge Point Types for Movies (10 types)
+# Visual Knowledge Point Types (from Movie Posters)
+# 视觉知识点类型（从电影海报提取）
 knowledge_types:
-  - "Genre"              # 类型/流派
-  - "Theme"              # 主题
-  - "Cinematography"     # 拍摄风格
-  - "Narrative"          # 叙事风格
-  - "Emotion"            # 情感基调
-  - "Setting"            # 时空背景
-  - "Character"          # 角色特征
-  - "Visual_Style"       # 视觉风格
-  - "Pace"               # 节奏
-  - "Others"             # 其他
+  - "Color_Palette"          # 色彩风格：暖色调、冷色调、高对比、低饱和度
+  - "Visual_Mood"            # 视觉氛围：温馨、压抑、神秘、欢快、史诗感
+  - "Composition"            # 构图风格：对称构图、三分法、中心构图、极简主义
+  - "Lighting"               # 光影效果：强烈对比、柔和光线、剪影、逆光
+  - "Texture"                # 质感风格：粗粒感、光滑、复古、现代感
+  - "Character_Presentation" # 角色呈现：单人特写、群像、无人物、背影
+  - "Era_Style"              # 时代风格：现代、复古、未来科幻、80年代
+  - "Genre_Visual"           # 视觉类型暗示：动作片元素、恐怖片元素、爱情片元素
+  - "Typography"             # 字体设计：粗犷、优雅、手写、科技感
+  - "Others"                 # 其他视觉特征：特殊符号、独特元素
 
 # Clustering settings
 clustering:
