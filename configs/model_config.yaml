@@ -1,0 +1,118 @@
+# Recommendation Model Configuration
+
+model:
+  name: "TwoStageGraphRec"
+
+  # Model architecture
+  architecture:
+    embedding_dim: 128
+    hidden_dims: [256, 128, 64]
+    num_layers: 3
+    dropout: 0.2
+
+  # Graph Neural Network settings
+  gnn:
+    type: "GAT"  # Options: "GCN", "GAT", "GraphSAGE"
+    num_heads: 4  # For GAT
+    concat_heads: true
+    add_self_loops: true
+
+  # Relation-aware attention
+  relation_attention:
+    enabled: true
+    num_relation_types: 5
+    attention_dim: 64
+
+  # Contrastive learning
+  contrastive:
+    enabled: true
+    temperature: 0.07
+    margin: 1.0
+    negative_samples: 5
+
+# Training settings
+training:
+  # Optimization
+  optimizer: "adam"
+  learning_rate: 0.001
+  weight_decay: 0.0001
+
+  # Learning rate scheduler
+  scheduler:
+    enabled: true
+    type: "cosine"  # Options: "step", "exponential", "cosine"
+    warmup_epochs: 5
+
+  # Training parameters
+  num_epochs: 100
+  batch_size: 256
+  early_stopping:
+    enabled: true
+    patience: 10
+    min_delta: 0.001
+
+  # Loss weights
+  loss_weights:
+    recommendation_loss: 1.0
+    contrastive_loss: 0.5
+    graph_structure_loss: 0.3
+
+# Two-stage training strategy
+two_stage:
+  # Stage 1: Train three graphs separately
+  stage1:
+    epochs: 50
+    learning_rate: 0.001
+
+    # Train user-side graph
+    user_graph:
+      enabled: true
+      weight: 1.0
+
+    # Train item-side graph
+    item_graph:
+      enabled: true
+      weight: 1.0
+
+    # Train interaction graph
+    interaction_graph:
+      enabled: true
+      weight: 1.0
+      distinguish_positive_negative: true
+
+  # Stage 2: Unified fusion graph
+  stage2:
+    epochs: 50
+    learning_rate: 0.0005
+    freeze_stage1: false  # Whether to freeze stage1 embeddings
+
+# Evaluation settings
+evaluation:
+  metrics:
+    - "recall@10"
+    - "recall@20"
+    - "ndcg@10"
+    - "ndcg@20"
+    - "hit_rate@10"
+    - "mrr"
+
+  test_split: 0.2
+  validation_split: 0.1
+
+  # Interpretability evaluation
+  interpretability:
+    enabled: true
+    num_explanations: 100
+    path_max_length: 5
+
+# Device settings
+device:
+  use_cuda: true
+  cuda_device: 0
+  num_workers: 4
+
+# Checkpointing
+checkpoint:
+  save_dir: "checkpoints"
+  save_frequency: 10  # Save every N epochs
+  keep_last_n: 5  # Keep only last N checkpoints

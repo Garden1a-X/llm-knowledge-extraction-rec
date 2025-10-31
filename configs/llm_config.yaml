@@ -1,0 +1,117 @@
+# LLM Configuration for Knowledge Extraction
+
+llm:
+  # LLM provider: "openai", "anthropic", "local"
+  provider: "openai"
+
+  # OpenAI settings
+  openai:
+    model: "gpt-4o"  # gpt-4o supports vision for poster analysis
+    api_key_env: "OPENAI_API_KEY"
+    temperature: 0.7
+    max_tokens: 2000
+    top_p: 1.0
+    frequency_penalty: 0.0
+    presence_penalty: 0.0
+
+  # Anthropic (Claude) settings
+  anthropic:
+    model: "claude-3-5-sonnet-20241022"  # Supports vision for poster analysis
+    api_key_env: "ANTHROPIC_API_KEY"
+    temperature: 0.7
+    max_tokens: 4000
+
+  # Local LLM settings (if using local models)
+  local:
+    model_path: "models/llama-2-7b"
+    device: "cuda"  # Options: "cuda", "cpu"
+    load_in_8bit: false
+
+# Prompt templates
+prompts:
+  # Visual knowledge extraction from movie poster (PRIMARY METHOD)
+  poster_visual_knowledge:
+    system_prompt: |
+      You are an expert in visual design and film poster analysis.
+      Your task is to analyze movie posters and extract visual knowledge points.
+      Focus ONLY on visual features that can be observed from the poster image.
+      Do NOT infer content based on the movie title or your prior knowledge of the film.
+
+    user_prompt_template: |
+      Movie ID: {movie_id}
+      Movie Title: {title} (for reference only - focus on visual analysis)
+
+      [Movie Poster Image Attached]
+
+      Analyze the poster image and extract visual knowledge points in these categories:
+      {knowledge_types}
+
+      For each category, describe what you observe:
+      - Color_Palette: Dominant colors, color temperature (warm/cool), saturation, contrast
+      - Visual_Mood: The atmosphere or feeling conveyed by the visual design
+      - Composition: How elements are arranged (symmetry, balance, focal points)
+      - Lighting: Light and shadow effects, lighting style
+      - Texture: Visual texture, grain, smoothness, style effects
+      - Character_Presentation: How people are shown (if any)
+      - Era_Style: Visual indicators of time period or era
+      - Genre_Visual: Visual elements that suggest genre (action, horror, romance, etc.)
+      - Typography: Font style, text treatment, logo design
+      - Others: Any other distinctive visual features
+
+      Return a JSON array with objects containing:
+      - type: category name (from above)
+      - content: specific description of the visual feature
+      - confidence: 0.0-1.0 (how confident you are about this observation)
+
+      Example:
+      [
+        {{"type": "Color_Palette", "content": "Dominant warm orange and red tones with high saturation", "confidence": 0.95}},
+        {{"type": "Visual_Mood", "content": "Intense and dramatic atmosphere", "confidence": 0.9}},
+        {{"type": "Composition", "content": "Central character with symmetrical background elements", "confidence": 0.85}}
+      ]
+
+  # Batch visual extraction for demo (小数据集测试)
+  poster_visual_batch:
+    system_prompt: |
+      You are analyzing a batch of movie posters to extract visual features.
+      Focus on visual elements only, not on plot or story.
+
+    user_prompt_template: |
+      Analyze these {num_posters} movie posters and extract visual knowledge points.
+
+      For each poster, provide:
+      - movie_id
+      - visual_features: array of {{type, content, confidence}}
+
+      Focus on observable visual characteristics only.
+
+  # User interest extraction prompt
+  user_interest:
+    system_prompt: |
+      You are an expert at understanding user movie preferences from their rating history.
+      Extract user interests based on their movie interactions and the movie knowledge graph.
+
+    user_prompt_template: |
+      User ID: {user_id}
+      User Demographics: {demographics}
+      Interaction History: {interaction_history}
+      Movie Knowledge Graph: {movie_graph}
+      User Interest Graph: {user_graph}
+
+      Please extract the user's movie interests, categorizing them as:
+      - Long-term interests (persistent preferences across time)
+      - Short-term interests (recent trends in last few ratings)
+
+      Return the result in JSON format with fields: interest_type (long/short), category, content, strength (0-1).
+
+# Rate limiting
+rate_limiting:
+  requests_per_minute: 60
+  retry_attempts: 3
+  retry_delay: 5  # seconds
+
+# Batch processing
+batch:
+  enabled: true
+  batch_size: 10
+  parallel_workers: 4

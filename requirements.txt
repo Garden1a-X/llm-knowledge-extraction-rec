@@ -1,0 +1,57 @@
+# Deep Learning & Graph Neural Networks
+torch>=2.0.0
+torch-geometric>=2.3.0
+torch-scatter>=2.1.0
+torch-sparse>=0.6.0
+
+# Transformers & LLM
+transformers>=4.30.0
+sentence-transformers>=2.2.0
+openai>=1.0.0
+anthropic>=0.18.0
+
+# Embedding & Clustering
+bertopic>=0.15.0
+hdbscan>=0.8.33
+scikit-learn>=1.3.0
+umap-learn>=0.5.3
+
+# Graph Processing
+networkx>=3.1
+neo4j>=5.9.0
+python-igraph>=0.10.0
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Utilities
+tqdm>=4.65.0
+pyyaml>=6.0
+python-dotenv>=1.0.0
+loguru>=0.7.0
+hydra-core>=1.3.0
+
+# Image Processing (for movie poster analysis)
+Pillow>=10.0.0
+opencv-python>=4.8.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.14.0
+
+# Jupyter
+jupyter>=1.0.0
+ipykernel>=6.23.0
+ipywidgets>=8.0.0
+
+# Testing
+pytest>=7.3.0
+pytest-cov>=4.1.0
+
+# Development
+black>=23.3.0
+flake8>=6.0.0
+mypy>=1.3.0

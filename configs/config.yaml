@@ -1,0 +1,78 @@
+# Main Configuration File
+
+# Data paths
+data:
+  raw_data_path: "data/raw"
+  processed_data_path: "data/processed"
+  graph_data_path: "data/graphs"
+
+  # Dataset settings
+  dataset_name: "movielens_1m"
+  demo_mode: true  # Set to false for full dataset
+  demo_num_users: 100
+  demo_num_movies: 200
+  full_num_users: 6040
+  full_num_movies: 3900
+
+  # MovieLens specific
+  min_rating_positive: 4  # Ratings >= 4 are positive interactions
+  max_rating_negative: 2  # Ratings <= 2 are negative interactions
+
+# Visual Knowledge Point Types (from Movie Posters)
+# 视觉知识点类型（从电影海报提取）
+knowledge_types:
+  - "Color_Palette"          # 色彩风格：暖色调、冷色调、高对比、低饱和度
+  - "Visual_Mood"            # 视觉氛围：温馨、压抑、神秘、欢快、史诗感
+  - "Composition"            # 构图风格：对称构图、三分法、中心构图、极简主义
+  - "Lighting"               # 光影效果：强烈对比、柔和光线、剪影、逆光
+  - "Texture"                # 质感风格：粗粒感、光滑、复古、现代感
+  - "Character_Presentation" # 角色呈现：单人特写、群像、无人物、背影
+  - "Era_Style"              # 时代风格：现代、复古、未来科幻、80年代
+  - "Genre_Visual"           # 视觉类型暗示：动作片元素、恐怖片元素、爱情片元素
+  - "Typography"             # 字体设计：粗犷、优雅、手写、科技感
+  - "Others"                 # 其他视觉特征：特殊符号、独特元素
+
+# Clustering settings
+clustering:
+  method: "hdbscan"  # Options: "hdbscan", "kmeans"
+  embedding_model: "bge"  # Options: "bertopic", "bge"
+
+  # HDBSCAN parameters
+  hdbscan:
+    min_cluster_size: 5
+    min_samples: 3
+    metric: "euclidean"
+
+  # K-means parameters
+  kmeans:
+    n_clusters: 20
+    max_iter: 300
+    random_state: 42
+
+  # BGE model settings
+  bge:
+    model_name: "BAAI/bge-large-en-v1.5"
+    batch_size: 32
+
+  # BERTopic settings
+  bertopic:
+    language: "english"
+    min_topic_size: 10
+
+# Graph construction settings
+graph:
+  backend: "networkx"  # Options: "networkx", "neo4j"
+
+  # Neo4j settings (if using Neo4j)
+  neo4j:
+    uri: "bolt://localhost:7687"
+    user: "neo4j"
+    password: "password"
+
+# Logging
+logging:
+  level: "INFO"  # Options: "DEBUG", "INFO", "WARNING", "ERROR"
+  log_file: "logs/app.log"
+
+# Random seed for reproducibility
+random_seed: 42
