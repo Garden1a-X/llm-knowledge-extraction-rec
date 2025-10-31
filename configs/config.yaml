@@ -7,24 +7,29 @@ data:
   graph_data_path: "data/graphs"
 
   # Dataset settings
-  dataset_name: "amazon_videogames"
+  dataset_name: "movielens_1m"
   demo_mode: true  # Set to false for full dataset
-  demo_num_users: 20
-  demo_num_products: 200
-  full_num_products: 26000
+  demo_num_users: 100
+  demo_num_movies: 200
+  full_num_users: 6040
+  full_num_movies: 3900
 
-# Knowledge Point Types (10 types)
+  # MovieLens specific
+  min_rating_positive: 4  # Ratings >= 4 are positive interactions
+  max_rating_negative: 2  # Ratings <= 2 are negative interactions
+
+# Knowledge Point Types for Movies (10 types)
 knowledge_types:
-  - "Functionality"
-  - "Compatibility"
-  - "Components"
-  - "User Demographics"
-  - "Usage Scenarios"
-  - "Game Features"
-  - "Technical Specifications"
-  - "Content Additions"
-  - "Performance Metrics"
-  - "Others"
+  - "Genre"              # 类型/流派
+  - "Theme"              # 主题
+  - "Cinematography"     # 拍摄风格
+  - "Narrative"          # 叙事风格
+  - "Emotion"            # 情感基调
+  - "Setting"            # 时空背景
+  - "Character"          # 角色特征
+  - "Visual_Style"       # 视觉风格
+  - "Pace"               # 节奏
+  - "Others"             # 其他
 
 # Clustering settings
 clustering:

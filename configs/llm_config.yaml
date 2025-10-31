@@ -6,7 +6,7 @@ llm:
 
   # OpenAI settings
   openai:
-    model: "gpt-4"
+    model: "gpt-4o"  # gpt-4o supports vision for poster analysis
     api_key_env: "OPENAI_API_KEY"
     temperature: 0.7
     max_tokens: 2000
@@ -16,10 +16,10 @@ llm:
 
   # Anthropic (Claude) settings
   anthropic:
-    model: "claude-3-opus-20240229"
+    model: "claude-3-5-sonnet-20241022"  # Supports vision for poster analysis
     api_key_env: "ANTHROPIC_API_KEY"
     temperature: 0.7
-    max_tokens: 2000
+    max_tokens: 4000
 
   # Local LLM settings (if using local models)
   local:
@@ -29,43 +29,73 @@ llm:
 
 # Prompt templates
 prompts:
-  # Product knowledge extraction prompt
-  product_knowledge:
+  # Movie knowledge extraction prompt (text-only)
+  movie_knowledge_text:
     system_prompt: |
-      You are an expert at extracting structured knowledge from product descriptions.
-      Extract knowledge points from the given product and classify them into the provided categories.
+      You are an expert film analyst with deep knowledge of cinema.
+      Extract structured knowledge points from the given movie information and classify them into the provided categories.
 
     user_prompt_template: |
-      Product Title: {title}
-      Product Description: {description}
+      Movie Title: {title}
+      Genres: {genres}
 
-      Please extract knowledge points for this product and classify them into these categories:
+      Please extract knowledge points for this movie and classify them into these categories:
       {knowledge_types}
 
       For each knowledge point, provide:
-      1. Type: one of the categories above
-      2. Content: a concise description of the knowledge point
+      1. Type: one of the categories above (Genre, Theme, Cinematography, Narrative, Emotion, Setting, Character, Visual_Style, Pace, Others)
+      2. Content: a concise, specific description of the knowledge point
       3. Confidence: a score from 0 to 1
 
-      Return the result in JSON format.
+      Return the result as a JSON array of objects with fields: type, content, confidence.
+
+  # Movie knowledge extraction with poster (multimodal)
+  movie_knowledge_multimodal:
+    system_prompt: |
+      You are an expert film analyst with deep knowledge of cinema and visual design.
+      Extract structured knowledge points from the given movie information AND its poster image.
+      Combine textual and visual information to provide comprehensive knowledge extraction.
+
+    user_prompt_template: |
+      Movie Title: {title}
+      Genres: {genres}
+      [Movie Poster Image Attached]
+
+      Please analyze both the text and the poster image to extract knowledge points.
+      Classify them into these categories: {knowledge_types}
+
+      For visual elements from the poster, pay attention to:
+      - Color palette and mood
+      - Visual composition and style
+      - Character presentation
+      - Genre indicators
+
+      For each knowledge point, provide:
+      1. Type: one of the categories above
+      2. Content: a concise description
+      3. Source: "text", "visual", or "both"
+      4. Confidence: a score from 0 to 1
+
+      Return the result as a JSON array of objects.
 
   # User interest extraction prompt
   user_interest:
     system_prompt: |
-      You are an expert at understanding user preferences from their interaction history.
-      Extract user interests based on their product interactions and the product knowledge graph.
+      You are an expert at understanding user movie preferences from their rating history.
+      Extract user interests based on their movie interactions and the movie knowledge graph.
 
     user_prompt_template: |
       User ID: {user_id}
+      User Demographics: {demographics}
       Interaction History: {interaction_history}
-      Product Knowledge Graph: {product_graph}
+      Movie Knowledge Graph: {movie_graph}
       User Interest Graph: {user_graph}
 
-      Please extract the user's interests, categorizing them as:
-      - Long-term interests (persistent preferences)
-      - Short-term interests (recent trends)
+      Please extract the user's movie interests, categorizing them as:
+      - Long-term interests (persistent preferences across time)
+      - Short-term interests (recent trends in last few ratings)
 
-      Return the result in JSON format.
+      Return the result in JSON format with fields: interest_type (long/short), category, content, strength (0-1).
 
 # Rate limiting
 rate_limiting:

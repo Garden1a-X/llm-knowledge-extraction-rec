@@ -1,112 +1,147 @@
 """
-Configuration Loader Utility
+Configuration loader utilities.
 """
 
 import yaml
 from pathlib import Path
 from typing import Dict, Any
-from loguru import logger
+import os
+from dotenv import load_dotenv
 
 
 class ConfigLoader:
-    """Loads and manages configuration files."""
+    """Load and manage configuration files."""
 
     def __init__(self, config_dir: str = "configs"):
         """
-        Initialize config loader.
+        Initialize ConfigLoader.
 
         Args:
-            config_dir: Directory containing config files
+            config_dir: Directory containing configuration files
         """
         self.config_dir = Path(config_dir)
         self.configs = {}
 
+        # Load environment variables
+        load_dotenv()
+
     def load_config(self, config_name: str) -> Dict[str, Any]:
         """
-        Load a specific configuration file.
+        Load a YAML configuration file.
 
         Args:
-            config_name: Name of config file (without .yaml extension)
+            config_name: Name of the config file (without .yaml extension)
 
         Returns:
-            Configuration dictionary
+            Dictionary containing configuration
         """
+        if config_name in self.configs:
+            return self.configs[config_name]
+
         config_path = self.config_dir / f"{config_name}.yaml"
 
         if not config_path.exists():
-            logger.error(f"Config file not found: {config_path}")
-            return {}
+            raise FileNotFoundError(f"Configuration file not found: {config_path}")
 
         with open(config_path, 'r') as f:
             config = yaml.safe_load(f)
 
-        logger.info(f"Loaded config: {config_name}")
         self.configs[config_name] = config
         return config
 
     def load_all_configs(self) -> Dict[str, Dict[str, Any]]:
         """
-        Load all configuration files in the config directory.
+        Load all configuration files from the config directory.
 
         Returns:
-            Dictionary mapping config_name to config_dict
+            Dictionary mapping config names to their contents
         """
+        all_configs = {}
+
         for config_file in self.config_dir.glob("*.yaml"):
             config_name = config_file.stem
-            self.load_config(config_name)
+            all_configs[config_name] = self.load_config(config_name)
 
-        logger.info(f"Loaded {len(self.configs)} config files")
-        return self.configs
+        return all_configs
 
-    def get(self, config_name: str, key_path: str = None, default=None) -> Any:
+    def get(self, config_name: str, key: str, default: Any = None) -> Any:
         """
-        Get a configuration value.
+        Get a specific configuration value.
 
         Args:
-            config_name: Name of the config file
-            key_path: Dot-separated path to the value (e.g., "model.learning_rate")
-            default: Default value if key not found
+            config_name: Name of the configuration file
+            key: Configuration key (supports nested keys with dot notation)
+            default: Default value if key is not found
 
         Returns:
-            Configuration value
+            Configuration value or default
+
+        Example:
+            >>> config_loader.get('config', 'data.raw_data_path', './data/raw')
         """
-        if config_name not in self.configs:
-            self.load_config(config_name)
+        config = self.load_config(config_name)
 
-        config = self.configs.get(config_name, {})
-
-        if key_path is None:
-            return config
-
-        # Navigate nested dict using key_path
-        keys = key_path.split('.')
+        # Support nested key access with dot notation
+        keys = key.split('.')
         value = config
 
-        for key in keys:
-            if isinstance(value, dict) and key in value:
-                value = value[key]
+        for k in keys:
+            if isinstance(value, dict) and k in value:
+                value = value[k]
             else:
                 return default
 
         return value
 
-    def merge_configs(self, *config_names: str) -> Dict[str, Any]:
+    def get_api_key(self, provider: str) -> str:
         """
-        Merge multiple configuration files.
+        Get API key from environment variables.
 
         Args:
-            *config_names: Names of config files to merge
+            provider: LLM provider name ('openai', 'anthropic', etc.)
 
         Returns:
-            Merged configuration dictionary
+            API key string
+
+        Raises:
+            ValueError: If API key is not found
         """
-        merged = {}
+        llm_config = self.load_config('llm_config')
 
-        for config_name in config_names:
-            if config_name not in self.configs:
-                self.load_config(config_name)
+        provider_config = llm_config.get('llm', {}).get(provider, {})
+        env_var_name = provider_config.get('api_key_env')
 
-            config = self.configs.get(config_name, {})
-            merged.update(config)
+        if not env_var_name:
+            raise ValueError(f"API key environment variable not configured for provider: {provider}")
 
-        return merged
+        api_key = os.getenv(env_var_name)
+
+        if not api_key:
+            raise ValueError(
+                f"API key not found in environment variable: {env_var_name}\n"
+                f"Please set it in your .env file or environment."
+            )
+
+        return api_key
+
+
+# Global config loader instance
+_config_loader = None
+
+
+def get_config_loader(config_dir: str = "configs") -> ConfigLoader:
+    """
+    Get or create a global ConfigLoader instance.
+
+    Args:
+        config_dir: Directory containing configuration files
+
+    Returns:
+        ConfigLoader instance
+    """
+    global _config_loader
+
+    if _config_loader is None:
+        _config_loader = ConfigLoader(config_dir)
+
+    return _config_loader
