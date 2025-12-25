@@ -170,26 +170,60 @@ llm-knowledge-extraction-rec/
 └── README.md                      # 项目说明
 ```
 
+## 📚 详细文档
+
+**完整的开发计划和实验设计请查看 `docs/` 目录：**
+
+- **`docs/development_plan.py`** - 完整开发计划
+  - 4个baseline方法详细说明（LightGCN, KGAT, RippleNet, MKGAT）
+  - 创新方法实现步骤
+  - API成本估算（GPT-4o mini: $5-10）
+  - 时间规划（6-10周）
+
+- **`docs/experiment_design.py`** - 实验设计方案
+  - 8种方法对比矩阵
+  - 消融实验设计（验证视觉知识和用户兴趣的独立贡献）
+  - 开源模型验证（Qwen3-VL vs GPT-4o mini）
+  - 评估指标和统计检验
+
+查看方式：
+```bash
+python3 docs/development_plan.py    # 查看开发计划
+python3 docs/experiment_design.py  # 查看实验设计
+```
+
 ## 当前进展
 
-### ✅ 已完成（原型阶段 - 基于Amazon VideoGames）
+### ✅ 已完成
 
-1. 商品知识点抽取（demo验证）
-2. 用户兴趣抽取
-3. 基于大模型抽取知识图谱的图推荐全流程
+1. ✅ 环境搭建（PyTorch + PyG）
+2. ✅ MovieLens 1M数据加载验证（3883电影, 6040用户, 1M评分, 3882海报）
+3. ✅ 项目架构重构（clean architecture）
+4. ✅ 完整开发计划和实验设计
 
-### 🚧 进行中（迁移到MovieLens 1M）
+### 🚧 进行中
 
-1. 切换到MovieLens 1M数据集
-2. 设计电影领域的知识点类型schema
-3. 搭建完整的项目代码框架
+- 待定（准备实现第一个baseline或LLM客户端）
 
 ### 📋 待完成
 
-1. 构建初步图谱
-2. 搭建三图建模和对比学习框架
-3. 实现路径可解释性
-4. 性能评估和case study
+**Baseline方法**:
+1. [ ] LightGCN - 纯协同过滤baseline
+2. [ ] KGAT - 传统元数据KG
+3. [ ] RippleNet - 传播机制
+4. [ ] MKGAT - CNN视觉特征（最核心对比）
+
+**创新方法**:
+5. [ ] LLM知识提取（GPT-4o mini）
+6. [ ] 开源模型知识提取（Qwen3-VL）
+7. [ ] 用户兴趣提取
+8. [ ] 三层知识图谱构建
+9. [ ] Ours-Visual / Ours-Interest / Ours-Full / Ours-Qwen
+
+**实验分析**:
+10. [ ] 性能对比和统计检验
+11. [ ] 消融实验分析
+12. [ ] 案例分析和可视化
 
 ## 技术栈
 
