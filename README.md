@@ -200,18 +200,20 @@ python3 docs/experiment_design.py  # 查看实验设计
 2. ✅ MovieLens 1M数据加载验证（3883电影, 6040用户, 1M评分, 3882海报）
 3. ✅ 项目架构重构（clean architecture）
 4. ✅ 完整开发计划和实验设计
+5. ✅ RecBole集成（用于baseline实现）
 
 ### 🚧 进行中
 
-- 待定（准备实现第一个baseline或LLM客户端）
+- 准备运行baseline方法（使用RecBole）
 
 ### 📋 待完成
 
-**Baseline方法**:
+**Baseline方法（使用RecBole）**:
 1. [ ] LightGCN - 纯协同过滤baseline
-2. [ ] KGAT - 传统元数据KG
-3. [ ] RippleNet - 传播机制
-4. [ ] MKGAT - CNN视觉特征（最核心对比）
+2. [ ] BPR, NGCF - 其他协同过滤baseline
+3. [ ] KGAT - 传统元数据KG
+4. [ ] RippleNet - 传播机制
+5. [ ] MKGAT - CNN视觉特征（最核心对比，需单独实现）
 
 **创新方法**:
 5. [ ] LLM知识提取（GPT-4o mini）
@@ -227,7 +229,8 @@ python3 docs/experiment_design.py  # 查看实验设计
 
 ## 技术栈
 
-- **LLM**：用于知识抽取（离线）
+- **Baseline框架**：RecBole (统一的推荐算法库)
+- **LLM**：GPT-4o mini / Qwen3-VL（用于知识抽取）
 - **Embedding模型**：BGE / BERTopic
 - **聚类算法**：HDBSCAN / K-means
 - **图神经网络**：PyTorch Geometric
@@ -236,25 +239,52 @@ python3 docs/experiment_design.py  # 查看实验设计
 
 ## 快速开始
 
+### 1. 环境设置
+
 ```bash
-# 1. 克隆仓库
+# 克隆仓库
 git clone <repository-url>
 cd llm-knowledge-extraction-rec
 
-# 2. 安装依赖
+# 安装依赖
 pip install -r requirements.txt
 
-# 3. 下载数据
-python scripts/download_data.py
+# 或使用conda
+conda activate xuao_llm_kg_rec
+pip install recbole
+```
 
-# 4. 运行知识抽取
+### 2. 运行Baseline方法
+
+```bash
+# 准备RecBole格式数据
+python baselines/prepare_data_for_recbole.py \
+    --ml_data_dir data/raw/ml-1m \
+    --output_dir data/recbole/ml-1m
+
+# 运行LightGCN baseline
+python baselines/run_baseline.py \
+    --model LightGCN \
+    --dataset ml-1m \
+    --device cuda
+
+# 运行所有baseline（LightGCN, BPR, NGCF）
+bash baselines/run_all_baselines.sh
+```
+
+详细说明见 `baselines/README.txt`
+
+### 3. LLM知识提取（待实现）
+
+```bash
+# 运行知识抽取
 python scripts/extract_knowledge.py
 
-# 5. 构建图谱
+# 构建图谱
 python scripts/build_graph.py
 
-# 6. 训练推荐模型
-python scripts/train_recommender.py
+# 训练我们的模型
+python scripts/train_ours.py
 ```
 
 ## 参考文献

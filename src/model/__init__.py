@@ -1,15 +1,8 @@
 """
 Recommendation models.
+
+Baseline models (LightGCN, KGAT, RippleNet, MKGAT) are implemented using RecBole.
+This module will contain our custom models (Ours-Visual, Ours-Interest, Ours-Full).
 """
 
-from .lightgcn import LightGCN
-from .trainer import Trainer
-from .evaluator import RecommendationEvaluator, evaluate_model_on_dataset, print_results
-
-__all__ = [
-    'LightGCN',
-    'Trainer',
-    'RecommendationEvaluator',
-    'evaluate_model_on_dataset',
-    'print_results',
-]
+__all__ = []
