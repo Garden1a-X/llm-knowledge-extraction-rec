@@ -19,9 +19,17 @@ from datetime import datetime
 try:
     from recbole.quick_start import run_recbole
     from recbole.config import Config
-except ImportError:
-    print("ERROR: RecBole not installed!")
-    print("Please install: pip install recbole")
+except ImportError as e:
+    print("ERROR: Failed to import RecBole!")
+    print(f"Import error: {e}")
+    print()
+    print("RecBole may not be installed, or there's a dependency issue.")
+    print("Please try: pip install recbole")
+    print()
+    print("If RecBole is installed, run this to diagnose:")
+    print("  python baselines/test_recbole.py")
+    import traceback
+    traceback.print_exc()
     exit(1)
 
 
