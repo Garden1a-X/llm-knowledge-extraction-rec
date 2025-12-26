@@ -168,14 +168,70 @@ RippleNet:
   Graph for Recommender Systems, CIKM 2018
 
 ================================================================================
+Running Multiple Trials (RECOMMENDED for Papers)
+================================================================================
+
+For stable results with mean and standard deviation, run multiple trials with
+different random seeds.
+
+Quick start (5 trials):
+-----------------------
+
+bash baselines/run_5_trials.sh LightGCN
+
+This will run 5 trials with seeds: [42, 2023, 2024, 2025, 12345]
+
+Extract and analyze results:
+---------------------------
+
+python baselines/extract_trial_results.py outputs/baselines/multiple_trials/LightGCN_TIMESTAMP/
+
+This will output:
+- Mean ± Std for each metric
+- Individual trial results
+- Markdown table (for README)
+- LaTeX table (for paper)
+- JSON summary file
+
+Example output:
+--------------
+
+NDCG@10:   0.1263 ± 0.0045
+Recall@10: 0.0578 ± 0.0023
+...
+
+Why multiple trials?
+--------------------
+
+1. Single runs can be unstable due to random initialization
+2. Papers require reporting mean and standard deviation
+3. Allows statistical significance testing
+4. Ensures reproducibility
+
+Recommended: Run 3-5 trials for each baseline and your proposed method.
+
+Advanced usage:
+---------------
+
+Run custom trials with specific seeds:
+
+python baselines/run_multiple_trials.py \
+    --model LightGCN \
+    --num_trials 5 \
+    --seeds 42 2023 2024 2025 12345 \
+    --epochs 300
+
+================================================================================
 Next Steps
 ================================================================================
 
 After running baselines:
 
-1. Compare results and establish baseline performance
-2. For KGAT/RippleNet: Prepare KG from MovieLens metadata
-3. Implement our innovation: LLM-based visual knowledge extraction
-4. Compare Ours-Visual, Ours-Interest, Ours-Full against baselines
+1. Run multiple trials for each baseline (3-5 trials each)
+2. Compare results and establish baseline performance
+3. For KGAT/RippleNet: Prepare KG from MovieLens metadata
+4. Implement our innovation: LLM-based visual knowledge extraction
+5. Run multiple trials for Ours-Visual, Ours-Interest, Ours-Full
+6. Statistical comparison against baselines
 
 ================================================================================

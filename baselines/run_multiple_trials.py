@@ -1,0 +1,259 @@
+#!/usr/bin/env python
+"""
+Run multiple trials of a baseline model with different random seeds.
+This is essential for getting stable results with mean and standard deviation.
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+from datetime import datetime
+import numpy as np
+
+
+def run_single_trial(model, dataset, data_path, device, epochs, seed, trial_num):
+    """Run a single trial with a specific seed."""
+    print(f"\n{'='*80}")
+    print(f"Trial {trial_num + 1} - Running {model} with seed {seed}")
+    print(f"{'='*80}\n")
+
+    cmd = [
+        sys.executable,
+        "baselines/run_baseline.py",
+        "--model", model,
+        "--dataset", dataset,
+        "--data_path", data_path,
+        "--device", device,
+        "--epochs", str(epochs),
+        "--seed", str(seed)
+    ]
+
+    try:
+        result = subprocess.run(
+            cmd,
+            cwd=Path(__file__).parent.parent,
+            capture_output=True,
+            text=True,
+            timeout=7200  # 2 hour timeout
+        )
+
+        if result.returncode != 0:
+            print(f"ERROR in trial {trial_num + 1}:")
+            print(result.stderr)
+            return None
+
+        # Parse results from output
+        output = result.stdout
+        test_results = None
+
+        # Look for test results in output
+        lines = output.split('\n')
+        for i, line in enumerate(lines):
+            if 'test result:' in line.lower():
+                # Try to parse the results
+                # RecBole outputs like: "test result: OrderedDict([('recall@10', 0.0578), ...])"
+                try:
+                    # Extract the part after "test result:"
+                    result_str = line.split('test result:')[-1].strip()
+                    # This is a bit hacky but works for RecBole output
+                    if 'OrderedDict' in result_str:
+                        # Parse key-value pairs
+                        import re
+                        pattern = r"\('([^']+)',\s*([0-9.]+)\)"
+                        matches = re.findall(pattern, result_str)
+                        test_results = {k: float(v) for k, v in matches}
+                        break
+                except Exception as e:
+                    print(f"Warning: Could not parse test results: {e}")
+                    continue
+
+        if test_results is None:
+            print(f"Warning: Could not extract test results from trial {trial_num + 1}")
+            print("Output snippet:")
+            print('\n'.join(lines[-50:]))
+
+        return test_results
+
+    except subprocess.TimeoutExpired:
+        print(f"ERROR: Trial {trial_num + 1} timed out after 2 hours")
+        return None
+    except Exception as e:
+        print(f"ERROR in trial {trial_num + 1}: {e}")
+        return None
+
+
+def compute_statistics(results_list):
+    """Compute mean and std for each metric."""
+    if not results_list:
+        return None, None
+
+    # Get all metrics
+    metrics = list(results_list[0].keys())
+
+    means = {}
+    stds = {}
+
+    for metric in metrics:
+        values = [r[metric] for r in results_list]
+        means[metric] = np.mean(values)
+        stds[metric] = np.std(values)
+
+    return means, stds
+
+
+def format_results_table(means, stds):
+    """Format results as a nice table."""
+    if means is None or stds is None:
+        return "No valid results"
+
+    table = "\n" + "="*80 + "\n"
+    table += "FINAL RESULTS (Mean ± Std)\n"
+    table += "="*80 + "\n"
+    table += f"{'Metric':<20} {'Mean':>12} {'Std':>12} {'Format':>20}\n"
+    table += "-"*80 + "\n"
+
+    for metric in sorted(means.keys()):
+        mean_val = means[metric]
+        std_val = stds[metric]
+        formatted = f"{mean_val:.4f} ± {std_val:.4f}"
+        table += f"{metric:<20} {mean_val:>12.4f} {std_val:>12.4f} {formatted:>20}\n"
+
+    table += "="*80 + "\n"
+    return table
+
+
+def save_results(model, dataset, num_trials, seeds, all_results, means, stds, output_dir):
+    """Save all results to a JSON file."""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{model}_{dataset}_{num_trials}trials_{timestamp}.json"
+    filepath = os.path.join(output_dir, filename)
+
+    data = {
+        "model": model,
+        "dataset": dataset,
+        "num_trials": num_trials,
+        "seeds": seeds,
+        "timestamp": timestamp,
+        "individual_results": all_results,
+        "statistics": {
+            "means": means,
+            "stds": stds
+        }
+    }
+
+    os.makedirs(output_dir, exist_ok=True)
+    with open(filepath, 'w') as f:
+        json.dump(data, f, indent=2)
+
+    print(f"\n✓ Results saved to: {filepath}")
+    return filepath
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Run multiple trials of a baseline model with different random seeds"
+    )
+    parser.add_argument("--model", type=str, required=True,
+                        help="Model name (e.g., LightGCN, BPR, NGCF)")
+    parser.add_argument("--dataset", type=str, default="ml-1m",
+                        help="Dataset name (default: ml-1m)")
+    parser.add_argument("--data_path", type=str, default="data/recbole",
+                        help="Path to RecBole data (default: data/recbole)")
+    parser.add_argument("--device", type=str, default="cuda",
+                        help="Device to use (default: cuda)")
+    parser.add_argument("--epochs", type=int, default=300,
+                        help="Number of epochs (default: 300)")
+    parser.add_argument("--num_trials", type=int, default=5,
+                        help="Number of trials to run (default: 5)")
+    parser.add_argument("--seeds", type=int, nargs='+',
+                        help="Specific seeds to use (default: [42, 2023, 2024, 2025, 12345])")
+    parser.add_argument("--output_dir", type=str, default="outputs/baselines/multiple_trials",
+                        help="Directory to save results (default: outputs/baselines/multiple_trials)")
+
+    args = parser.parse_args()
+
+    # Set default seeds if not provided
+    if args.seeds is None:
+        args.seeds = [42, 2023, 2024, 2025, 12345][:args.num_trials]
+    elif len(args.seeds) != args.num_trials:
+        print(f"Warning: Number of seeds ({len(args.seeds)}) != num_trials ({args.num_trials})")
+        print(f"Using first {args.num_trials} seeds")
+        args.seeds = args.seeds[:args.num_trials]
+
+    print("="*80)
+    print(f"Running Multiple Trials for {args.model}")
+    print("="*80)
+    print(f"Model: {args.model}")
+    print(f"Dataset: {args.dataset}")
+    print(f"Number of trials: {args.num_trials}")
+    print(f"Seeds: {args.seeds}")
+    print(f"Epochs per trial: {args.epochs}")
+    print(f"Device: {args.device}")
+    print("="*80)
+
+    # Run all trials
+    all_results = []
+    for i, seed in enumerate(args.seeds):
+        result = run_single_trial(
+            model=args.model,
+            dataset=args.dataset,
+            data_path=args.data_path,
+            device=args.device,
+            epochs=args.epochs,
+            seed=seed,
+            trial_num=i
+        )
+
+        if result is not None:
+            all_results.append(result)
+            print(f"\n✓ Trial {i+1} completed successfully")
+            print(f"Results: {result}")
+        else:
+            print(f"\n✗ Trial {i+1} failed")
+
+    # Compute statistics
+    print("\n" + "="*80)
+    print(f"Completed {len(all_results)}/{args.num_trials} trials successfully")
+    print("="*80)
+
+    if len(all_results) == 0:
+        print("ERROR: No successful trials!")
+        return 1
+
+    means, stds = compute_statistics(all_results)
+
+    # Print results table
+    print(format_results_table(means, stds))
+
+    # Print individual trial results
+    print("\nIndividual Trial Results:")
+    print("-"*80)
+    for i, (seed, result) in enumerate(zip(args.seeds[:len(all_results)], all_results)):
+        print(f"\nTrial {i+1} (seed={seed}):")
+        for metric, value in sorted(result.items()):
+            print(f"  {metric:<20}: {value:.4f}")
+
+    # Save results
+    save_results(
+        model=args.model,
+        dataset=args.dataset,
+        num_trials=args.num_trials,
+        seeds=args.seeds,
+        all_results=all_results,
+        means=means,
+        stds=stds,
+        output_dir=args.output_dir
+    )
+
+    print("\n" + "="*80)
+    print("All trials completed!")
+    print("="*80)
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
