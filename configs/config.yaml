@@ -17,33 +17,34 @@ llm:
   # Provider: "openai", "anthropic", or "local"
   provider: "openai"
 
-  # Model name
-  model_name: "gpt-4"
+  # Model name for knowledge extraction (use GPT-4o mini for cost efficiency)
+  model_name: "gpt-4o-mini"
 
   # API configuration (load from environment variables)
   api_key_env: "OPENAI_API_KEY"
 
   # Generation parameters
-  temperature: 0.7
+  temperature: 0.0  # Use 0 for more consistent/reproducible extraction
   max_tokens: 2000
 
   # For vision models (poster analysis)
-  vision_model: "gpt-4-vision-preview"
+  vision_model: "gpt-4o-mini"  # GPT-4o mini supports vision
 
 # Knowledge Extraction Configuration
 knowledge_extraction:
-  # Movie knowledge point types (10 types)
+  # Visual knowledge point types (10 types) - for poster analysis
+  # These match the types defined in docs/development_plan.py
   allowed_types:
-    - "Genre & Theme"
-    - "Director & Cast"
-    - "Plot Elements"
-    - "Visual Style"
-    - "Emotional Tone"
-    - "Target Audience"
-    - "Cultural Context"
-    - "Production Quality"
-    - "Narrative Structure"
-    - "Others"
+    - "Color_Palette"           # 色彩风格
+    - "Visual_Mood"             # 视觉氛围
+    - "Composition"             # 构图风格
+    - "Lighting"                # 光线处理
+    - "Texture"                 # 质感风格
+    - "Character_Presentation"  # 角色呈现
+    - "Era_Style"               # 时代风格
+    - "Genre_Visual"            # 类型视觉标签
+    - "Typography"              # 文字排版
+    - "Others"                  # 其他视觉特征
 
   # Number of knowledge points per type per movie
   max_points_per_type: 5
