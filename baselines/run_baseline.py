@@ -66,6 +66,11 @@ def get_model_config(model_name: str, use_kg: bool = False):
             'mode': 'full',  # Full ranking
         },
 
+        # Data loading - IMPORTANT: load timestamp for temporal split
+        'load_col': {
+            'inter': ['user_id', 'item_id', 'timestamp']
+        },
+
         # Other
         'seed': 42,
         'gpu_id': '0',  # Will be overridden by --device
