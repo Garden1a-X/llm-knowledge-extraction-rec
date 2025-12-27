@@ -64,6 +64,10 @@ def run_single_trial(model, dataset, data_path, device, epochs, seed, trial_num)
 
         if output_dir is None:
             print(f"Warning: Could not find output directory from trial {trial_num + 1}")
+            print(f"Stdout snippet (last 30 lines):")
+            print('\n'.join(lines[-30:]))
+            print(f"\nStderr:")
+            print(result.stderr[:2000] if result.stderr else "(empty)")
             return None, None
 
         # Read the results.json file
