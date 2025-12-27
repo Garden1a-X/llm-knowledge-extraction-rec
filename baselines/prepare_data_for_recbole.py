@@ -153,8 +153,8 @@ def prepare_recbole_data(
         valid_users = ratings['user_id'].unique()
         valid_movies = ratings['movie_id'].unique()
 
-        users = users[users['user_id'].isin(valid_users)]
-        movies = movies[movies['movie_id'].isin(valid_movies)]
+        users = users[users['user_id'].isin(valid_users)].copy()
+        movies = movies[movies['movie_id'].isin(valid_movies)].copy()
 
         print(f"\n  After filtering:")
         print(f"    Ratings: {len(ratings)}")
@@ -232,17 +232,17 @@ def prepare_recbole_data(
 
     mapping_path = output_dir / 'id_mappings.json'
     with open(mapping_path, 'w') as f:
-        # Convert int keys to strings for JSON serialization
+        # Convert int keys to strings and ensure values are Python ints (not numpy.int64)
         serializable_data = {
             'user_id_map': {
-                'original_to_new': {str(k): v for k, v in user_id_map['original_to_new'].items()},
-                'new_to_original': {str(k): v for k, v in user_id_map['new_to_original'].items()}
+                'original_to_new': {str(k): int(v) for k, v in user_id_map['original_to_new'].items()},
+                'new_to_original': {str(k): int(v) for k, v in user_id_map['new_to_original'].items()}
             },
             'item_id_map': {
-                'original_to_new': {str(k): v for k, v in item_id_map['original_to_new'].items()},
-                'new_to_original': {str(k): v for k, v in item_id_map['new_to_original'].items()}
+                'original_to_new': {str(k): int(v) for k, v in item_id_map['original_to_new'].items()},
+                'new_to_original': {str(k): int(v) for k, v in item_id_map['new_to_original'].items()}
             },
-            'stats': mapping_data['stats']
+            'stats': {k: int(v) if isinstance(v, (int, float)) else v for k, v in mapping_data['stats'].items()}
         }
         json.dump(serializable_data, f, indent=2)
 
