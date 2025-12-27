@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pandas as pd
 import argparse
+import json
 from src.data.loader import MovieLensLoader
 
 
@@ -73,6 +74,46 @@ def apply_k_core_filtering(ratings: pd.DataFrame, k: int = 5) -> pd.DataFrame:
     return ratings
 
 
+def create_id_mappings(users: pd.DataFrame, movies: pd.DataFrame):
+    """
+    Create continuous ID mappings for users and items.
+
+    Maps original IDs to continuous integers starting from 1.
+    (RecBole uses 1-indexed IDs internally, 0 is reserved for padding)
+
+    Args:
+        users: DataFrame with user_id column
+        movies: DataFrame with movie_id column
+
+    Returns:
+        Tuple of (user_id_map, item_id_map) where each map is a dict:
+        {
+            'original_to_new': {original_id: new_id, ...},
+            'new_to_original': {new_id: original_id, ...}
+        }
+    """
+    # Get unique IDs and sort them for consistency
+    unique_user_ids = sorted(users['user_id'].unique())
+    unique_movie_ids = sorted(movies['movie_id'].unique())
+
+    # Create mappings (start from 1)
+    user_id_map = {
+        'original_to_new': {old_id: new_id for new_id, old_id in enumerate(unique_user_ids, start=1)},
+        'new_to_original': {new_id: old_id for new_id, old_id in enumerate(unique_user_ids, start=1)}
+    }
+
+    item_id_map = {
+        'original_to_new': {old_id: new_id for new_id, old_id in enumerate(unique_movie_ids, start=1)},
+        'new_to_original': {new_id: old_id for new_id, old_id in enumerate(unique_movie_ids, start=1)}
+    }
+
+    print(f"\n  ID Mappings created:")
+    print(f"    Users: {len(unique_user_ids)} IDs mapped to [1, {len(unique_user_ids)}]")
+    print(f"    Items: {len(unique_movie_ids)} IDs mapped to [1, {len(unique_movie_ids)}]")
+
+    return user_id_map, item_id_map
+
+
 def prepare_recbole_data(
     ml_data_dir: str,
     output_dir: str,
@@ -80,7 +121,7 @@ def prepare_recbole_data(
     min_interactions: int = 0
 ):
     """
-    Convert MovieLens 1M to RecBole format.
+    Convert MovieLens 1M to RecBole format with continuous ID mapping.
 
     Args:
         ml_data_dir: Path to MovieLens 1M raw data
@@ -119,6 +160,17 @@ def prepare_recbole_data(
         print(f"    Ratings: {len(ratings)}")
         print(f"    Users: {len(users)}")
         print(f"    Movies: {len(movies)}")
+
+    # ========================================================================
+    # Create continuous ID mappings
+    # ========================================================================
+    user_id_map, item_id_map = create_id_mappings(users, movies)
+
+    # Apply mappings to dataframes
+    ratings['user_id'] = ratings['user_id'].map(user_id_map['original_to_new'])
+    ratings['movie_id'] = ratings['movie_id'].map(item_id_map['original_to_new'])
+    users['user_id'] = users['user_id'].map(user_id_map['original_to_new'])
+    movies['movie_id'] = movies['movie_id'].map(item_id_map['original_to_new'])
 
     # ========================================================================
     # 1. Create .inter file (interactions)
@@ -163,6 +215,40 @@ def prepare_recbole_data(
     print(f"  Shape: {item_df.shape}")
 
     # ========================================================================
+    # 4. Save ID mappings
+    # ========================================================================
+    print(f"\nSaving ID mappings...")
+
+    mapping_data = {
+        'user_id_map': user_id_map,
+        'item_id_map': item_id_map,
+        'stats': {
+            'num_users': len(user_id_map['new_to_original']),
+            'num_items': len(item_id_map['new_to_original']),
+            'num_ratings': len(ratings),
+            'min_interactions': min_interactions
+        }
+    }
+
+    mapping_path = output_dir / 'id_mappings.json'
+    with open(mapping_path, 'w') as f:
+        # Convert int keys to strings for JSON serialization
+        serializable_data = {
+            'user_id_map': {
+                'original_to_new': {str(k): v for k, v in user_id_map['original_to_new'].items()},
+                'new_to_original': {str(k): v for k, v in user_id_map['new_to_original'].items()}
+            },
+            'item_id_map': {
+                'original_to_new': {str(k): v for k, v in item_id_map['original_to_new'].items()},
+                'new_to_original': {str(k): v for k, v in item_id_map['new_to_original'].items()}
+            },
+            'stats': mapping_data['stats']
+        }
+        json.dump(serializable_data, f, indent=2)
+
+    print(f"  Saved to {mapping_path}")
+
+    # ========================================================================
     # Summary
     # ========================================================================
     print(f"\n{'='*60}")
@@ -173,6 +259,12 @@ def prepare_recbole_data(
     print(f"  - {dataset_name}.inter (required)")
     print(f"  - {dataset_name}.user (optional)")
     print(f"  - {dataset_name}.item (optional)")
+    print(f"  - id_mappings.json (ID mapping for posters/features)")
+    print()
+    print("ID Mapping:")
+    print(f"  - User IDs: {len(user_id_map['new_to_original'])} users mapped to [1, {len(user_id_map['new_to_original'])}]")
+    print(f"  - Item IDs: {len(item_id_map['new_to_original'])} items mapped to [1, {len(item_id_map['new_to_original'])}]")
+    print(f"  - Use 'new_to_original' to map RecBole IDs back to original movie IDs for posters")
     print()
     print("Usage in RecBole:")
     print(f"  config_dict = {{'data_path': '{output_dir}'}}")
