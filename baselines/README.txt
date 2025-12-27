@@ -9,6 +9,24 @@ RecBole provides implementations of 80+ recommendation algorithms, ensuring
 correctness and fair comparison.
 
 ================================================================================
+Available Scripts
+================================================================================
+
+Data Preparation:
+  prepare_data_for_recbole.py    Convert MovieLens to RecBole format
+
+Single Run:
+  run_baseline.py                Run one model with specific parameters
+
+Multiple Trials:
+  run_5_trials.sh                Quick: Run 5 trials with default seeds
+  run_multiple_trials.py         Flexible: Custom number of trials and seeds
+  extract_results_from_json.py   Extract statistics from completed trials
+
+Batch Operations:
+  run_all_baselines.sh           Run all baseline models once
+
+================================================================================
 Setup
 ================================================================================
 
@@ -184,14 +202,15 @@ This will run 5 trials with seeds: [42, 2023, 2024, 2025, 12345]
 Extract and analyze results:
 ---------------------------
 
-python baselines/extract_trial_results.py outputs/baselines/multiple_trials/LightGCN_TIMESTAMP/
+python baselines/extract_results_from_json.py outputs/baselines
 
-This will output:
-- Mean ± Std for each metric
-- Individual trial results
-- Markdown table (for README)
-- LaTeX table (for paper)
-- JSON summary file
+This will:
+- Find all MODEL_DATASET_TIMESTAMP/results.json files
+- Extract test_result from each trial
+- Compute mean ± std for all metrics
+- Output Markdown table (for README)
+- Output LaTeX table (for paper)
+- Save to MODEL_summary_Ntrials.json (e.g., LightGCN_summary_5trials.json)
 
 Example output:
 --------------

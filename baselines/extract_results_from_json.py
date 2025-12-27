@@ -237,7 +237,15 @@ def main():
     if args.output:
         output_file = Path(args.output)
     else:
-        output_file = output_dir / f"summary_statistics_{len(all_results)}trials.json"
+        # Infer model name from directory structure
+        model_name = "unknown"
+        if all_results and len(results_files) > 0:
+            # Try to extract model name from first results file path
+            # Path format: outputs/baselines/MODEL_DATASET_TIMESTAMP/results.json
+            first_dir = results_files[0].parent.name  # e.g., "LightGCN_ml-1m_20251226_232706"
+            model_name = first_dir.split('_')[0]  # Extract "LightGCN"
+
+        output_file = output_dir / f"{model_name}_summary_{len(all_results)}trials.json"
 
     with open(output_file, 'w') as f:
         json.dump(output_data, f, indent=2)
