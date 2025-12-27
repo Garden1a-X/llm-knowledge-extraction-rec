@@ -192,10 +192,28 @@ def run_baseline(
             saved=True,  # Save model
         )
 
+        # RecBole returns a tuple: (best_valid_score, test_result_dict)
+        # Extract the test results
+        if isinstance(result, tuple) and len(result) == 2:
+            best_valid_score, test_result = result
+            result_dict = {
+                'best_valid_score': float(best_valid_score) if best_valid_score is not None else None,
+                'test_result': test_result
+            }
+        elif isinstance(result, dict):
+            # If it's already a dict, check if it has test_result
+            if 'test_result' not in result:
+                result_dict = {'test_result': result}
+            else:
+                result_dict = result
+        else:
+            print(f"Warning: Unexpected result type: {type(result)}")
+            result_dict = {'test_result': result}
+
         # Save results
         results_path = model_output_dir / 'results.json'
         with open(results_path, 'w') as f:
-            json.dump(result, f, indent=2, default=str)
+            json.dump(result_dict, f, indent=2, default=str)
 
         print(f"\n{'='*80}")
         print("Training completed!")
@@ -203,17 +221,18 @@ def run_baseline(
         print(f"Results saved to: {results_path}")
         print(f"Model saved to: {model_output_dir / 'checkpoints'}")
 
-        # Print results
+        # Print test results
         print(f"\n{'='*80}")
         print("Test Results:")
         print(f"{'='*80}")
-        if isinstance(result, dict):
-            for metric, value in result.items():
+        test_result = result_dict.get('test_result', {})
+        if isinstance(test_result, dict):
+            for metric, value in sorted(test_result.items()):
                 if isinstance(value, (int, float)):
                     print(f"  {metric:20s}: {value:.4f}")
         print(f"{'='*80}\n")
 
-        return result
+        return result_dict
 
     except Exception as e:
         print(f"\nERROR: Training failed!")
