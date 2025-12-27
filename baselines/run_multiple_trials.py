@@ -146,7 +146,9 @@ def format_results_table(means, stds):
 def save_results(model, dataset, num_trials, seeds, all_results, means, stds, output_dir, trial_output_dirs=None):
     """Save all results to a JSON file."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"{model}_summary_{num_trials}trials.json"
+    # Include dataset name in filename for multi-dataset experiments
+    dataset_clean = dataset.replace('-', '_')  # ml-1m -> ml_1m
+    filename = f"{model}_{dataset_clean}_summary_{num_trials}trials.json"
     filepath = os.path.join(output_dir, filename)
 
     data = {
