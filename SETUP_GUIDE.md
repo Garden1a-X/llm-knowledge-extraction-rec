@@ -1,8 +1,8 @@
 # Setup Guide - LLM Knowledge Extraction for Recommendations
 
-## Current Status (2024-12-26)
+## Current Status (2025-12-27)
 
-This is a fresh environment. The previous successful 5-epoch LightGCN test was in a different session/environment (likely with conda).
+BPR and LightGCN baselines have been completed successfully with 5-core filtered data.
 
 ## Quick Setup (Recommended)
 
@@ -107,9 +107,9 @@ python baselines/run_baseline.py \
 
 ## Expected Results
 
-### LightGCN (300 epochs on ML-1M)
-- NDCG@10: 0.18-0.22
-- Recall@10: 0.25-0.32
+### LightGCN (300 epochs on ML-1M, 5-core filtered)
+- NDCG@10: 0.1267 ± 0.0013 (actual result from 5 trials)
+- Recall@10: 0.0581 ± 0.0009
 - Training time: ~30-60 minutes (depending on GPU)
 
 ### Next Steps After Baseline
@@ -119,9 +119,10 @@ python baselines/run_baseline.py \
 4. Build knowledge graph (src/graph/)
 5. Implement Ours models (src/model/)
 
-## Contact
+## Documentation
 
-If you encounter issues, check:
-1. PROJECT_CHECK_20241226.txt - Current project status
-2. baselines/README.txt - RecBole usage guide
-3. docs/development_plan.py - Full implementation plan
+For detailed information, check:
+1. docs/EXPERIMENT_TRACKING.md - Current experiment progress
+2. docs/KNOWLEDGE_EXTRACTION_PLAN.md - Implementation plan
+3. docs/BASELINE_PLAN.md - Baseline experiment design
+4. baselines/README.txt - RecBole usage guide

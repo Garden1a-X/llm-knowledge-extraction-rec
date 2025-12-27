@@ -119,7 +119,7 @@ Results will be saved to: outputs/baselines/MODEL_DATASET_TIMESTAMP/
   - checkpoints/: Saved model checkpoints
 
 Example output:
-  outputs/baselines/LightGCN_ml-1m_20241226_120000/
+  outputs/baselines/LightGCN_ml-1m_20251227_120000/
     ├── config.json
     ├── results.json
     └── checkpoints/

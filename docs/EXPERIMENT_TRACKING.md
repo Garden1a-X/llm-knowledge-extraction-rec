@@ -1,6 +1,6 @@
 # Baseline 实验跟踪表
 
-*Last updated: 2024-12-27*
+*Last updated: 2025-12-27*
 
 ---
 
@@ -48,7 +48,7 @@
 - [x] ✅ LightGCN (5 trials × 300 epochs) - **完成！NDCG@10: 0.1267 (+3.9%)**
 - [ ] ⏸️ KGAT - 暂时跳过，需要准备KG
 
-**Phase 1 完成时间**: 2024-12-27 ✅
+**Phase 1 完成时间**: 2025-12-27 ✅
 
 ---
 
