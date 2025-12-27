@@ -19,10 +19,65 @@ import argparse
 from src.data.loader import MovieLensLoader
 
 
+def apply_k_core_filtering(ratings: pd.DataFrame, k: int = 5) -> pd.DataFrame:
+    """
+    Apply k-core filtering to the ratings data.
+
+    Iteratively removes users and items with fewer than k interactions
+    until all remaining users and items have at least k interactions.
+
+    Args:
+        ratings: DataFrame with user_id, movie_id, rating, timestamp
+        k: Minimum number of interactions (default: 5)
+
+    Returns:
+        Filtered ratings DataFrame
+    """
+    print(f"\nApplying {k}-core filtering...")
+    print(f"  Before filtering: {len(ratings)} ratings, "
+          f"{ratings['user_id'].nunique()} users, "
+          f"{ratings['movie_id'].nunique()} items")
+
+    iteration = 0
+    while True:
+        iteration += 1
+        prev_size = len(ratings)
+
+        # Count interactions per user and item
+        user_counts = ratings['user_id'].value_counts()
+        item_counts = ratings['movie_id'].value_counts()
+
+        # Keep users and items with at least k interactions
+        valid_users = user_counts[user_counts >= k].index
+        valid_items = item_counts[item_counts >= k].index
+
+        # Filter ratings
+        ratings = ratings[
+            ratings['user_id'].isin(valid_users) &
+            ratings['movie_id'].isin(valid_items)
+        ]
+
+        # Check convergence
+        if len(ratings) == prev_size:
+            print(f"  Converged after {iteration} iterations")
+            break
+
+        print(f"  Iteration {iteration}: {len(ratings)} ratings remaining")
+
+    print(f"  After filtering: {len(ratings)} ratings, "
+          f"{ratings['user_id'].nunique()} users, "
+          f"{ratings['movie_id'].nunique()} items")
+    print(f"  Removed: {prev_size - len(ratings)} ratings "
+          f"({100 * (prev_size - len(ratings)) / prev_size:.2f}%)")
+
+    return ratings
+
+
 def prepare_recbole_data(
     ml_data_dir: str,
     output_dir: str,
-    dataset_name: str = 'ml-1m'
+    dataset_name: str = 'ml-1m',
+    min_interactions: int = 0
 ):
     """
     Convert MovieLens 1M to RecBole format.
@@ -31,6 +86,7 @@ def prepare_recbole_data(
         ml_data_dir: Path to MovieLens 1M raw data
         output_dir: Output directory for RecBole data
         dataset_name: Dataset name (used as filename prefix)
+        min_interactions: Minimum interactions for k-core filtering (0 = no filtering)
     """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -43,9 +99,26 @@ def prepare_recbole_data(
     movies = loader.load_movies()
     users = loader.load_users()
 
-    print(f"  Ratings: {len(ratings)}")
-    print(f"  Users: {len(users)}")
-    print(f"  Movies: {len(movies)}")
+    print(f"  Original data:")
+    print(f"    Ratings: {len(ratings)}")
+    print(f"    Users: {len(users)}")
+    print(f"    Movies: {len(movies)}")
+
+    # Apply k-core filtering if requested
+    if min_interactions > 0:
+        ratings = apply_k_core_filtering(ratings, k=min_interactions)
+
+        # Update users and movies to only include those in filtered ratings
+        valid_users = ratings['user_id'].unique()
+        valid_movies = ratings['movie_id'].unique()
+
+        users = users[users['user_id'].isin(valid_users)]
+        movies = movies[movies['movie_id'].isin(valid_movies)]
+
+        print(f"\n  After filtering:")
+        print(f"    Ratings: {len(ratings)}")
+        print(f"    Users: {len(users)}")
+        print(f"    Movies: {len(movies)}")
 
     # ========================================================================
     # 1. Create .inter file (interactions)
@@ -115,13 +188,16 @@ def main():
                         help='Output directory for RecBole format data')
     parser.add_argument('--dataset_name', type=str, default='ml-1m',
                         help='Dataset name (used as filename prefix)')
+    parser.add_argument('--min_interactions', type=int, default=5,
+                        help='Minimum interactions for k-core filtering (default: 5, 0 = no filtering)')
 
     args = parser.parse_args()
 
     prepare_recbole_data(
         ml_data_dir=args.ml_data_dir,
         output_dir=args.output_dir,
-        dataset_name=args.dataset_name
+        dataset_name=args.dataset_name,
+        min_interactions=args.min_interactions
     )
 
 
