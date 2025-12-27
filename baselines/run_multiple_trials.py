@@ -43,46 +43,60 @@ def run_single_trial(model, dataset, data_path, device, epochs, seed, trial_num)
         if result.returncode != 0:
             print(f"ERROR in trial {trial_num + 1}:")
             print(result.stderr)
-            return None
+            return None, None
 
-        # Parse results from output
+        # Find the output directory from stdout
         output = result.stdout
-        test_results = None
+        output_dir = None
 
-        # Look for test results in output
         lines = output.split('\n')
-        for i, line in enumerate(lines):
-            if 'test result:' in line.lower():
-                # Try to parse the results
-                # RecBole outputs like: "test result: OrderedDict([('recall@10', 0.0578), ...])"
-                try:
-                    # Extract the part after "test result:"
-                    result_str = line.split('test result:')[-1].strip()
-                    # This is a bit hacky but works for RecBole output
-                    if 'OrderedDict' in result_str:
-                        # Parse key-value pairs
-                        import re
-                        pattern = r"\('([^']+)',\s*([0-9.]+)\)"
-                        matches = re.findall(pattern, result_str)
-                        test_results = {k: float(v) for k, v in matches}
-                        break
-                except Exception as e:
-                    print(f"Warning: Could not parse test results: {e}")
-                    continue
+        for line in lines:
+            if 'Results saved to:' in line:
+                # Extract directory path
+                # Format: "Results saved to: outputs/baselines/MODEL_DATASET_TIMESTAMP/results.json"
+                path_str = line.split('Results saved to:')[-1].strip()
+                # Get the directory (remove /results.json if present)
+                if path_str.endswith('results.json'):
+                    output_dir = Path(path_str).parent
+                else:
+                    output_dir = Path(path_str)
+                break
 
-        if test_results is None:
-            print(f"Warning: Could not extract test results from trial {trial_num + 1}")
-            print("Output snippet:")
-            print('\n'.join(lines[-50:]))
+        if output_dir is None:
+            print(f"Warning: Could not find output directory from trial {trial_num + 1}")
+            return None, None
 
-        return test_results
+        # Read the results.json file
+        results_file = output_dir / "results.json"
+        if not results_file.exists():
+            print(f"Warning: Results file not found: {results_file}")
+            return None, None
+
+        with open(results_file, 'r') as f:
+            data = json.load(f)
+
+        # Extract test_result field
+        if 'test_result' not in data:
+            print(f"Warning: No 'test_result' field in {results_file}")
+            return None, None
+
+        test_results = data['test_result']
+
+        print(f"\n✓ Trial {trial_num + 1} completed successfully")
+        print(f"  Output: {output_dir}")
+        print(f"  NDCG@10: {test_results.get('ndcg@10', 'N/A'):.4f}")
+        print(f"  Recall@10: {test_results.get('recall@10', 'N/A'):.4f}")
+
+        return test_results, str(output_dir)
 
     except subprocess.TimeoutExpired:
         print(f"ERROR: Trial {trial_num + 1} timed out after 2 hours")
-        return None
+        return None, None
     except Exception as e:
         print(f"ERROR in trial {trial_num + 1}: {e}")
-        return None
+        import traceback
+        traceback.print_exc()
+        return None, None
 
 
 def compute_statistics(results_list):
@@ -125,7 +139,7 @@ def format_results_table(means, stds):
     return table
 
 
-def save_results(model, dataset, num_trials, seeds, all_results, means, stds, output_dir):
+def save_results(model, dataset, num_trials, seeds, all_results, means, stds, output_dir, trial_output_dirs=None):
     """Save all results to a JSON file."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"{model}_{dataset}_{num_trials}trials_{timestamp}.json"
@@ -138,6 +152,7 @@ def save_results(model, dataset, num_trials, seeds, all_results, means, stds, ou
         "seeds": seeds,
         "timestamp": timestamp,
         "individual_results": all_results,
+        "trial_output_dirs": trial_output_dirs,
         "statistics": {
             "means": means,
             "stds": stds
@@ -196,8 +211,10 @@ def main():
 
     # Run all trials
     all_results = []
+    output_dirs = []
+
     for i, seed in enumerate(args.seeds):
-        result = run_single_trial(
+        result, output_dir = run_single_trial(
             model=args.model,
             dataset=args.dataset,
             data_path=args.data_path,
@@ -209,8 +226,7 @@ def main():
 
         if result is not None:
             all_results.append(result)
-            print(f"\n✓ Trial {i+1} completed successfully")
-            print(f"Results: {result}")
+            output_dirs.append(output_dir)
         else:
             print(f"\n✗ Trial {i+1} failed")
 
@@ -245,7 +261,8 @@ def main():
         all_results=all_results,
         means=means,
         stds=stds,
-        output_dir=args.output_dir
+        output_dir=args.output_dir,
+        trial_output_dirs=output_dirs
     )
 
     print("\n" + "="*80)

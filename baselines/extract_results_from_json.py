@@ -32,15 +32,13 @@ def load_results_json(json_file):
         with open(json_file, 'r') as f:
             data = json.load(f)
 
-        # Extract test results
-        # The JSON contains test metrics directly
-        test_results = {}
-        for key, value in data.items():
-            if key.startswith('test_') or '@' in key:
-                # This is a metric
-                test_results[key] = value
+        # Extract test_result field (which contains the actual test metrics)
+        if 'test_result' in data:
+            return data['test_result']
+        else:
+            print(f"Warning: No 'test_result' field in {json_file}")
+            return None
 
-        return test_results
     except Exception as e:
         print(f"Error loading {json_file}: {e}")
         return None
