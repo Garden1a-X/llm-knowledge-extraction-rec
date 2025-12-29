@@ -48,38 +48,45 @@ Provide knowledge points as relation-entity pairs, one per line:
 <relation>: <entity>
 ```
 
-**Relations to consider:**
-- color_scheme: Overall color palette and tones
-- visual_style: Aesthetic style (e.g., noir, minimalist, retro)
-- main_element: Key visual objects or subjects
-- composition: Layout and spatial arrangement
-- mood: Emotional atmosphere conveyed
-- lighting: Lighting characteristics
-- typography: Text style (if prominent)
-- texture: Surface quality or effects
+**What are Relations and Entities?**
+- **Relation**: A type or category of visual feature (e.g., "color_palette", "artistic_style", "depicted_subject")
+- **Entity**: A specific characteristic within that category (e.g., "warm_tones", "minimalist", "human_portrait")
 
-**Guidelines:**
+**Guidelines for Relations:**
+1. Be creative - discover diverse types of visual features you observe
+2. Relations can describe: colors, styles, subjects, layouts, moods, lighting, text, textures, effects, or ANY visual aspect
+3. Use clear, descriptive names with underscores (e.g., "dominant_color", "art_style", "character_type")
+4. Don't limit yourself - if you see a visual pattern, create a relation for it
+
+**CRITICAL Guidelines for Entities:**
+1. Use ABSTRACT, HIGH-LEVEL terms that can apply to MULTIPLE movies
+2. Avoid overly specific descriptions - think in CATEGORIES, not unique details
+3. Prefer COMMON visual terms over rare combinations
+4. Ask yourself: "Could this entity describe other movies too?"
+
+**Good Entity Examples (abstract, reusable):**
+- warm_tones, cool_tones, monochrome (NOT "orange_yellow_sunset_gradient")
+- human_portrait, action_scene, landscape (NOT "woman_in_red_dress_holding_gun")
+- minimalist, vintage, dramatic (NOT "simple_white_background_with_one_centered_object")
+- high_contrast, soft_lighting, backlighting (NOT "strong_shadows_from_upper_left")
+
+**Bad Entity Examples (too specific, hard to reuse):**
+- sunset_over_ocean_with_sailboat
+- three_people_standing_in_triangular_formation
+- red_and_blue_diagonal_stripes_pattern
+
+**Task Requirements:**
 1. Extract AT LEAST 10 knowledge points (aim for 10-15)
-2. Relations should be SINGLE WORDS or short phrases (e.g., "color_scheme", "visual_style")
-3. Entities should be WORDS or SHORT PHRASES (e.g., "warm_tones", "cyberpunk_aesthetic")
-4. Use underscores for multi-word terms (e.g., "warm_orange_tones")
-5. Knowledge points should be GENERALIZABLE - potentially applicable to multiple movies
-6. Focus on characteristics that are USEFUL FOR RECOMMENDATION
+2. Use diverse relation types - explore different visual aspects
+3. Keep entities abstract and reusable
+4. Focus on characteristics useful for movie recommendation
+5. Use underscores for multi-word terms
 
-**Example:**
+**Format Example (illustrating format only, NOT limiting relation types):**
 ```
-color_scheme: warm_orange_tones
-color_scheme: deep_red_accents
-visual_style: retro_aesthetic
-visual_style: minimalist_design
-main_element: silhouette_figure
-main_element: urban_skyline
-composition: centered_vertical_layout
-mood: mysterious_atmosphere
-mood: nostalgic_feeling
-lighting: high_contrast
-lighting: dramatic_shadows
-typography: bold_sans_serif
+some_visual_aspect: abstract_characteristic
+another_aspect: general_category
+different_feature: reusable_term
 ```
 
 Now extract knowledge points from the poster:"""
