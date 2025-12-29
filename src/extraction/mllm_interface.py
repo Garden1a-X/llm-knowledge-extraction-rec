@@ -84,14 +84,10 @@ class OpenAIMLLM(MLLMInterface):
         # Initialize client with optional base_url
         client_kwargs = {}
 
-        # API key is required by OpenAI client
-        # Use provided key, or "EMPTY" for custom endpoints that don't need it
+        # API key handling
         if api_key is not None:
             client_kwargs['api_key'] = api_key
-        elif base_url:
-            # Custom endpoint, use dummy key
-            client_kwargs['api_key'] = "EMPTY"
-        # else: will use OPENAI_API_KEY from env
+        # else: will try to use OPENAI_API_KEY from environment
 
         if base_url:
             client_kwargs['base_url'] = base_url
