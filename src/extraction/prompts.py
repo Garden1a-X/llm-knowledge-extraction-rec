@@ -17,11 +17,15 @@ class PromptTemplates:
         Returns:
             System prompt string
         """
-        return """You are an expert in analyzing movie posters and extracting fine-grained visual knowledge points.
+        return """You are an expert in analyzing movie posters and extracting visual knowledge points for movie recommendation systems.
 
 Your task is to analyze movie poster images and extract visual knowledge in the form of relation-entity pairs.
 
-Focus ONLY on what you can SEE in the poster - colors, visual styles, elements, composition, mood, and atmosphere. Do not include information about the movie's plot, actors, or external knowledge."""
+IMPORTANT PRINCIPLES:
+1. Extract ONLY what you can SEE in the poster - focus on visual characteristics
+2. Knowledge points should be GENERALIZABLE - they should potentially apply to multiple movies, not be unique to just this one poster
+3. Knowledge points should be RECOMMENDATION-RELEVANT - they should help distinguish movie preferences and styles
+4. Do not include plot information, actor names, or external knowledge about the movie"""
 
     @staticmethod
     def get_phase1_user_prompt(movie_title: str = None) -> str:
@@ -55,19 +59,26 @@ Provide knowledge points as relation-entity pairs, one per line:
 - texture: Surface quality or effects
 
 **Guidelines:**
-1. Extract 8-15 knowledge points
-2. Use underscores for multi-word terms (e.g., "warm_orange_tones")
-3. Be specific and descriptive
-4. Focus on visual characteristics only
+1. Extract AT LEAST 10 knowledge points (aim for 10-15)
+2. Relations should be SINGLE WORDS or short phrases (e.g., "color_scheme", "visual_style")
+3. Entities should be WORDS or SHORT PHRASES (e.g., "warm_tones", "cyberpunk_aesthetic")
+4. Use underscores for multi-word terms (e.g., "warm_orange_tones")
+5. Knowledge points should be GENERALIZABLE - potentially applicable to multiple movies
+6. Focus on characteristics that are USEFUL FOR RECOMMENDATION
 
 **Example:**
 ```
 color_scheme: warm_orange_tones
+color_scheme: deep_red_accents
 visual_style: retro_aesthetic
+visual_style: minimalist_design
 main_element: silhouette_figure
+main_element: urban_skyline
 composition: centered_vertical_layout
 mood: mysterious_atmosphere
+mood: nostalgic_feeling
 lighting: high_contrast
+lighting: dramatic_shadows
 typography: bold_sans_serif
 ```
 

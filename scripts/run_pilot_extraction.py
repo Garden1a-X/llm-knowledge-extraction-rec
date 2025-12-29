@@ -144,6 +144,8 @@ def main():
                         help='Model name')
     parser.add_argument('--api_key', type=str, default=None,
                         help='OpenAI API key (if None, read from env)')
+    parser.add_argument('--base_url', type=str, default=None,
+                        help='Base URL for OpenAI-compatible API (e.g., http://10.12.208.86:8502)')
     parser.add_argument('--temperature', type=float, default=0.7,
                         help='Sampling temperature')
     parser.add_argument('--max_tokens', type=int, default=1000,
@@ -181,11 +183,16 @@ def main():
 
     # Initialize MLLM
     print(f"\nInitializing {args.backend} MLLM...")
-    mllm = create_mllm(
-        backend=args.backend,
-        model_name=args.model,
-        api_key=args.api_key
-    )
+    mllm_kwargs = {
+        'backend': args.backend,
+        'model_name': args.model,
+        'api_key': args.api_key
+    }
+    if args.base_url:
+        mllm_kwargs['base_url'] = args.base_url
+        print(f"Using custom base URL: {args.base_url}")
+
+    mllm = create_mllm(**mllm_kwargs)
 
     # Sample movies
     if args.sample_ids:

@@ -60,6 +60,7 @@ class OpenAIMLLM(MLLMInterface):
         self,
         model_name: str = "gpt-4o-mini",
         api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
         **kwargs
     ):
         """
@@ -68,6 +69,7 @@ class OpenAIMLLM(MLLMInterface):
         Args:
             model_name: OpenAI model name (gpt-4o, gpt-4o-mini)
             api_key: OpenAI API key (if None, read from env)
+            base_url: Optional base URL for OpenAI-compatible APIs (e.g., local vLLM)
             **kwargs: Additional OpenAI parameters
         """
         super().__init__(model_name, **kwargs)
@@ -79,7 +81,14 @@ class OpenAIMLLM(MLLMInterface):
                 "OpenAI library not found. Install with: pip install openai"
             )
 
-        self.client = OpenAI(api_key=api_key)
+        # Initialize client with optional base_url
+        client_kwargs = {}
+        if api_key:
+            client_kwargs['api_key'] = api_key
+        if base_url:
+            client_kwargs['base_url'] = base_url
+
+        self.client = OpenAI(**client_kwargs)
 
     def _encode_image(self, image: Union[Image.Image, str, Path]) -> str:
         """
