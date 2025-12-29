@@ -24,15 +24,17 @@ from src.extraction.mllm_interface import create_mllm
 from src.extraction.prompts import PromptTemplates
 
 
-def load_existing_results(result_file: Path) -> tuple[Dict, Set[int]]:
+def load_existing_results(result_file: Path, skip_errors: bool = True) -> tuple[Dict, Set[int]]:
     """
     Load existing extraction results.
 
     Args:
         result_file: Path to existing results JSON
+        skip_errors: If True, skip all processed IDs (success + error).
+                     If False, only skip successfully extracted IDs (will retry errors).
 
     Returns:
-        (existing_data, extracted_ids_set)
+        (existing_data, processed_ids_set)
     """
     if not result_file.exists():
         return None, set()
@@ -40,13 +42,18 @@ def load_existing_results(result_file: Path) -> tuple[Dict, Set[int]]:
     with open(result_file, 'r') as f:
         data = json.load(f)
 
-    # Get IDs that were successfully extracted
-    extracted_ids = {
-        r['recbole_id'] for r in data.get('results', [])
-        if r.get('status') == 'success'
-    }
+    # Get IDs that were already processed
+    if skip_errors:
+        # Skip ALL processed IDs (both success and error)
+        processed_ids = {r['recbole_id'] for r in data.get('results', [])}
+    else:
+        # Only skip successfully extracted IDs (will retry errors)
+        processed_ids = {
+            r['recbole_id'] for r in data.get('results', [])
+            if r.get('status') == 'success'
+        }
 
-    return data, extracted_ids
+    return data, processed_ids
 
 
 def save_sampled_ids(ids: List[int], output_file: Path):
@@ -103,13 +110,13 @@ def extract_knowledge_incremental(
     output_file: Path,
     config: Dict,
     existing_results: List[Dict] = None,
-    already_extracted: Set[int] = None,
+    skip_processed: Set[int] = None,
     temperature: float = 0.7,
     max_tokens: int = 1000,
     verbose: bool = True
 ) -> List[Dict]:
     """
-    Extract knowledge incrementally with real-time saving, skipping already extracted items.
+    Extract knowledge incrementally with real-time saving, skipping already processed items.
 
     Args:
         poster_loader: PosterLoader instance
@@ -118,7 +125,7 @@ def extract_knowledge_incremental(
         output_file: Path to output JSON file (saves after each extraction)
         config: Configuration dict to save with results
         existing_results: Previous results to preserve
-        already_extracted: Set of already extracted IDs
+        skip_processed: Set of IDs to skip (already processed successfully or errors to skip)
         temperature: Sampling temperature
         max_tokens: Max tokens
         verbose: Show progress
@@ -126,17 +133,24 @@ def extract_knowledge_incremental(
     Returns:
         Combined list of all results
     """
-    already_extracted = already_extracted or set()
-    results = list(existing_results) if existing_results else []
+    skip_processed = skip_processed or set()
 
-    # Filter out already extracted
-    to_extract = [rid for rid in recbole_ids if rid not in already_extracted]
+    # Determine what to extract: IDs not in skip_processed set
+    to_extract = [rid for rid in recbole_ids if rid not in skip_processed]
+    to_extract_set = set(to_extract)
+
+    # Keep only existing results that we're NOT going to reprocess
+    # This removes old error records for IDs we're retrying
+    if existing_results:
+        results = [r for r in existing_results if r['recbole_id'] not in to_extract_set]
+    else:
+        results = []
 
     if verbose:
         print(f"\nExtraction status:")
         print(f"  Total items: {len(recbole_ids)}")
-        print(f"  Already extracted: {len(already_extracted)}")
-        print(f"  To extract: {len(to_extract)}")
+        print(f"  Already processed (kept): {len(skip_processed)}")
+        print(f"  To extract/retry: {len(to_extract)}")
 
     if not to_extract:
         print("  ✓ All items already extracted!")
@@ -245,6 +259,8 @@ def main():
                         help='Random seed')
     parser.add_argument('--resample', action='store_true',
                         help='Force resampling (ignore saved sample IDs)')
+    parser.add_argument('--retry-errors', action='store_true',
+                        help='Retry previously failed extractions (default: skip all processed IDs)')
 
     # Output
     parser.add_argument('--output', type=str, default='results/phase1_5percent_exploration.json',
@@ -293,7 +309,15 @@ def main():
         save_sampled_ids(recbole_ids, output_file)
 
     # Load existing results
-    existing_data, already_extracted = load_existing_results(output_file)
+    # By default, skip ALL processed IDs (success + error)
+    # If --retry-errors, only skip successfully extracted IDs
+    skip_errors = not args.retry_errors
+    existing_data, skip_processed = load_existing_results(output_file, skip_errors=skip_errors)
+
+    if skip_errors and skip_processed:
+        print(f"\n  Skipping all {len(skip_processed)} previously processed IDs (use --retry-errors to retry failed ones)")
+    elif not skip_errors and skip_processed:
+        print(f"\n  Skipping {len(skip_processed)} successfully extracted IDs, will retry errors")
 
     # Initialize MLLM
     print(f"\nInitializing {args.backend} MLLM...")
@@ -331,7 +355,7 @@ def main():
         output_file=output_file,
         config=config,
         existing_results=existing_data.get('results', []) if existing_data else None,
-        already_extracted=already_extracted,
+        skip_processed=skip_processed,
         temperature=args.temperature,
         max_tokens=args.max_tokens,
         verbose=not args.quiet
