@@ -71,10 +71,37 @@ def load_sampled_ids(output_file: Path) -> List[int]:
     return None
 
 
+def save_results(output_file: Path, config: Dict, results: List[Dict]):
+    """
+    Save extraction results to JSON file immediately.
+
+    Args:
+        output_file: Path to output JSON file
+        config: Configuration dict
+        results: List of extraction results
+    """
+    output_data = {
+        'phase': 'phase1_exploration',
+        'percentage': config.get('percentage', 5.0),
+        'config': config,
+        'results': results
+    }
+
+    # Write atomically: write to temp file first, then rename
+    temp_file = output_file.with_suffix('.tmp.json')
+    with open(temp_file, 'w') as f:
+        json.dump(output_data, f, indent=2)
+
+    # Atomic rename (overwrites existing file)
+    temp_file.replace(output_file)
+
+
 def extract_knowledge_incremental(
     poster_loader: PosterLoader,
     mllm,
     recbole_ids: List[int],
+    output_file: Path,
+    config: Dict,
     existing_results: List[Dict] = None,
     already_extracted: Set[int] = None,
     temperature: float = 0.7,
@@ -82,12 +109,14 @@ def extract_knowledge_incremental(
     verbose: bool = True
 ) -> List[Dict]:
     """
-    Extract knowledge incrementally, skipping already extracted items.
+    Extract knowledge incrementally with real-time saving, skipping already extracted items.
 
     Args:
         poster_loader: PosterLoader instance
         mllm: MLLM interface
         recbole_ids: List of RecBole IDs to process
+        output_file: Path to output JSON file (saves after each extraction)
+        config: Configuration dict to save with results
         existing_results: Previous results to preserve
         already_extracted: Set of already extracted IDs
         temperature: Sampling temperature
@@ -155,6 +184,9 @@ def extract_knowledge_incremental(
 
             results.append(result)
 
+            # Save immediately after each successful extraction
+            save_results(output_file, config, results)
+
             if verbose:
                 tqdm.write(f"  ✓ RecBole ID {recbole_id} (Movie {original_id}): "
                           f"{len(knowledge_points)} knowledge points")
@@ -169,6 +201,9 @@ def extract_knowledge_incremental(
                 'timestamp': datetime.now().isoformat()
             }
             results.append(result)
+
+            # Save immediately after each error too
+            save_results(output_file, config, results)
 
             if verbose:
                 tqdm.write(f"  ✗ RecBole ID {recbole_id}: Error - {e}")
@@ -273,7 +308,19 @@ def main():
 
     mllm = create_mllm(**mllm_kwargs)
 
-    # Extract knowledge
+    # Prepare config for saving
+    config = {
+        'backend': args.backend,
+        'model': args.model,
+        'temperature': args.temperature,
+        'max_tokens': args.max_tokens,
+        'num_samples': len(recbole_ids),
+        'seed': args.seed,
+        'percentage': args.percentage,
+        'timestamp': datetime.now().isoformat()
+    }
+
+    # Extract knowledge (saves automatically after each item)
     print(f"\nStarting extraction...")
     print("-"*60)
 
@@ -281,6 +328,8 @@ def main():
         poster_loader=poster_loader,
         mllm=mllm,
         recbole_ids=recbole_ids,
+        output_file=output_file,
+        config=config,
         existing_results=existing_data.get('results', []) if existing_data else None,
         already_extracted=already_extracted,
         temperature=args.temperature,
@@ -288,24 +337,7 @@ def main():
         verbose=not args.quiet
     )
 
-    # Save results
-    output_data = {
-        'phase': 'phase1_exploration',
-        'percentage': args.percentage,
-        'config': {
-            'backend': args.backend,
-            'model': args.model,
-            'temperature': args.temperature,
-            'max_tokens': args.max_tokens,
-            'num_samples': len(recbole_ids),
-            'seed': args.seed,
-            'timestamp': datetime.now().isoformat()
-        },
-        'results': results
-    }
-
-    with open(output_file, 'w') as f:
-        json.dump(output_data, f, indent=2)
+    # Results already saved incrementally, no need to save again here
 
     # Summary
     print("-"*60)
