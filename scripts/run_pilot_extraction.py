@@ -160,12 +160,18 @@ def main():
                         help='Comma-separated RecBole IDs (overrides sampling)')
 
     # Output
-    parser.add_argument('--output', type=str, required=True,
-                        help='Output JSON file')
+    parser.add_argument('--output', type=str, default=None,
+                        help='Output JSON file (default: results/extraction_TIMESTAMP.json)')
     parser.add_argument('--quiet', action='store_true',
                         help='Suppress progress output')
 
     args = parser.parse_args()
+
+    # Auto-generate output filename if not provided
+    if args.output is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        args.output = f"results/extraction_{timestamp}.json"
+        print(f"Output file not specified, using: {args.output}")
 
     # Initialize poster loader
     print("="*60)
