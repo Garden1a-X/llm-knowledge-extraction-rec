@@ -249,6 +249,44 @@ Now refine the relation mapping:"""
 
         return '\n'.join(lines)
 
+    def _call_openai(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        model_name: str,
+        api_key: Optional[str],
+        base_url: Optional[str],
+        temperature: float
+    ) -> str:
+        """调用OpenAI API"""
+        try:
+            from openai import OpenAI
+        except ImportError:
+            raise ImportError("请安装openai: pip install openai")
+
+        # 初始化客户端
+        client_kwargs = {}
+        if api_key:
+            client_kwargs['api_key'] = api_key
+        if base_url:
+            client_kwargs['base_url'] = base_url
+
+        client = OpenAI(**client_kwargs)
+
+        # 调用API
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=temperature,
+            max_tokens=4000,
+            response_format={"type": "json_object"}
+        )
+
+        return response.choices[0].message.content
+
     def refine_with_llm(
         self,
         backend: str = 'openai',
@@ -272,22 +310,11 @@ Now refine the relation mapping:"""
         Returns:
             精炼后的映射
         """
-        from src.extraction.mllm_interface import create_mllm
-
         print(f"\n{'='*60}")
         print(f"使用LLM微调Relation映射")
         print(f"{'='*60}")
         print(f"Model: {model_name}")
         print(f"Temperature: {temperature}")
-
-        # 创建MLLM接口
-        mllm_kwargs = {'backend': backend, 'model_name': model_name}
-        if api_key:
-            mllm_kwargs['api_key'] = api_key
-        if base_url:
-            mllm_kwargs['base_url'] = base_url
-
-        mllm = create_mllm(**mllm_kwargs)
 
         # 构建prompt
         system_prompt, user_prompt = self.build_refinement_prompt(issues)
@@ -295,13 +322,17 @@ Now refine the relation mapping:"""
         # 调用LLM
         print(f"\n🔄 调用LLM进行映射微调...")
 
-        response = mllm.extract_text(
-            system_prompt=system_prompt,
-            user_prompt=user_prompt,
-            temperature=temperature,
-            max_tokens=4000,
-            response_format={"type": "json_object"}
-        )
+        if backend == 'openai':
+            response = self._call_openai(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                model_name=model_name,
+                api_key=api_key,
+                base_url=base_url,
+                temperature=temperature
+            )
+        else:
+            raise ValueError(f"不支持的backend: {backend}")
 
         # 解析JSON响应
         try:
