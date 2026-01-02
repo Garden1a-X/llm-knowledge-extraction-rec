@@ -335,6 +335,11 @@ python scripts/06_build_graph.py
 
 ## 📝 更新日志
 
+### 2026-01-02
+- ✅ 完成Phase 2 Relation聚类（128 → 15标准relation）
+- ✅ 实现双聚类方法对比（BERTopic vs Agglomerative）
+- ✅ 实现finalize_mapping机制（自动合并低频clusters）
+
 ### 2025-12-27
 - ✅ 完成Phase 1 Baseline实验（BPR, LightGCN）
 - ✅ 创建完整的知识提取方案（KNOWLEDGE_EXTRACTION_PLAN.md）
@@ -369,4 +374,4 @@ MIT License
 
 ---
 
-*Last updated: 2025-12-27*
+*Last updated: 2026-01-02*

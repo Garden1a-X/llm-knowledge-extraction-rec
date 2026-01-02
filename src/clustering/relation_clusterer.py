@@ -310,6 +310,101 @@ class RelationClusterer:
 
         return relation_mapping
 
+    def finalize_relation_mapping(
+        self,
+        labels: np.ndarray,
+        min_total_instances: int = 10,
+        method: str = 'frequency'
+    ) -> Dict[str, str]:
+        """
+        最终化relation映射，将超低频cluster合并到others_relation
+
+        Args:
+            labels: Agglomerative聚类标签
+            min_total_instances: cluster的最小总实例数阈值（低于此值合并到others）
+            method: 选择标准名称的方法（'frequency' 或 'manual'）
+
+        Returns:
+            relation_mapping: {原始relation: 标准relation}
+        """
+        relation_mapping = {}
+        standard_relations = []
+        low_freq_clusters = []
+
+        # 按cluster分组
+        n_clusters = len(set(labels))
+
+        for cluster_id in range(n_clusters):
+            # 获取该cluster的所有relations
+            cluster_relations = [
+                self.unique_relations[i]
+                for i, label in enumerate(labels)
+                if label == cluster_id
+            ]
+
+            # 计算该cluster的总实例数
+            total_instances = sum(
+                self.relation_counts[rel]
+                for rel in cluster_relations
+            )
+
+            # 判断是否为低频cluster
+            if total_instances < min_total_instances:
+                low_freq_clusters.append((cluster_id, cluster_relations, total_instances))
+                continue
+
+            # 正常cluster: 选择标准名
+            if method == 'frequency':
+                # 选择频次最高的作为标准名
+                cluster_counts = [
+                    (rel, self.relation_counts[rel])
+                    for rel in cluster_relations
+                ]
+                cluster_counts.sort(key=lambda x: x[1], reverse=True)
+                standard_name = cluster_counts[0][0]
+            else:
+                # 手动选择（默认第一个）
+                standard_name = cluster_relations[0]
+
+            standard_relations.append(standard_name)
+
+            # 建立映射
+            for rel in cluster_relations:
+                relation_mapping[rel] = standard_name
+
+        # 处理低频clusters -> others_relation
+        others_relations = []
+        others_total = 0
+        for cluster_id, cluster_relations, total_instances in low_freq_clusters:
+            others_relations.extend(cluster_relations)
+            others_total += total_instances
+            for rel in cluster_relations:
+                relation_mapping[rel] = 'others_relation'
+
+        standard_relations.append('others_relation')
+
+        # 输出统计
+        print(f"\n✓ 最终化relation映射:")
+        print(f"  有效标准relation数: {len(standard_relations) - 1}")
+        print(f"  低频clusters数: {len(low_freq_clusters)}")
+        print(f"  合并到others的relation数: {len(others_relations)}")
+        print(f"  others总实例数: {others_total}")
+
+        print(f"\n  最终标准relations ({len(standard_relations)}个):")
+        for std_rel in sorted(standard_relations):
+            if std_rel == 'others_relation':
+                print(f"    - {std_rel:30s} ({others_total} instances, 来自{len(others_relations)}个低频relation)")
+            else:
+                count = self.relation_counts[std_rel]
+                print(f"    - {std_rel:30s} ({count} instances)")
+
+        if others_relations:
+            print(f"\n  合并到others的relations:")
+            for rel in sorted(others_relations):
+                print(f"    - {rel:30s} ({self.relation_counts[rel]} instances)")
+
+        return relation_mapping
+
     def save_results(
         self,
         relation_mapping: Dict[str, str],

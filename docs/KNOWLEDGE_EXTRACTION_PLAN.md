@@ -1,14 +1,14 @@
 # LLM知识抽取方案
 
 *Created: 2025-12-27*
-*Last Updated: 2025-01-02*
-*Status: **Phase 2 进行中** - Relation聚类*
+*Last Updated: 2026-01-02*
+*Status: **Phase 2 进行中** - Relation聚类完成，待进行Entity聚类*
 
 ---
 
 ## 📝 工作日志
 
-### 2025-01-02: Phase 2 Relation聚类
+### 2026-01-02: Phase 2 Relation聚类完成
 - ✅ **Phase 1提取完成**: 170个电影，新prompt成功
   - 128个唯一relation，1869个知识点
   - 626个唯一entity，平均复用2.99x
@@ -17,7 +17,12 @@
   - Embedding: BGE (BAAI/bge-base-en-v1.5)
   - 方法1: BERTopic（探索+可视化）
   - 方法2: Agglomerative（精确控制）
-- 🔄 **当前**: 实现Relation聚类模块
+- ✅ **Relation聚类完成**:
+  - 实现RelationClusterer模块
+  - 对比BERTopic和Agglomerative结果
+  - 最终方案: Agglomerative N=20 + 自动合并低频clusters
+  - 输出: 15个标准relation（14个有效 + 1个others）
+- 🔄 **下一步**: Entity聚类（626 → 200-300个）
 
 ### 2025-12-29: Phase 1 质量优化
 - ✅ **首次提取完成**: 170个电影，全部成功
@@ -265,27 +270,43 @@ def main():
 - **M+1个关系类**（最多15个 + 1个others）
 - 每个关系下**K+1种实体**（最多30个 + 1个others）
 
-### **2.1 关系层聚类**
+### **2.1 关系层聚类**（✅ 已完成 2026-01-02）
 
 #### **输入**
 从Phase 1收集所有唯一的"关系"名称（如：`Color_Palette`, `Color_Style`, `Visual_Mood`, `Mood_Atmosphere`...）
 
-#### **方法**
+**实际数据**：128个唯一relation，1869个实例
+
+#### **方法选择与对比**
+
+我们实现并对比了两种聚类方法：
+
+**方法1: BERTopic（自动探索）**
+- 优点：自动发现cluster数量，可视化工具丰富
+- 缺点：对短关键词效果不佳，容易产生"junk bucket" clusters
+- 实际结果：16 clusters，但Topic 0/1包含16个语义混杂的低频relations
+
+**方法2: Agglomerative Clustering（精确控制）✅ 最终选择**
+- 优点：精确控制cluster数量，适合短关键词
+- 参数：N=20, Average linkage, Cosine distance
+- 实际结果：20 clusters → 合并低频后得到15个标准relation
+
+#### **最终实现**
 
 ```python
 # src/clustering/relation_clusterer.py
 
 from sentence_transformers import SentenceTransformer
-from hdbscan import HDBSCAN
+from sklearn.cluster import AgglomerativeClustering
 from collections import Counter
 
-def cluster_relations(raw_relations, max_clusters=15):
+def cluster_relations(raw_relations, n_clusters=20):
     """
     聚类关系类型
 
     Args:
         raw_relations: List of relation names
-        max_clusters: 最多保留的关系类数量
+        n_clusters: 目标cluster数量
 
     Returns:
         relation_mapping: {原始关系 -> 标准关系}
@@ -299,53 +320,59 @@ def cluster_relations(raw_relations, max_clusters=15):
     model = SentenceTransformer('BAAI/bge-base-en-v1.5')
     embeddings = model.encode(list(relation_freq.keys()))
 
-    # 3. HDBSCAN聚类
-    clusterer = HDBSCAN(
-        min_cluster_size=3,  # 至少3个关系归为一类
-        metric='cosine',
-        cluster_selection_method='eom'
+    # 3. Agglomerative聚类
+    clusterer = AgglomerativeClustering(
+        n_clusters=n_clusters,
+        linkage='average',
+        metric='cosine'
     )
     cluster_labels = clusterer.fit_predict(embeddings)
 
-    # 4. 提取标准关系名（每个cluster选代表）
-    clusters = {}
-    for rel, label in zip(relation_freq.keys(), cluster_labels):
-        if label == -1:  # noise
-            continue
-        if label not in clusters:
-            clusters[label] = []
-        clusters[label].append((rel, relation_freq[rel]))
+    # 4. Finalize映射：合并低频clusters到others
+    relation_mapping = finalize_relation_mapping(
+        labels=cluster_labels,
+        relation_freq=relation_freq,
+        min_total_instances=10  # 总实例数<10的cluster合并到others
+    )
 
-    # 5. 每个cluster选最高频的作为标准名
-    standard_relations = []
+    # 提取标准关系名
+    standard_relations = sorted(set(relation_mapping.values()))
+
+    return relation_mapping, standard_relations
+
+def finalize_relation_mapping(labels, relation_freq, min_total_instances=10):
+    """
+    最终化映射：自动合并低频clusters到others_relation
+
+    对每个cluster:
+    - 如果总实例数 >= threshold: 保留，选最高频relation作为标准名
+    - 如果总实例数 < threshold: 合并到others_relation
+    """
     relation_mapping = {}
 
-    for cluster_id, relations in clusters.items():
-        # 按频率排序
-        relations.sort(key=lambda x: x[1], reverse=True)
-        standard_name = relations[0][0]  # 最高频
+    for cluster_id in set(labels):
+        cluster_relations = [rel for rel, lbl in zip(...) if lbl == cluster_id]
+        total_instances = sum(relation_freq[rel] for rel in cluster_relations)
 
-        standard_relations.append(standard_name)
+        if total_instances >= min_total_instances:
+            # 选最高频的作为标准名
+            standard_name = max(cluster_relations, key=lambda r: relation_freq[r])
+            for rel in cluster_relations:
+                relation_mapping[rel] = standard_name
+        else:
+            # 低频cluster → others
+            for rel in cluster_relations:
+                relation_mapping[rel] = 'others_relation'
 
-        # 建立映射
-        for rel, _ in relations:
-            relation_mapping[rel] = standard_name
-
-    # 6. 如果cluster太多，合并小cluster
-    if len(standard_relations) > max_clusters:
-        standard_relations = merge_small_clusters(
-            standard_relations,
-            max_clusters
-        )
-
-    # 7. Noise和低频关系 → Others
-    relation_mapping['Others_Relation'] = 'Others_Relation'
-    for rel in raw_relations:
-        if rel not in relation_mapping:
-            relation_mapping[rel] = 'Others_Relation'
-
-    return relation_mapping, standard_relations + ['Others_Relation']
+    return relation_mapping
 ```
+
+**实际结果**（2026-01-02）：
+- 输入：128个唯一relation
+- Agglomerative N=20 → 20 clusters
+- 合并6个低频clusters（总实例数<10）
+- 输出：**15个标准relation**（14个有效 + 1个others）
+- 覆盖率：99%+
 
 #### **输出**
 
@@ -1086,34 +1113,38 @@ src/
 
 ---
 
-## 📊 预期统计
+## 📊 数据规模统计
 
 ### **知识点规模**
 
-| 指标 | Phase 1 (5%) | Phase 3 (20%) | Phase 4 (100%) |
+| 指标 | Phase 1 实际 (170部电影) | Phase 3 (预期) | Phase 4 (预期) |
 |------|--------------|---------------|----------------|
-| 电影数 | 200 | 800 | 3900 |
-| 总知识点数 | ~2000 | ~8000 | ~39000 |
-| 唯一关系数 | 50-100 → **10-15** | - | - |
-| 唯一实体数 | 500-1000 → **300-450** | **350-500** | **350-500** |
+| 电影数 | **170** ✅ | 800 | 3900 |
+| 总知识点数 | **1869** ✅ | ~8000 | ~39000 |
+| 唯一关系数 | **128** → **15** ✅ | - | - |
+| 唯一实体数 | **626** → **200-300** (待聚类) | **250-350** | **250-350** |
 
-### **词典规模**
+### **词典规模**（基于实际结果）
 
-- **关系类数**：10-15 + 1(others) = **11-16类**
-- **实体数**：每类最多30 → 总计 **15×30 = 450** + 15个others = **~465个**
+**Relation层**（✅ 已完成）：
+- **关系类数**：**15个**（14个有效 + 1个others）
+- Agglomerative N=20, 合并6个低频clusters
 
-### **图谱规模**
+**Entity层**（待完成）：
+- **实体数**：每类最多20-30 → 总计 **15×25 = 375** + 15个others = **~390个**（预期）
 
-| 节点类型 | 数量 |
+### **图谱规模**（预期）
+
+| 节点类型 | 数量（预期） |
 |----------|------|
 | User | 6040 (5-core后) |
-| Knowledge | ~465 |
+| Knowledge | ~390 (15 relations × 26 entities/relation 平均) |
 | Item | 3700 (5-core后) |
-| **总节点** | **~10205** |
+| **总节点** | **~10130** |
 
 | 边类型 | 数量（估算） |
 |--------|--------------|
-| User → Knowledge | ~6040 × 20 = 120K |
+| User → Knowledge | ~6040 × 15-20 = 90-120K |
 | Knowledge → Item | ~3700 × 5 = 18.5K |
 | User → Item | ~900K (5-core后) |
 | **总边数** | **~1M** |
