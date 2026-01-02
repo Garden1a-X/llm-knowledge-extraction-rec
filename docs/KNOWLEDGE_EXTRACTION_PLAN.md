@@ -1,12 +1,23 @@
 # LLM知识抽取方案
 
 *Created: 2025-12-27*
-*Last Updated: 2025-12-29*
-*Status: **Phase 1 进行中** - Prompt优化后重新提取*
+*Last Updated: 2025-01-02*
+*Status: **Phase 2 进行中** - Relation聚类*
 
 ---
 
 ## 📝 工作日志
+
+### 2025-01-02: Phase 2 Relation聚类
+- ✅ **Phase 1提取完成**: 170个电影，新prompt成功
+  - 128个唯一relation，1869个知识点
+  - 626个唯一entity，平均复用2.99x
+  - Prompt依赖度19.5%，质量优秀
+- ✅ **Phase 2规划**: 双层聚类方案确定
+  - Embedding: BGE (BAAI/bge-base-en-v1.5)
+  - 方法1: BERTopic（探索+可视化）
+  - 方法2: Agglomerative（精确控制）
+- 🔄 **当前**: 实现Relation聚类模块
 
 ### 2025-12-29: Phase 1 质量优化
 - ✅ **首次提取完成**: 170个电影，全部成功
@@ -20,7 +31,7 @@
   - Relation: 8 → 43种 (+35)
   - Prompt依赖: 100% → 17.7% (-82.3%)
   - Entity复用: 1.28x → 1.53x
-- 🔄 **当前**: 用新prompt重新提取170个电影
+- ✅ **重新提取完成**: 用新prompt提取170个电影
 
 ### 2025-12-27: Phase 1 设计与实现
 - 实现提取基础设施（增量保存、ID映射、实时恢复）
