@@ -212,9 +212,14 @@
 2. ✅ BPR baseline (NDCG@10: 0.1219 ± 0.0021)
 3. ✅ LightGCN baseline (NDCG@10: 0.1267 ± 0.0013, +3.9% vs BPR)
 4. ✅ Phase 1 知识提取完成（170部电影，1869个知识点）
-5. ✅ Phase 2a Relation聚类完成（128 → 14个标准relation，覆盖率99.5%）
+5. ✅ Phase 2a Relation聚类完成（128 → 14个标准relation）
+   - 使用BGE embedding + Agglomerative clustering
+   - 发现问题：embedding被`_type`等后缀主导，导致语义不一致
 
 ### **进行中** 🔄
+- **Phase 2a Refinement**: 使用LLM微调relation映射，修正语义问题
+  - 工具：`scripts/refine_relation_mapping.py`
+  - 目标：修正`action_type`, `genre`等混乱的聚类
 - Phase 2b: Entity聚类（626个entity → 200-300个标准entity）
 - 知识提取方法论文写作
 

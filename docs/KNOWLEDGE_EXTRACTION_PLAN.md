@@ -8,7 +8,7 @@
 
 ## 📝 工作日志
 
-### 2026-01-02: Phase 2a Relation聚类完成 ✅
+### 2026-01-02: Phase 2a Relation聚类与LLM微调 ✅
 - ✅ **Phase 1提取完成**: 170个电影，新prompt成功
   - 128个唯一relation，1869个知识点
   - 626个唯一entity，平均复用2.99x
@@ -20,10 +20,18 @@
 - ✅ **Relation聚类完成**:
   - 实现RelationClusterer模块
   - 对比BERTopic和Agglomerative结果
-  - 最终方案: Agglomerative N=20 + 自动合并 + 手动命名优化
-  - 输出: **14个标准relation** (artistic_style, character_type, color_palette, depicted_subject, dominant_color, genre, graphic_element, interaction, lighting, mood, others_relation, symbolism, text_style, visual_effect)
-  - 覆盖率: 99.5%
-  - 保存: `results/relation_mapping_final_v1.json`
+  - 最终方案: Agglomerative N=20 + 自动合并
+  - 输出: **14个标准relation**
+  - 保存: `results/relation_mapping_final.json`
+- ⚠️ **发现问题**: Embedding聚类被`_type`等后缀主导
+  - `action_type`混入了animal_type, setting_type, vehicle_type等
+  - `genre`混入了narrative_*系列
+  - 语义不一致，需要修正
+- ✅ **LLM微调方案**: 使用GPT-4o-mini修正语义问题
+  - 实现RelationRefiner模块 (`src/clustering/relation_refiner.py`)
+  - 创建微调脚本 (`scripts/refine_relation_mapping.py`)
+  - 利用LLM的语义理解能力，修正embedding聚类的后缀主导问题
+- 🔄 **待执行**: 运行LLM微调，生成`relation_mapping_final_v1.json`
 - 🔄 **下一步**: Phase 2b Entity聚类（626 → 300-350个）
 
 ### 2025-12-29: Phase 1 质量优化
