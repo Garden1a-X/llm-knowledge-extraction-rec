@@ -212,7 +212,7 @@
 2. ✅ BPR baseline (NDCG@10: 0.1219 ± 0.0021)
 3. ✅ LightGCN baseline (NDCG@10: 0.1267 ± 0.0013, +3.9% vs BPR)
 4. ✅ Phase 1 知识提取完成（170部电影，1869个知识点）
-5. ✅ Phase 2 Relation聚类完成（128 → 15个标准relation）
+5. ✅ Phase 2a Relation聚类完成（128 → 14个标准relation，覆盖率99.5%）
 
 ### **进行中** 🔄
 - Phase 2b: Entity聚类（626个entity → 200-300个标准entity）

@@ -336,9 +336,10 @@ python scripts/06_build_graph.py
 ## 📝 更新日志
 
 ### 2026-01-02
-- ✅ 完成Phase 2 Relation聚类（128 → 15标准relation）
+- ✅ 完成Phase 2a Relation聚类（128 → 14标准relation）
 - ✅ 实现双聚类方法对比（BERTopic vs Agglomerative）
-- ✅ 实现finalize_mapping机制（自动合并低频clusters）
+- ✅ 实现finalize_mapping + 手动优化机制
+- ✅ 最终14个标准relation: artistic_style, character_type, color_palette, depicted_subject, dominant_color, genre, graphic_element, interaction, lighting, mood, others_relation, symbolism, text_style, visual_effect
 
 ### 2025-12-27
 - ✅ 完成Phase 1 Baseline实验（BPR, LightGCN）

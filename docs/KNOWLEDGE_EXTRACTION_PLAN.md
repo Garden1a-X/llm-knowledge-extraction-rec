@@ -8,21 +8,23 @@
 
 ## 📝 工作日志
 
-### 2026-01-02: Phase 2 Relation聚类完成
+### 2026-01-02: Phase 2a Relation聚类完成 ✅
 - ✅ **Phase 1提取完成**: 170个电影，新prompt成功
   - 128个唯一relation，1869个知识点
   - 626个唯一entity，平均复用2.99x
   - Prompt依赖度19.5%，质量优秀
-- ✅ **Phase 2规划**: 双层聚类方案确定
+- ✅ **Phase 2a规划**: 双层聚类方案确定
   - Embedding: BGE (BAAI/bge-base-en-v1.5)
   - 方法1: BERTopic（探索+可视化）
   - 方法2: Agglomerative（精确控制）
 - ✅ **Relation聚类完成**:
   - 实现RelationClusterer模块
   - 对比BERTopic和Agglomerative结果
-  - 最终方案: Agglomerative N=20 + 自动合并低频clusters
-  - 输出: 15个标准relation（14个有效 + 1个others）
-- 🔄 **下一步**: Entity聚类（626 → 200-300个）
+  - 最终方案: Agglomerative N=20 + 自动合并 + 手动命名优化
+  - 输出: **14个标准relation** (artistic_style, character_type, color_palette, depicted_subject, dominant_color, genre, graphic_element, interaction, lighting, mood, others_relation, symbolism, text_style, visual_effect)
+  - 覆盖率: 99.5%
+  - 保存: `results/relation_mapping_final_v1.json`
+- 🔄 **下一步**: Phase 2b Entity聚类（626 → 300-350个）
 
 ### 2025-12-29: Phase 1 质量优化
 - ✅ **首次提取完成**: 170个电影，全部成功
@@ -368,20 +370,31 @@ def finalize_relation_mapping(labels, relation_freq, min_total_instances=10):
 ```
 
 **实际结果**（2026-01-02）：
-- 输入：128个唯一relation
+- 输入：128个唯一relation，1869个实例
 - Agglomerative N=20 → 20 clusters
-- 合并6个低频clusters（总实例数<10）
-- 输出：**15个标准relation**（14个有效 + 1个others）
-- 覆盖率：99%+
+- 合并7个低频clusters（总实例数<10）→ others_relation
+- 手动调整命名（3处）：提升语义清晰度
+- 输出：**14个标准relation**（13个有效 + 1个others）
+- 覆盖率：99.5%+
 
-#### **输出**
+#### **最终14个标准Relations**
 
 ```python
-# 示例输出
 standard_relations = [
-    'Color_Palette',       # 整合了 Color_Style, Color_Scheme等
-    'Visual_Mood',         # 整合了 Mood_Atmosphere, Emotional_Tone等
-    'Composition_Style',   # 整合了 Layout, Composition等
+    'artistic_style',      # 215 instances - 艺术风格/构图/服装
+    'character_type',      # 150 instances - 角色类型/表情/姿势
+    'color_palette',       #  40 instances - 色彩搭配
+    'depicted_subject',    # 240 instances - 描绘主体/背景
+    'dominant_color',      # 271 instances - 主色调/主题
+    'genre',               #  12 instances - 类型/叙事
+    'graphic_element',     #  16 instances - 图形元素
+    'interaction',         #  17 instances - 互动/动作/关系
+    'lighting',            # 182 instances - 光照/场景
+    'mood',                # 221 instances - 情绪氛围
+    'others_relation',     #   9 instances - 极低频relations
+    'symbolism',           #  10 instances - 象征意义
+    'text_style',          # 297 instances - 文字排版
+    'visual_effect'        # 189 instances - 视觉效果/对比度
     'Lighting_Effect',
     'Era_Aesthetic',
     'Genre_Visual',
@@ -1121,26 +1134,28 @@ src/
 |------|--------------|---------------|----------------|
 | 电影数 | **170** ✅ | 800 | 3900 |
 | 总知识点数 | **1869** ✅ | ~8000 | ~39000 |
-| 唯一关系数 | **128** → **15** ✅ | - | - |
+| 唯一关系数 | **128** → **14** ✅ | - | - |
 | 唯一实体数 | **626** → **200-300** (待聚类) | **250-350** | **250-350** |
 
 ### **词典规模**（基于实际结果）
 
-**Relation层**（✅ 已完成）：
-- **关系类数**：**15个**（14个有效 + 1个others）
-- Agglomerative N=20, 合并6个低频clusters
+**Relation层**（✅ 已完成 2026-01-02）：
+- **关系类数**：**14个**（13个有效 + 1个others）
+- 方法：Agglomerative N=20 + 自动合并 + 手动命名优化
+- 覆盖率：99.5%+
+- 保存文件：`results/relation_mapping_final_v1.json`
 
-**Entity层**（待完成）：
-- **实体数**：每类最多20-30 → 总计 **15×25 = 375** + 15个others = **~390个**（预期）
+**Entity层**（🔄 待进行）：
+- **实体数**：每类最多20-30 → 总计 **14×25 = 350** + 14个others = **~364个**（预期）
 
 ### **图谱规模**（预期）
 
 | 节点类型 | 数量（预期） |
 |----------|------|
 | User | 6040 (5-core后) |
-| Knowledge | ~390 (15 relations × 26 entities/relation 平均) |
+| Knowledge | ~364 (14 relations × 26 entities/relation 平均) |
 | Item | 3700 (5-core后) |
-| **总节点** | **~10130** |
+| **总节点** | **~10104** |
 
 | 边类型 | 数量（估算） |
 |--------|--------------|
