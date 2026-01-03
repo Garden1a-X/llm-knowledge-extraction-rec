@@ -338,7 +338,7 @@ python scripts/06_build_graph.py
 ### 2026-01-03
 - ✅ **完成Phase 2a LLM微调**（Relation映射完成）
 - ✅ 使用GPT-4o-mini增量式微调，修正embedding聚类的语义问题
-- ✅ 最终**16个标准relation**：artistic_style, character_type, color_palette, composition_style, costume_design, depicted_subject, dominant_color, genre, graphic_element, interaction, lighting, mood, others_relation, symbolism, text_style, visual_effect
+- ✅ 最终**16个标准relation**：action_behaviors, additional_elements, artistic_styles, character_type, color_palette, composition_styles, depicted_entities, depicted_subject, design_element, genre, lighting, mood, symbolism, text_style, texture, visual_theme
 - ✅ 覆盖率100%，质量评分90/100
 - ✅ Bug修复：修复split操作中orphan检测失败问题
 

@@ -23,22 +23,22 @@
   - 语义一致性：90/100分（仅3处小语义问题，可接受）
   - 覆盖率：100%
 - ✅ **最终16个标准Relations**:
-  1. artistic_style (艺术风格)
-  2. character_type (角色类型)
-  3. color_palette (色彩搭配)
-  4. composition_style (构图风格) - 从artistic_style拆分
-  5. costume_design (服装设计) - 从artistic_style拆分
-  6. depicted_subject (描绘主体)
-  7. dominant_color (主色调)
-  8. genre (类型)
-  9. graphic_element (图形元素)
-  10. interaction (互动)
+  1. action_behaviors (行为动作)
+  2. additional_elements (附加元素，原others_relation)
+  3. artistic_styles (艺术风格，复数形式)
+  4. character_type (角色类型)
+  5. color_palette (色彩搭配)
+  6. composition_styles (构图风格)
+  7. depicted_entities (描绘实体)
+  8. depicted_subject (描绘主体)
+  9. design_element (设计元素)
+  10. genre (类型)
   11. lighting (光照)
   12. mood (情绪氛围)
-  13. others_relation (其他)
-  14. symbolism (象征意义)
-  15. text_style (文字排版)
-  16. visual_effect (视觉效果)
+  13. symbolism (象征意义)
+  14. text_style (文字排版)
+  15. texture (纹理质感)
+  16. visual_theme (视觉主题，合并了dominant_color和theme)
 - 🔄 **下一步**: Phase 2b Entity聚类（626 → 200-300个标准entity）
 
 ### 2026-01-02: Phase 2a Relation聚类与LLM微调实现 ✅
@@ -432,22 +432,22 @@ def finalize_relation_mapping(labels, relation_freq, min_total_instances=10):
 
 ```python
 standard_relations = [
-    'artistic_style',      # 艺术风格（通用艺术表现）
+    'action_behaviors',    # 行为动作
+    'additional_elements', # 附加元素（原others_relation）
+    'artistic_styles',     # 艺术风格（复数）
     'character_type',      # 角色类型/表情/姿势
     'color_palette',       # 色彩搭配
-    'composition_style',   # 构图风格（从artistic_style拆分）
-    'costume_design',      # 服装设计（从artistic_style拆分）
+    'composition_styles',  # 构图风格（复数）
+    'depicted_entities',   # 描绘的实体（动物、车辆等）
     'depicted_subject',    # 描绘主体/背景
-    'dominant_color',      # 主色调/主题
+    'design_element',      # 设计元素
     'genre',               # 类型/叙事
-    'graphic_element',     # 图形元素
-    'interaction',         # 互动/动作/关系
     'lighting',            # 光照/场景
     'mood',                # 情绪氛围
-    'others_relation',     # 极低频relations
     'symbolism',           # 象征意义
     'text_style',          # 文字排版
-    'visual_effect'        # 视觉效果/对比度
+    'texture',             # 纹理/质感/对比度
+    'visual_theme'         # 视觉主题（合并了dominant_color和theme）
 ]
 
 relation_mapping = {
