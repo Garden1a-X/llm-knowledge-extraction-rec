@@ -655,8 +655,13 @@ Return a JSON object mapping each orphaned relation to its target standard relat
                 if orphaned_from_split:
                     print(f"    ⚠️  WARNING: {len(orphaned_from_split)} relations未被LLM明确分配")
                     print(f"        未分配: {orphaned_from_split[:5]}{'...' if len(orphaned_from_split) > 5 else ''}")
-                    # 不自动分配，留待后续LLM二次分配
-                    # 暂时保持它们映射到source（虽然source已被删除，但会被检测为orphan）
+                    # 关键修复：将这些orphan的映射改为一个临时标记
+                    # 这样即使新的standard relation和旧的同名，也能被检测为orphan
+                    orphan_marker = f"__ORPHAN_FROM_{source}__"
+                    for orphan_rel in orphaned_from_split:
+                        new_relation_mapping[orphan_rel] = orphan_marker
+                        change_log.append(f"  Marked as orphan: {orphan_rel} (from {source})")
+                    print(f"        标记为orphan，等待第二轮LLM分配")
 
             elif operation == 'merge':
                 # Merge操作: 合并多个standard relations
