@@ -290,7 +290,7 @@ Now refine the relation mapping:"""
                 {"role": "user", "content": user_prompt}
             ],
             temperature=temperature,
-            max_tokens=4000,
+            max_tokens=8000,  # 增加max_tokens以容纳完整映射
             response_format={"type": "json_object"}
         )
 
@@ -367,7 +367,7 @@ Now refine the relation mapping:"""
         return refined_data
 
     def _validate_refined_mapping(self, refined_data: Dict):
-        """验证精炼后的映射"""
+        """验证并自动补全精炼后的映射"""
         # 检查必需字段
         required_fields = ['standard_relations', 'relation_mapping', 'summary']
         for field in required_fields:
@@ -380,11 +380,21 @@ Now refine the relation mapping:"""
 
         missing = original_relations - mapped_relations
         if missing:
-            print(f"⚠️ 警告: {len(missing)}个原始relations未被映射: {missing}")
+            print(f"\n🔧 自动补全 {len(missing)} 个未映射的relations...")
+
+            # 对于缺失的relations，保持原来的映射
+            for rel in missing:
+                original_std_rel = self.base_mapping['relation_mapping'][rel]
+                refined_data['relation_mapping'][rel] = original_std_rel
+
+            print(f"✓ 已补全，保持原始映射")
 
         extra = mapped_relations - original_relations
         if extra:
-            print(f"⚠️ 警告: 映射中出现了额外的relations: {extra}")
+            print(f"⚠️ 警告: 映射中出现了 {len(extra)} 个额外的relations，将被忽略")
+            # 移除额外的relations
+            for rel in extra:
+                del refined_data['relation_mapping'][rel]
 
     def save_refined_mapping(
         self,
