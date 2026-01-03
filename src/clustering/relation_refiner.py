@@ -463,6 +463,13 @@ Now propose the incremental changes:"""
                 source = change['source_standard_relation']
                 print(f"    Source: {source}")
 
+                # 先找出所有当前映射到source的original relations
+                relations_mapped_to_source = [
+                    orig_rel for orig_rel, std_rel in new_relation_mapping.items()
+                    if std_rel == source
+                ]
+                print(f"    当前有 {len(relations_mapped_to_source)} 个relations映射到 {source}")
+
                 # 移除旧的standard relation
                 if source in new_standard_relations:
                     new_standard_relations.remove(source)
@@ -471,7 +478,8 @@ Now propose the incremental changes:"""
                 else:
                     print(f"    ⚠️  Warning: {source} not in standard_relations")
 
-                # 添加新的standard relations
+                # 添加新的standard relations并重新映射
+                all_receives = set()  # 跟踪所有被明确指定的relations
                 for new_std in change['new_standard_relations']:
                     new_name = new_std['name']
                     new_standard_relations.append(new_name)
@@ -481,11 +489,29 @@ Now propose the incremental changes:"""
                     # 重新映射指定的original relations
                     moved_count = 0
                     for orig_rel in new_std['receives_from_source']:
+                        all_receives.add(orig_rel)
                         if orig_rel in new_relation_mapping and new_relation_mapping[orig_rel] == source:
                             new_relation_mapping[orig_rel] = new_name
                             change_log.append(f"  Moved {orig_rel}: {source} → {new_name}")
                             moved_count += 1
                     print(f"      Moved {moved_count} relations to {new_name}")
+
+                # 检查是否有遗漏的relations（仍然映射到已删除的source）
+                orphaned_from_split = [
+                    rel for rel in relations_mapped_to_source
+                    if rel not in all_receives
+                ]
+
+                if orphaned_from_split:
+                    print(f"    ⚠️  WARNING: {len(orphaned_from_split)} relations未被分配，将自动分配到第一个新relation")
+                    print(f"        未分配: {orphaned_from_split[:5]}{'...' if len(orphaned_from_split) > 5 else ''}")
+
+                    # 自动分配到第一个新的standard relation
+                    first_new_rel = change['new_standard_relations'][0]['name']
+                    for orphan_rel in orphaned_from_split:
+                        new_relation_mapping[orphan_rel] = first_new_rel
+                        change_log.append(f"  Auto-assigned {orphan_rel}: {source} → {first_new_rel} (orphaned)")
+                    print(f"        自动分配到: {first_new_rel}")
 
             elif operation == 'merge':
                 # Merge操作: 合并多个standard relations
