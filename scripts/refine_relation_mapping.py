@@ -93,9 +93,11 @@ def main():
               f"{refined_data['summary']['relations_after']}")
         print(f"总改动数: {refined_data['summary']['total_changes']}")
 
-        print(f"\n主要改动:")
-        for change in refined_data['summary']['major_changes']:
-            print(f"  - {change}")
+        print(f"\n主要改进:")
+        improvements = refined_data['summary'].get('major_improvements',
+                                                     refined_data['summary'].get('major_changes', []))
+        for improvement in improvements:
+            print(f"  - {improvement}")
 
         print(f"\n{'='*80}")
         print("✅ 微调完成!")
