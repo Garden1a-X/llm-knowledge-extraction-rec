@@ -153,6 +153,10 @@ CONSTRAINTS:
 
 Please refine this mapping to fix the semantic inconsistencies.
 
+**CRITICAL REQUIREMENT:**
+You MUST provide a COMPLETE mapping for ALL {len(self.base_mapping['relation_mapping'])} original relations.
+Do not only list the changes - provide the full relation_mapping dictionary with all original relations mapped to their standard relations.
+
 **Output Format:**
 Return a JSON object with this structure:
 ```json
@@ -161,14 +165,19 @@ Return a JSON object with this structure:
     {{
       "name": "depicted_subject",
       "definition": "Visual entities shown in poster (characters, objects, animals, vehicles)",
-      "mapped_relations": ["depicted_subject", "animal_type", "vehicle_type"],
+      "mapped_relations": ["depicted_subject", "animal_type", "vehicle_type", ...],
       "total_instances": 260,
       "changes": "Added animal_type, vehicle_type from action_type"
     }}
   ],
   "relation_mapping": {{
     "depicted_subject": "depicted_subject",
-    "animal_type": "depicted_subject"
+    "animal_type": "depicted_subject",
+    "vehicle_type": "depicted_subject",
+    "object_type": "depicted_subject",
+    "background_texture": "scene_setting",
+    "background_type": "scene_setting",
+    ... (INCLUDE ALL {len(self.base_mapping['relation_mapping'])} ORIGINAL RELATIONS)
   }},
   "summary": {{
     "total_changes": 15,
@@ -185,7 +194,7 @@ Return a JSON object with this structure:
 **Guidelines:**
 1. Fix semantic inconsistencies - group by MEANING not word similarity
 2. Each standard relation should be useful for movie recommendations
-3. Preserve correct mappings (color_palette, symbolism, etc.)
+3. relation_mapping MUST contain ALL {len(self.base_mapping['relation_mapping'])} original relations
 4. Provide clear reasoning for major changes
 
 Now refine the relation mapping:"""
