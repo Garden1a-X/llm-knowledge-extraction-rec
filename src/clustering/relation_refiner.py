@@ -424,6 +424,40 @@ Now propose the incremental changes:"""
             print(f"   请检查该文件以了解LLM返回的内容")
             raise
 
+        # 检查是否有orphan需要二次分配
+        if refined_mapping.get('orphans'):
+            print(f"\n{'='*60}")
+            print(f"🔄 第二轮LLM调用 - 分配遗漏的relations")
+            print(f"{'='*60}")
+
+            orphan_assignments = self._assign_orphans_with_llm(
+                orphans=refined_mapping['orphans'],
+                standard_relations=refined_mapping['standard_relations'],
+                backend=backend,
+                model_name=model_name,
+                api_key=api_key,
+                base_url=base_url,
+                temperature=temperature
+            )
+
+            # 应用orphan分配
+            for orig_rel, target_std_rel in orphan_assignments.items():
+                refined_mapping['relation_mapping'][orig_rel] = target_std_rel
+                refined_mapping['change_log'].append(
+                    f"  LLM-assigned orphan {orig_rel}: → {target_std_rel}"
+                )
+
+            # 最终验证（这次要求无orphan）
+            print(f"\n🔍 最终验证...")
+            self._validate_incremental_result(
+                refined_mapping['relation_mapping'],
+                refined_mapping['standard_relations'],
+                refined_mapping['change_log'],
+                raise_on_orphans=True
+            )
+
+            refined_mapping['orphans'] = []  # 清空orphan列表
+
         self.refined_mapping = refined_mapping
 
         print(f"\n✓ LLM微调完成")
@@ -437,6 +471,122 @@ Now propose the incremental changes:"""
                 print(f"    - {improvement}")
 
         return refined_mapping
+
+    def _assign_orphans_with_llm(
+        self,
+        orphans: List[tuple],
+        standard_relations: List[str],
+        backend: str,
+        model_name: str,
+        api_key: Optional[str],
+        base_url: Optional[str],
+        temperature: float
+    ) -> Dict[str, str]:
+        """
+        使用LLM为orphan relations分配合适的standard relation
+
+        Args:
+            orphans: orphan relations列表 [(orig_rel, old_std_rel), ...]
+            standard_relations: 可用的标准relations列表
+            其他参数: LLM配置
+
+        Returns:
+            分配映射 {orig_rel: target_std_rel}
+        """
+        print(f"\n📋 需要分配 {len(orphans)} 个orphan relations:")
+        for orig_rel, old_std_rel in orphans[:10]:
+            print(f"  - {orig_rel} (原本在 {old_std_rel})")
+
+        # 构建prompt
+        system_prompt = """You are an expert in semantic classification for movie poster knowledge graphs.
+
+Your task is to assign orphaned relations to the most semantically appropriate standard relation.
+
+These relations were left unassigned after a split operation because the LLM didn't explicitly specify where they should go. Now you need to determine the best placement based on semantic meaning."""
+
+        orphan_list = '\n'.join([
+            f"  - {orig_rel} (was in: {old_std_rel})"
+            for orig_rel, old_std_rel in orphans
+        ])
+
+        std_rel_list = '\n'.join([f"  - {sr}" for sr in standard_relations])
+
+        user_prompt = f"""Available standard relations:
+{std_rel_list}
+
+Orphaned relations that need assignment:
+{orphan_list}
+
+Please assign each orphaned relation to the most semantically appropriate standard relation from the available list.
+
+**Output Format:**
+Return a JSON object mapping each orphaned relation to its target standard relation:
+```json
+{{
+  "assignments": {{
+    "composition": "visual_style",
+    "animal_type": "environmental_elements",
+    "object_type": "action_elements",
+    ...
+  }},
+  "reasoning": {{
+    "composition": "Composition is about visual arrangement, fits visual_style",
+    "animal_type": "Animals are part of the environment/setting",
+    ...
+  }}
+}}
+```
+
+**Important:**
+1. Every orphaned relation MUST be assigned
+2. Only use standard relations from the available list
+3. Choose based on semantic meaning, not word similarity
+4. Provide brief reasoning for each assignment"""
+
+        # 调用LLM
+        print(f"\n🔄 调用LLM进行orphan分配...")
+
+        if backend == 'openai':
+            response = self._call_openai(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                model_name=model_name,
+                api_key=api_key,
+                base_url=base_url,
+                temperature=temperature
+            )
+        else:
+            raise ValueError(f"不支持的backend: {backend}")
+
+        # 解析响应
+        try:
+            assignment_data = json.loads(response)
+        except json.JSONDecodeError as e:
+            print(f"❌ JSON解析失败: {e}")
+            print(f"原始响应:\n{response}")
+            raise
+
+        assignments = assignment_data.get('assignments', {})
+        reasoning = assignment_data.get('reasoning', {})
+
+        # 显示分配结果
+        print(f"\n✓ LLM分配结果:")
+        for orig_rel, target_std_rel in assignments.items():
+            reason = reasoning.get(orig_rel, 'No reasoning provided')
+            print(f"  {orig_rel} → {target_std_rel}")
+            print(f"    理由: {reason}")
+
+        # 验证所有orphan都被分配了
+        orphan_names = {orig_rel for orig_rel, _ in orphans}
+        assigned_names = set(assignments.keys())
+        missing = orphan_names - assigned_names
+        if missing:
+            print(f"⚠️  警告: {len(missing)}个orphans未被LLM分配: {list(missing)[:5]}")
+            print(f"   将它们分配到第一个标准relation作为fallback")
+            for missing_rel in missing:
+                assignments[missing_rel] = standard_relations[0]
+
+        return assignments
 
     def _apply_incremental_changes(self, changes_data: Dict) -> Dict:
         """
@@ -503,15 +653,10 @@ Now propose the incremental changes:"""
                 ]
 
                 if orphaned_from_split:
-                    print(f"    ⚠️  WARNING: {len(orphaned_from_split)} relations未被分配，将自动分配到第一个新relation")
+                    print(f"    ⚠️  WARNING: {len(orphaned_from_split)} relations未被LLM明确分配")
                     print(f"        未分配: {orphaned_from_split[:5]}{'...' if len(orphaned_from_split) > 5 else ''}")
-
-                    # 自动分配到第一个新的standard relation
-                    first_new_rel = change['new_standard_relations'][0]['name']
-                    for orphan_rel in orphaned_from_split:
-                        new_relation_mapping[orphan_rel] = first_new_rel
-                        change_log.append(f"  Auto-assigned {orphan_rel}: {source} → {first_new_rel} (orphaned)")
-                    print(f"        自动分配到: {first_new_rel}")
+                    # 不自动分配，留待后续LLM二次分配
+                    # 暂时保持它们映射到source（虽然source已被删除，但会被检测为orphan）
 
             elif operation == 'merge':
                 # Merge操作: 合并多个standard relations
@@ -591,8 +736,11 @@ Now propose the incremental changes:"""
                         renamed_count += 1
                 print(f"      Updated {renamed_count} mappings")
 
-        # 验证结果
-        self._validate_incremental_result(new_relation_mapping, new_standard_relations, change_log)
+        # 验证结果并获取orphan信息
+        orphan_info = self._validate_incremental_result(
+            new_relation_mapping, new_standard_relations, change_log,
+            raise_on_orphans=False
+        )
 
         # 构建返回数据
         refined_data = {
@@ -604,7 +752,8 @@ Now propose the incremental changes:"""
                 'relations_after': len(new_standard_relations)
             }),
             'change_log': change_log,
-            'original_changes': changes_data['changes']
+            'original_changes': changes_data['changes'],
+            'orphans': orphan_info['orphans'] if orphan_info else []
         }
 
         return refined_data
@@ -613,7 +762,8 @@ Now propose the incremental changes:"""
         self,
         new_relation_mapping: Dict[str, str],
         new_standard_relations: List[str],
-        change_log: List[str]
+        change_log: List[str],
+        raise_on_orphans: bool = True
     ):
         """
         验证增量修改的结果
@@ -622,6 +772,10 @@ Now propose the incremental changes:"""
             new_relation_mapping: 新的relation映射
             new_standard_relations: 新的标准relations列表
             change_log: 修改日志
+            raise_on_orphans: 是否在发现orphan时抛出异常
+
+        Returns:
+            如果raise_on_orphans=False，返回包含orphan信息的字典
         """
         # 检查1: 所有原始relations都还在
         original_relations = set(self.base_mapping['relation_mapping'].keys())
@@ -643,10 +797,18 @@ Now propose the incremental changes:"""
                 orphans.append((orig_rel, std_rel))
 
         if orphans:
-            print(f"\n❌ 发现 {len(orphans)} 个orphan映射:")
+            print(f"\n⚠️  发现 {len(orphans)} 个orphan映射:")
             for orig_rel, std_rel in orphans[:10]:
                 print(f"  {orig_rel} → {std_rel} (不在standard_relations中)")
-            raise ValueError(f"验证失败: 存在{len(orphans)}个orphan映射")
+
+            if raise_on_orphans:
+                raise ValueError(f"验证失败: 存在{len(orphans)}个orphan映射")
+            else:
+                print(f"  将请求LLM进行二次分配...")
+                return {
+                    'orphans': orphans,
+                    'standard_relations': new_standard_relations
+                }
 
         # 检查3: 所有standard relations都被使用
         used_std_rels = set(new_relation_mapping.values())
@@ -658,6 +820,8 @@ Now propose the incremental changes:"""
         print(f"  原始relations: {len(original_relations)}个全部保留")
         print(f"  标准relations: {len(new_standard_relations)}个，全部有效")
         print(f"  无orphan映射")
+
+        return None
 
     def save_refined_mapping(
         self,
