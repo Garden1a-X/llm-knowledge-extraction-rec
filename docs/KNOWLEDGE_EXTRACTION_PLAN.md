@@ -1,14 +1,47 @@
 # LLM知识抽取方案
 
 *Created: 2025-12-27*
-*Last Updated: 2026-01-02*
-*Status: **Phase 2 进行中** - Relation聚类完成，待进行Entity聚类*
+*Last Updated: 2026-01-03*
+*Status: **Phase 2a 完成，Phase 2b 待进行** - Relation聚类+LLM微调完成，待进行Entity聚类*
 
 ---
 
 ## 📝 工作日志
 
-### 2026-01-02: Phase 2a Relation聚类与LLM微调 ✅
+### 2026-01-03: Phase 2a LLM微调完成 ✅
+- ✅ **LLM微调执行完成**: 使用GPT-4o-mini修正embedding聚类的语义问题
+  - 实现增量式微调（split/merge/separate/rename操作）
+  - 两阶段LLM调用：主要修正 + orphan分配
+  - 最终结果：**16个标准relation**（从14增加到16）
+  - 保存: `relation_mapping_final_v2.json`
+- ✅ **Bug修复**: 修复split操作中source名称复用导致的orphan检测失败
+  - 问题：当split创建与source同名的新relation时，orphan未被检测
+  - 解决：使用临时标记`__ORPHAN_FROM_<source>__`确保所有orphan被检测
+  - 结果：全部11个orphan成功被第二次LLM调用处理
+- ✅ **质量评估**:
+  - 映射完整性：128/128个原始relation全部映射
+  - 语义一致性：90/100分（仅3处小语义问题，可接受）
+  - 覆盖率：100%
+- ✅ **最终16个标准Relations**:
+  1. artistic_style (艺术风格)
+  2. character_type (角色类型)
+  3. color_palette (色彩搭配)
+  4. composition_style (构图风格) - 从artistic_style拆分
+  5. costume_design (服装设计) - 从artistic_style拆分
+  6. depicted_subject (描绘主体)
+  7. dominant_color (主色调)
+  8. genre (类型)
+  9. graphic_element (图形元素)
+  10. interaction (互动)
+  11. lighting (光照)
+  12. mood (情绪氛围)
+  13. others_relation (其他)
+  14. symbolism (象征意义)
+  15. text_style (文字排版)
+  16. visual_effect (视觉效果)
+- 🔄 **下一步**: Phase 2b Entity聚类（626 → 200-300个标准entity）
+
+### 2026-01-02: Phase 2a Relation聚类与LLM微调实现 ✅
 - ✅ **Phase 1提取完成**: 170个电影，新prompt成功
   - 128个唯一relation，1869个知识点
   - 626个唯一entity，平均复用2.99x
@@ -31,8 +64,10 @@
   - 实现RelationRefiner模块 (`src/clustering/relation_refiner.py`)
   - 创建微调脚本 (`scripts/refine_relation_mapping.py`)
   - 利用LLM的语义理解能力，修正embedding聚类的后缀主导问题
-- 🔄 **待执行**: 运行LLM微调，生成`relation_mapping_final_v1.json`
-- 🔄 **下一步**: Phase 2b Entity聚类（626 → 300-350个）
+- ✅ **LLM微调完成**: 2026-01-03
+  - 执行成功，生成`relation_mapping_final_v2.json`
+  - 结果：16个标准relation，128个原始relation全部映射
+  - 质量：90/100分
 
 ### 2025-12-29: Phase 1 质量优化
 - ✅ **首次提取完成**: 170个电影，全部成功
@@ -377,41 +412,42 @@ def finalize_relation_mapping(labels, relation_freq, min_total_instances=10):
     return relation_mapping
 ```
 
-**实际结果**（2026-01-02）：
+**初步结果**（2026-01-02）：
 - 输入：128个唯一relation，1869个实例
 - Agglomerative N=20 → 20 clusters
 - 合并7个低频clusters（总实例数<10）→ others_relation
 - 手动调整命名（3处）：提升语义清晰度
 - 输出：**14个标准relation**（13个有效 + 1个others）
 - 覆盖率：99.5%+
+- ⚠️ 问题：部分cluster语义不一致（被后缀主导）
 
-#### **最终14个标准Relations**
+**LLM微调后最终结果**（2026-01-03）：
+- 输入：14个初步relation + 128个原始relation
+- LLM增量微调：split/merge/separate/rename操作
+- 两阶段处理：主要修正 + orphan分配
+- 输出：**16个标准relation**（15个有效 + 1个others）
+- 质量：90/100分，语义一致性显著改善
+
+#### **最终16个标准Relations**（LLM微调后）
 
 ```python
 standard_relations = [
-    'artistic_style',      # 215 instances - 艺术风格/构图/服装
-    'character_type',      # 150 instances - 角色类型/表情/姿势
-    'color_palette',       #  40 instances - 色彩搭配
-    'depicted_subject',    # 240 instances - 描绘主体/背景
-    'dominant_color',      # 271 instances - 主色调/主题
-    'genre',               #  12 instances - 类型/叙事
-    'graphic_element',     #  16 instances - 图形元素
-    'interaction',         #  17 instances - 互动/动作/关系
-    'lighting',            # 182 instances - 光照/场景
-    'mood',                # 221 instances - 情绪氛围
-    'others_relation',     #   9 instances - 极低频relations
-    'symbolism',           #  10 instances - 象征意义
-    'text_style',          # 297 instances - 文字排版
-    'visual_effect'        # 189 instances - 视觉效果/对比度
-    'Lighting_Effect',
-    'Era_Aesthetic',
-    'Genre_Visual',
-    'Character_Display',
-    'Setting_Environment',
-    'Poster_Design',
-    'Visual_Symbolism',
-    ...                    # 最多15个
-    'Others_Relation'      # 低频关系
+    'artistic_style',      # 艺术风格（通用艺术表现）
+    'character_type',      # 角色类型/表情/姿势
+    'color_palette',       # 色彩搭配
+    'composition_style',   # 构图风格（从artistic_style拆分）
+    'costume_design',      # 服装设计（从artistic_style拆分）
+    'depicted_subject',    # 描绘主体/背景
+    'dominant_color',      # 主色调/主题
+    'genre',               # 类型/叙事
+    'graphic_element',     # 图形元素
+    'interaction',         # 互动/动作/关系
+    'lighting',            # 光照/场景
+    'mood',                # 情绪氛围
+    'others_relation',     # 极低频relations
+    'symbolism',           # 象征意义
+    'text_style',          # 文字排版
+    'visual_effect'        # 视觉效果/对比度
 ]
 
 relation_mapping = {
@@ -1147,23 +1183,24 @@ src/
 
 ### **词典规模**（基于实际结果）
 
-**Relation层**（✅ 已完成 2026-01-02）：
-- **关系类数**：**14个**（13个有效 + 1个others）
-- 方法：Agglomerative N=20 + 自动合并 + 手动命名优化
-- 覆盖率：99.5%+
-- 保存文件：`results/relation_mapping_final_v1.json`
+**Relation层**（✅ 已完成 2026-01-03）：
+- **关系类数**：**16个**（15个有效 + 1个others）
+- 方法：Agglomerative N=20 + LLM增量微调
+- 覆盖率：100%
+- 质量评分：90/100
+- 保存文件：`relation_mapping_final_v2.json`
 
 **Entity层**（🔄 待进行）：
-- **实体数**：每类最多20-30 → 总计 **14×25 = 350** + 14个others = **~364个**（预期）
+- **实体数**：每类最多20-30 → 总计 **16×25 = 400** + 16个others = **~416个**（预期）
 
 ### **图谱规模**（预期）
 
 | 节点类型 | 数量（预期） |
 |----------|------|
 | User | 6040 (5-core后) |
-| Knowledge | ~364 (14 relations × 26 entities/relation 平均) |
+| Knowledge | ~416 (16 relations × 26 entities/relation 平均) |
 | Item | 3700 (5-core后) |
-| **总节点** | **~10104** |
+| **总节点** | **~10156** |
 
 | 边类型 | 数量（估算） |
 |--------|--------------|
