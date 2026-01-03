@@ -389,9 +389,40 @@ Now propose the incremental changes:"""
             print(f"原始响应:\n{response}")
             raise
 
+        # 显示LLM返回的changes摘要
+        print(f"\n📋 LLM返回的修改操作:")
+        for i, change in enumerate(changes_data.get('changes', []), 1):
+            op = change['operation']
+            print(f"  {i}. {op}: ", end="")
+            if op == 'split':
+                print(f"{change['source_standard_relation']} → {[s['name'] for s in change['new_standard_relations']]}")
+            elif op == 'merge':
+                target = change['target_standard_relation']
+                target_name = target['name'] if isinstance(target, dict) else target
+                print(f"{change['source_standard_relations']} → {target_name}")
+            elif op == 'separate':
+                target = change['target_standard_relation']
+                target_name = target['name'] if isinstance(target, dict) else target
+                print(f"{len(change['original_relations_to_move'])} relations: {change['source_standard_relation']} → {target_name}")
+            elif op == 'rename':
+                print(f"{change['old_name']} → {change['new_name']}")
+
         # 应用增量修改
         print(f"\n🔄 应用增量修改...")
-        refined_mapping = self._apply_incremental_changes(changes_data)
+        try:
+            refined_mapping = self._apply_incremental_changes(changes_data)
+        except ValueError as e:
+            # 出错时保存原始LLM响应以便调试
+            debug_file = self.base_mapping_path.parent / 'llm_response_debug.json'
+            with open(debug_file, 'w') as f:
+                json.dump({
+                    'changes_data': changes_data,
+                    'raw_response': response,
+                    'error': str(e)
+                }, f, indent=2, ensure_ascii=False)
+            print(f"\n💾 LLM原始响应已保存到: {debug_file}")
+            print(f"   请检查该文件以了解LLM返回的内容")
+            raise
 
         self.refined_mapping = refined_mapping
 
@@ -423,41 +454,52 @@ Now propose the incremental changes:"""
 
         change_log = []
 
-        for change in changes_data['changes']:
+        for idx, change in enumerate(changes_data['changes'], 1):
             operation = change['operation']
+            print(f"\n  处理操作 {idx}/{len(changes_data['changes'])}: {operation}")
 
             if operation == 'split':
                 # Split操作: 将一个standard relation分成多个
                 source = change['source_standard_relation']
+                print(f"    Source: {source}")
 
                 # 移除旧的standard relation
                 if source in new_standard_relations:
                     new_standard_relations.remove(source)
                     change_log.append(f"Removed standard relation: {source}")
+                    print(f"    ✓ Removed: {source}")
+                else:
+                    print(f"    ⚠️  Warning: {source} not in standard_relations")
 
                 # 添加新的standard relations
                 for new_std in change['new_standard_relations']:
                     new_name = new_std['name']
                     new_standard_relations.append(new_name)
                     change_log.append(f"Added standard relation: {new_name} - {new_std['definition']}")
+                    print(f"    ✓ Added: {new_name}")
 
                     # 重新映射指定的original relations
+                    moved_count = 0
                     for orig_rel in new_std['receives_from_source']:
                         if orig_rel in new_relation_mapping and new_relation_mapping[orig_rel] == source:
                             new_relation_mapping[orig_rel] = new_name
                             change_log.append(f"  Moved {orig_rel}: {source} → {new_name}")
+                            moved_count += 1
+                    print(f"      Moved {moved_count} relations to {new_name}")
 
             elif operation == 'merge':
                 # Merge操作: 合并多个standard relations
                 sources = change['source_standard_relations']
                 target = change['target_standard_relation']
                 target_name = target['name'] if isinstance(target, dict) else target
+                print(f"    Sources: {sources} → Target: {target_name}")
 
                 # 移除旧的standard relations
                 for source in sources:
                     if source in new_standard_relations:
                         new_standard_relations.remove(source)
                         change_log.append(f"Removed standard relation: {source}")
+                        print(f"    ✓ Removed: {source}")
 
                 # 添加新的target relation（如果不存在）
                 if target_name not in new_standard_relations:
@@ -466,12 +508,18 @@ Now propose the incremental changes:"""
                         change_log.append(f"Added standard relation: {target_name} - {target['definition']}")
                     else:
                         change_log.append(f"Added standard relation: {target_name}")
+                    print(f"    ✓ Added: {target_name}")
+                else:
+                    print(f"    ✓ Target already exists: {target_name}")
 
                 # 重新映射所有从sources来的original relations
+                moved_count = 0
                 for orig_rel, std_rel in new_relation_mapping.items():
                     if std_rel in sources:
                         new_relation_mapping[orig_rel] = target_name
                         change_log.append(f"  Moved {orig_rel}: {std_rel} → {target_name}")
+                        moved_count += 1
+                print(f"      Moved {moved_count} relations to {target_name}")
 
             elif operation == 'separate':
                 # Separate操作: 从一个standard relation中移出部分original relations
@@ -479,33 +527,43 @@ Now propose the incremental changes:"""
                 to_move = change['original_relations_to_move']
                 target = change['target_standard_relation']
                 target_name = target['name'] if isinstance(target, dict) else target
+                print(f"    Move {len(to_move)} relations: {source} → {target_name}")
 
                 # 添加target relation（如果是新的）
                 if target.get('is_new', False) and target_name not in new_standard_relations:
                     new_standard_relations.append(target_name)
                     change_log.append(f"Added standard relation: {target_name} - {target['definition']}")
+                    print(f"    ✓ Added new target: {target_name}")
 
                 # 移动指定的original relations
+                moved_count = 0
                 for orig_rel in to_move:
                     if orig_rel in new_relation_mapping and new_relation_mapping[orig_rel] == source:
                         new_relation_mapping[orig_rel] = target_name
                         change_log.append(f"  Moved {orig_rel}: {source} → {target_name}")
+                        moved_count += 1
+                print(f"      Moved {moved_count} relations to {target_name}")
 
             elif operation == 'rename':
                 # Rename操作: 重命名standard relation
                 old_name = change['old_name']
                 new_name = change['new_name']
+                print(f"    {old_name} → {new_name}")
 
                 # 更新standard relations列表
                 if old_name in new_standard_relations:
                     idx = new_standard_relations.index(old_name)
                     new_standard_relations[idx] = new_name
                     change_log.append(f"Renamed standard relation: {old_name} → {new_name}")
+                    print(f"    ✓ Renamed in standard_relations")
 
                 # 更新所有映射
+                renamed_count = 0
                 for orig_rel, std_rel in new_relation_mapping.items():
                     if std_rel == old_name:
                         new_relation_mapping[orig_rel] = new_name
+                        renamed_count += 1
+                print(f"      Updated {renamed_count} mappings")
 
         # 验证结果
         self._validate_incremental_result(new_relation_mapping, new_standard_relations, change_log)
