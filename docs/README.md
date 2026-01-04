@@ -2,29 +2,50 @@
 
 本目录包含项目的所有规划和设计文档。
 
-## 📁 当前文档（2025-12-27更新）
+## 📁 当前文档（2026-01-04更新）
 
 ### **核心文档**
 
-1. **KNOWLEDGE_EXTRACTION_PLAN.md** ⭐ 最新
+1. **KNOWLEDGE_EXTRACTION_PLAN.md** ⭐ 总体规划
    - LLM知识抽取完整方案
    - 双阶段提取流程（7个Phase）
    - 分层聚类标准化
    - 用户兴趣提取
    - 图谱构建与Mask机制
    - **对应论文Method章节的三个部分**
+   - 最后更新：2026-01-04
 
-2. **BASELINE_PLAN.md**
+2. **RELATION_DEFINITIONS.md** ⭐ Relation边界定义（新增）
+   - 14+1个标准Relations的完整定义
+   - 每个relation的职责、范围、边界规则
+   - 复杂边界cases的判断标准（visual_theme等）
+   - 为LLM prompt设计和人工审核提供参考
+   - 创建时间：2026-01-04
+
+3. **BASELINE_PLAN.md**
    - Baseline实验完整规划
    - 13个对比方法的分类和选择理由
    - 3条演进路径
    - 消融实验设计
 
-3. **EXPERIMENT_TRACKING.md**
+4. **EXPERIMENT_TRACKING.md**
    - 实验进度实时跟踪
    - 已完成实验的结果记录
    - 结果汇总表
    - 代码仓库链接
+
+### **工作日志**
+
+1. **WORK_LOG_20260104.md** ⭐ 最新
+   - Phase 2b Entity重分配方案设计
+   - Relation边界混淆问题分析
+   - 两阶段entity重分配策略
+   - 关键决策记录（depicted_subject vs character_type等）
+
+2. **WORK_LOG_20250102.md** ⚠️ 已过时
+   - Phase 2a初步工作记录（LLM微调之前）
+   - 记录14个relations的初步聚类结果
+   - 仅作历史参考，实际最终结果是16个relations（见WORK_LOG_20260104.md）
 
 ---
 
@@ -69,13 +90,26 @@
 
 ---
 
-## 🚀 下一步
+## 🚀 当前状态与下一步
 
-参考 `KNOWLEDGE_EXTRACTION_PLAN.md` 开始实现：
-- Phase 1: 小规模探索（5%数据，~200部电影）
-- Phase 2: 双层聚类（关系≤15类，实体≤30/类）
-- Phase 3-7: 验证→全量→用户兴趣→图谱→模型
+### **已完成**：
+- ✅ Phase 1: 小规模探索（170部电影，1869个知识点）
+- ✅ Phase 2a: Relation聚类+LLM微调（128 → 16个标准relations）
+- ✅ Phase 2b-0（部分）：Entity分布分析 + Relation边界定义
+
+### **正在进行**：
+- 🔄 Phase 2b-0: Entity重分配
+  - 设计LLM prompt（第一轮清理 + 第二轮重分配）
+  - 实现entity重分配脚本
+  - 执行并人工审核
+
+### **下一步**：
+- Phase 2b-1: Entity聚类（626 → 250-270个标准entities）
+- Phase 3: 验证与扩充（20%数据）
+- Phase 4-7: 全量提取→用户兴趣→图谱→模型
+
+详见 `KNOWLEDGE_EXTRACTION_PLAN.md` 末尾的"下一步行动"章节。
 
 ---
 
-*Last updated: 2025-12-27*
+*Last updated: 2026-01-04*

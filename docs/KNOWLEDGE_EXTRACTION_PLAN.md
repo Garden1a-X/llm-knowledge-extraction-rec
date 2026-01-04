@@ -1253,11 +1253,30 @@ src/
 
 ## 📝 下一步行动
 
-1. **实现Phase 1**：小规模探索脚本
-2. **实现Phase 2**：双层聚类脚本
-3. **实现Phase 3**：验证与扩充
-4. **实现Phase 4-7**：全量提取→用户兴趣→图谱→模型
+### **当前阶段：Phase 2b Entity重分配与聚类** ⬅️ 我们在这里
+
+**立即任务**（Phase 2b-0: Entity重分配）：
+1. ✅ 分析entity分布，识别relation边界问题
+2. ✅ 定义14+1个relations的职责边界
+3. ⏸️ 设计第一轮LLM prompt（按relation清理+合并entities）
+4. ⏸️ 设计第二轮LLM prompt（重分配孤儿entities）
+5. ⏸️ 实现entity重分配脚本并执行
+6. ⏸️ 人工审核重分配结果
+7. ⏸️ 生成entity_redistribution_mapping.json
+
+**后续任务**（Phase 2b-1: Entity聚类）：
+1. 基于重分配后的clean data进行entity聚类
+2. 目标：626 entities → 250-270个标准entities
+3. 保存最终知识词典v1
+
+**更后续**：
+1. **Phase 3**：验证与扩充（20%数据）
+2. **Phase 4**：全量提取（80%数据）
+3. **Phase 5**：用户兴趣提取
+4. **Phase 6**：知识图谱构建
+5. **Phase 7**：推荐模型训练
 
 ---
 
 *文档结束*
+*最后更新：2026-01-04*
