@@ -335,6 +335,21 @@ python scripts/06_build_graph.py
 
 ## 📝 更新日志
 
+### 2026-01-04
+- ✅ **Phase 2b策略重新设计**（Entity重分配方案）
+- ✅ 发现问题：Relation边界混淆导致entity分布混乱
+  - visual_theme与color_palette/mood/artistic_styles重叠
+  - depicted_subject vs character_type边界模糊
+  - depicted_entities和action_behaviors过于稀疏
+- ✅ 设计两阶段Entity重分配方案（Phase 2b-0）
+  - 第一轮：按relation清理entities（剔除+合并）
+  - 第二轮：重分配孤儿entities到正确的relation
+- ✅ 明确定义**14+1个Relations**的职责边界
+  - 创建RELATION_DEFINITIONS.md文档
+  - 制定复杂边界规则（visual_theme等）
+  - 决策：depicted_entities合并到depicted_subject
+- 📋 下一步：设计LLM prompt，实现entity重分配
+
 ### 2026-01-03
 - ✅ **完成Phase 2a LLM微调**（Relation映射完成）
 - ✅ 使用GPT-4o-mini增量式微调，修正embedding聚类的语义问题
