@@ -17,7 +17,7 @@ from pathlib import Path
 from collections import Counter, defaultdict
 import os
 import sys
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple, Any, Optional
 
 # 添加项目根目录到路径
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -453,25 +453,34 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
     return prompt
 
 
-def call_gpt4(prompt: str, model: str = "gpt-4o-mini", api_key: Optional[str] = None) -> Dict[str, Any]:
+def call_gpt4(
+    prompt: str,
+    model: str = "gpt-4o-mini",
+    api_key: Optional[str] = None,
+    base_url: Optional[str] = None
+) -> Dict[str, Any]:
     """
-    调用GPT-4 API（使用项目现有的MLLM接口）
+    调用GPT-4 API（采用与mllm_interface相同的方式）
 
     Args:
         prompt: 用户prompt
         model: 模型名称
-        api_key: API key（可选，如果不提供则从环境变量读取）
+        api_key: API key（可选，如果不提供则从环境变量OPENAI_API_KEY读取）
+        base_url: 可选的base URL（用于OpenAI兼容的API，如本地vLLM）
 
     Returns:
         解析后的JSON结果
     """
     from openai import OpenAI
 
-    # 使用api_key参数或环境变量
+    # 使用api_key和base_url参数，或从环境变量读取
     client_kwargs = {}
-    if api_key:
+    if api_key is not None:
         client_kwargs['api_key'] = api_key
     # else: OpenAI会自动从环境变量OPENAI_API_KEY读取
+
+    if base_url:
+        client_kwargs['base_url'] = base_url
 
     client = OpenAI(**client_kwargs)
 
@@ -504,7 +513,8 @@ def process_relation_first_round(
     relation: str,
     entity_counter: Counter,
     dry_run: bool = False,
-    api_key: Optional[str] = None
+    api_key: Optional[str] = None,
+    base_url: Optional[str] = None
 ) -> Dict[str, Any]:
     """第一轮处理：清理和合并某个relation的entities"""
 
@@ -526,7 +536,7 @@ def process_relation_first_round(
 
     # 调用GPT-4
     print("正在调用GPT-4...")
-    result = call_gpt4(prompt, api_key=api_key)
+    result = call_gpt4(prompt, api_key=api_key, base_url=base_url)
 
     # 分析结果
     keep_merge = result.get('keep_and_merge', {})
@@ -574,6 +584,8 @@ def main():
     parser.add_argument('--dry-run', action='store_true', help='只生成prompt，不调用API')
     parser.add_argument('--api-key', type=str, default=None,
                        help='OpenAI API key（可选，如不提供则从环境变量OPENAI_API_KEY读取）')
+    parser.add_argument('--base-url', type=str, default=None,
+                       help='OpenAI API base URL（可选，用于OpenAI兼容的API如本地vLLM）')
     parser.add_argument('--output', type=str, default='results/entity_redistribution_round1.json',
                        help='输出文件路径')
 
@@ -608,7 +620,8 @@ def main():
             args.relation,
             relation_entity_counters[args.relation],
             dry_run=args.dry_run,
-            api_key=args.api_key
+            api_key=args.api_key,
+            base_url=args.base_url
         )
         results[args.relation] = result
 
@@ -619,7 +632,8 @@ def main():
                 relation,
                 counter,
                 dry_run=args.dry_run,
-                api_key=args.api_key
+                api_key=args.api_key,
+                base_url=args.base_url
             )
             results[relation] = result
 
