@@ -251,8 +251,27 @@ def load_entity_data():
     with open(phase1_file, 'r') as f:
         phase1_data = json.load(f)
 
-    # 加载relation mapping
-    mapping_file = RESULTS_DIR / 'relation_mapping_final_v2.json'
+    # 加载relation mapping（兼容v1和v2）
+    possible_mapping_files = [
+        RESULTS_DIR / 'relation_mapping_final_v2.json',
+        RESULTS_DIR / 'relation_mapping_final_v1.json',
+        RESULTS_DIR / 'relation_mapping_final.json',
+    ]
+
+    mapping_file = None
+    for path in possible_mapping_files:
+        if path.exists():
+            mapping_file = path
+            break
+
+    if not mapping_file:
+        raise FileNotFoundError(
+            "未找到Relation映射文件！请确保以下位置之一存在：\n"
+            "  - results/relation_mapping_final_v2.json\n"
+            "  - results/relation_mapping_final_v1.json\n"
+            "  - results/relation_mapping_final.json"
+        )
+
     print(f"加载Relation映射: {mapping_file}")
     with open(mapping_file, 'r') as f:
         mapping_data = json.load(f)
