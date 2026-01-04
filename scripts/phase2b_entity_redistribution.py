@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
 """
-Phase 2b-0: Entity重分配（两阶段LLM处理）
+Phase 2b-0: Entity重分配 - 第一轮清理与合并
 
 目标：
-1. 第一轮：按relation清理entities（剔除不属于的 + 合并同义词）
-2. 第二轮：重分配孤儿entities到正确的relation
+1. 按relation清理entities（剔除不属于的 + 合并同义词）
+2. 为每个relation生成清理后的entity列表
 
 使用：
-  python scripts/phase2b_entity_redistribution.py --relation visual_theme --dry-run
-  python scripts/phase2b_entity_redistribution.py --all
+  python scripts/phase2b_entity_redistribution.py
+
+然后按照交互式提示输入配置：
+  - 选择要处理的relation（或all）
+  - Dry-run模式（可选）
+  - LLM配置（API key, base URL等）
 """
 
 import json
-import argparse
 from pathlib import Path
 from collections import Counter, defaultdict
 import os
@@ -578,24 +581,16 @@ def process_relation_first_round(
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Phase 2b Entity重分配')
-    parser.add_argument('--relation', type=str, help='处理指定的relation')
-    parser.add_argument('--all', action='store_true', help='处理所有relations')
-    parser.add_argument('--dry-run', action='store_true', help='只生成prompt，不调用API')
-    parser.add_argument('--api-key', type=str, default=None,
-                       help='OpenAI API key（可选，如不提供则从环境变量OPENAI_API_KEY读取）')
-    parser.add_argument('--base-url', type=str, default=None,
-                       help='OpenAI API base URL（可选，用于OpenAI兼容的API如本地vLLM）')
-    parser.add_argument('--output', type=str, default='results/entity_redistribution_round1.json',
-                       help='输出文件路径')
-
-    args = parser.parse_args()
+    print("="*80)
+    print("Phase 2b Entity重分配 - 第一轮清理与合并")
+    print("="*80)
+    print()
 
     # 加载数据
     try:
         phase1_data, mapping_data = load_entity_data()
     except FileNotFoundError as e:
-        print(f"错误: {e}")
+        print(f"❌ 错误: {e}")
         print("\n提示: 请确保已经运行了Phase 1提取并保存了数据文件。")
         return
 
@@ -606,44 +601,107 @@ def main():
     for rel, counter in sorted(relation_entity_counters.items()):
         print(f"  - {rel:25s}: {len(counter):3d} unique entities")
 
+    # 交互式配置
+    print(f"\n{'='*80}")
+    print("配置处理参数")
+    print(f"{'='*80}")
+
+    # 选择要处理的relation
+    print("\n请选择要处理的relation:")
+    print("  - 输入relation名称（如 visual_theme）")
+    print("  - 输入 'all' 处理所有relations")
+    print("  - 输入 'list' 查看所有可用的relations")
+
+    while True:
+        relation_input = input("\nRelation: ").strip()
+        if relation_input == 'list':
+            print("\n可用的relations:")
+            for rel in sorted(relation_entity_counters.keys()):
+                print(f"  - {rel}")
+            continue
+        elif relation_input == 'all':
+            process_all = True
+            selected_relation = None
+            break
+        elif relation_input in relation_entity_counters:
+            process_all = False
+            selected_relation = relation_input
+            break
+        else:
+            print(f"❌ 错误: Relation '{relation_input}' 不存在，请重新输入")
+
+    # Dry-run选项
+    dry_run_input = input("\nDry-run模式（只看prompt不调用API）? (y/n, default: n): ").strip().lower()
+    dry_run = dry_run_input == 'y'
+
+    # LLM配置（仅在非dry-run模式下询问）
+    api_key = None
+    base_url = None
+    model = "gpt-4o-mini"
+    temperature = 0.1
+
+    if not dry_run:
+        print("\n请配置LLM参数（留空使用默认值）:")
+        model = input("  Model (default: gpt-4o-mini): ").strip() or "gpt-4o-mini"
+        api_key = input("  API Key (optional, 留空使用环境变量): ").strip() or None
+        base_url = input("  Base URL (optional): ").strip() or None
+        temp_input = input("  Temperature (default: 0.1): ").strip()
+        temperature = float(temp_input) if temp_input else 0.1
+
+    # 输出文件
+    default_output = 'results/entity_redistribution_round1.json'
+    output = input(f"\n输出文件路径 (default: {default_output}): ").strip() or default_output
+
+    # 显示配置总结
+    print(f"\n{'='*80}")
+    print("配置总结")
+    print(f"{'='*80}")
+    print(f"  处理范围: {'所有relations' if process_all else selected_relation}")
+    print(f"  Dry-run: {'是' if dry_run else '否'}")
+    if not dry_run:
+        print(f"  Model: {model}")
+        print(f"  Temperature: {temperature}")
+        print(f"  API Key: {'已设置' if api_key else '使用环境变量'}")
+        print(f"  Base URL: {base_url if base_url else '默认'}")
+    print(f"  输出文件: {output}")
+
+    # 确认
+    if not dry_run:
+        confirm = input("\n是否继续? (y/n): ").strip().lower()
+        if confirm != 'y':
+            print("已取消")
+            return
+
     # 处理relations
     results = {}
 
-    if args.relation:
-        # 处理单个relation
-        if args.relation not in relation_entity_counters:
-            print(f"\n错误: Relation '{args.relation}' 不存在")
-            print(f"可用的relations: {list(relation_entity_counters.keys())}")
-            return
-
-        result = process_relation_first_round(
-            args.relation,
-            relation_entity_counters[args.relation],
-            dry_run=args.dry_run,
-            api_key=args.api_key,
-            base_url=args.base_url
-        )
-        results[args.relation] = result
-
-    elif args.all:
+    if process_all:
         # 处理所有relations
         for relation, counter in sorted(relation_entity_counters.items()):
             result = process_relation_first_round(
                 relation,
                 counter,
-                dry_run=args.dry_run,
-                api_key=args.api_key,
-                base_url=args.base_url
+                dry_run=dry_run,
+                api_key=api_key,
+                base_url=base_url
             )
-            results[relation] = result
-
+            if result:  # dry-run会返回空dict
+                results[relation] = result
     else:
-        print("请指定 --relation RELATION_NAME 或 --all")
-        return
+        # 处理单个relation
+        result = process_relation_first_round(
+            selected_relation,
+            relation_entity_counters[selected_relation],
+            dry_run=dry_run,
+            api_key=api_key,
+            base_url=base_url
+        )
+        if result:
+            results[selected_relation] = result
 
     # 保存结果
-    if not args.dry_run and results:
-        output_path = PROJECT_ROOT / args.output
+    if not dry_run and results:
+        output_path = PROJECT_ROOT / output
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         output_data = {
@@ -658,7 +716,14 @@ def main():
         with open(output_path, 'w') as f:
             json.dump(output_data, f, indent=2, ensure_ascii=False)
 
-        print(f"\n✓ 结果已保存到: {output_path}")
+        print(f"\n{'='*80}")
+        print("✅ 处理完成!")
+        print(f"{'='*80}")
+        print(f"结果已保存到: {output_path}")
+        print("\n下一步:")
+        print("  1. 检查每个relation的清理结果是否合理")
+        print("  2. 如果满意，继续进行第二轮孤儿entity重分配")
+        print("  3. 最后进行entity聚类")
 
 
 if __name__ == '__main__':
