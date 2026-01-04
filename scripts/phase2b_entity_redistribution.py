@@ -335,16 +335,26 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
 
     rel_def = RELATION_DEFINITIONS.get(relation, {})
 
-    # 其他relations的简短列表（供参考）
-    other_relations = "\n".join([
-        f"  - {r}: {desc}"
-        for r, desc in RELATION_BRIEF.items()
-        if r != relation
-    ])
+    # 构建其他relations的完整定义（供精确参考）
+    other_relations_detail = ""
+    for r, r_def in RELATION_DEFINITIONS.items():
+        if r == relation:
+            continue
+        other_relations_detail += f"\n### {r}\n"
+        other_relations_detail += f"**职责**: {r_def.get('description', '')}\n\n"
+        other_relations_detail += "**包含范围**:\n"
+        for item in r_def.get('includes', []):
+            other_relations_detail += f"- {item}\n"
+        other_relations_detail += "\n**排除范围**:\n"
+        for item in r_def.get('excludes', []):
+            other_relations_detail += f"- {item}\n"
+        if r_def.get('boundary_rule'):
+            other_relations_detail += f"\n**边界规则**: {r_def['boundary_rule']}\n"
+        other_relations_detail += "\n"
 
     prompt = f"""你是一个专业的知识分类专家。你的任务是清理和优化一个relation下的entity列表。
 
-## Relation定义
+## 当前处理的Relation
 
 **Relation名称**: {relation}
 
@@ -365,9 +375,9 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
 
     prompt += f"""
 
-## 其他Relations（供参考）
+## 所有其他Relations的完整定义（供精确判断移除目标）
 
-{other_relations}
+{other_relations_detail}
 
 ## 当前Entity列表
 
@@ -388,11 +398,16 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
 
 ### 1. 剔除不属于该relation的entities
 
-识别哪些entities **不符合**该relation的定义，应该被移除。
+**非常重要**：严格根据relation的定义和边界规则，识别哪些entities **不符合**该relation的定义。
+
+判断标准：
+- 仔细对照该relation的"包含范围"和"排除范围"
+- 应用"边界规则"进行精确判断
+- 参考其他relations的完整定义，找到更合适的目标relation
 
 对于每个被移除的entity，提供：
-- 移除原因（为什么不属于该relation）
-- 建议目标relation（应该属于哪个relation）
+- 移除原因（明确说明为什么不属于当前relation）
+- 建议目标relation（根据其他relations的定义，判断应该属于哪个relation）
 
 ### 2. 合并同义词/语义相近的entities
 
@@ -402,7 +417,7 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
 
 **重要**：
 - 只合并真正的同义词，不要合并语义层级不同的entities（如man vs warrior）
-- 只合并同一relation内的entities，不要跨relation合并
+- 只合并同一relation内应该保留的entities，不要合并应该被移除的entities
 
 ## 输出格式
 
@@ -417,8 +432,8 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
   },
   "remove": {
     "entity_name": {
-      "reason": "移除原因",
-      "suggested_relation": "建议目标relation"
+      "reason": "移除原因（说明为什么不符合当前relation定义）",
+      "suggested_relation": "建议目标relation（根据其他relations定义判断）"
     },
     ...
   }
@@ -426,7 +441,7 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
 ```
 
 **说明**：
-- `keep_and_merge`: 保留的entities，分组合并。每个group的key是canonical name，value是该组包含的所有entities（包括canonical name自己）
+- `keep_and_merge`: 保留在当前relation的entities，分组合并。每个group的key是canonical name，value是该组包含的所有entities（包括canonical name自己）
 - `remove`: 被移除的entities，key是entity名称，value包含移除原因和建议目标relation
 
 **示例**：
