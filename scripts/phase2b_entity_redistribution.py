@@ -15,9 +15,14 @@ import json
 import argparse
 from pathlib import Path
 from collections import Counter, defaultdict
-import openai
 import os
+import sys
 from typing import Dict, List, Tuple, Any
+
+# 添加项目根目录到路径
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.extraction.mllm_interface import create_mllm
 
 # 项目根目录
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -448,38 +453,58 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
     return prompt
 
 
-def call_gpt4(prompt: str, model: str = "gpt-4o-mini") -> Dict[str, Any]:
-    """调用GPT-4 API"""
-    api_key = os.getenv('OPENAI_API_KEY')
-    if not api_key:
-        raise ValueError("请设置环境变量 OPENAI_API_KEY")
+def call_gpt4(prompt: str, model: str = "gpt-4o-mini", api_key: Optional[str] = None) -> Dict[str, Any]:
+    """
+    调用GPT-4 API（使用项目现有的MLLM接口）
 
-    client = openai.OpenAI(api_key=api_key)
+    Args:
+        prompt: 用户prompt
+        model: 模型名称
+        api_key: API key（可选，如果不提供则从环境变量读取）
 
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {
-                "role": "system",
-                "content": "你是一个专业的知识分类专家，擅长语义分析和实体归类。请严格按照JSON格式输出。"
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        response_format={"type": "json_object"},
-        temperature=0.1
-    )
+    Returns:
+        解析后的JSON结果
+    """
+    from openai import OpenAI
 
-    result = json.loads(response.choices[0].message.content)
-    return result
+    # 使用api_key参数或环境变量
+    client_kwargs = {}
+    if api_key:
+        client_kwargs['api_key'] = api_key
+    # else: OpenAI会自动从环境变量OPENAI_API_KEY读取
+
+    client = OpenAI(**client_kwargs)
+
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "你是一个专业的知识分类专家，擅长语义分析和实体归类。请严格按照JSON格式输出。"
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.1
+        )
+
+        result = json.loads(response.choices[0].message.content)
+        return result
+    except Exception as e:
+        print(f"\n❌ 调用GPT-4失败: {e}")
+        print("\n提示：请确保已设置OPENAI_API_KEY环境变量，或使用 --api-key 参数")
+        raise
 
 
 def process_relation_first_round(
     relation: str,
     entity_counter: Counter,
-    dry_run: bool = False
+    dry_run: bool = False,
+    api_key: Optional[str] = None
 ) -> Dict[str, Any]:
     """第一轮处理：清理和合并某个relation的entities"""
 
@@ -501,7 +526,7 @@ def process_relation_first_round(
 
     # 调用GPT-4
     print("正在调用GPT-4...")
-    result = call_gpt4(prompt)
+    result = call_gpt4(prompt, api_key=api_key)
 
     # 分析结果
     keep_merge = result.get('keep_and_merge', {})
@@ -547,6 +572,8 @@ def main():
     parser.add_argument('--relation', type=str, help='处理指定的relation')
     parser.add_argument('--all', action='store_true', help='处理所有relations')
     parser.add_argument('--dry-run', action='store_true', help='只生成prompt，不调用API')
+    parser.add_argument('--api-key', type=str, default=None,
+                       help='OpenAI API key（可选，如不提供则从环境变量OPENAI_API_KEY读取）')
     parser.add_argument('--output', type=str, default='results/entity_redistribution_round1.json',
                        help='输出文件路径')
 
@@ -580,7 +607,8 @@ def main():
         result = process_relation_first_round(
             args.relation,
             relation_entity_counters[args.relation],
-            dry_run=args.dry_run
+            dry_run=args.dry_run,
+            api_key=args.api_key
         )
         results[args.relation] = result
 
@@ -590,7 +618,8 @@ def main():
             result = process_relation_first_round(
                 relation,
                 counter,
-                dry_run=args.dry_run
+                dry_run=args.dry_run,
+                api_key=args.api_key
             )
             results[relation] = result
 
