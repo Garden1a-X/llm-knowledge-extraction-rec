@@ -331,8 +331,8 @@ def extract_entities_by_relation(phase1_data, mapping_data) -> Dict[str, Counter
     return relation_entity_counters
 
 
-def build_first_round_prompt(relation: str, entities: List[str], entity_counter: Counter) -> str:
-    """构建第一轮prompt：清理和合并entities"""
+def build_filtering_prompt(relation: str, entities: List[str]) -> str:
+    """构建Stage 1 prompt：仅判断每个entity是否属于该relation"""
 
     rel_def = RELATION_DEFINITIONS.get(relation, {})
 
@@ -353,7 +353,7 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
             other_relations_detail += f"\n**边界规则**: {r_def['boundary_rule']}\n"
         other_relations_detail += "\n"
 
-    prompt = f"""你是一个专业的知识分类专家。你的任务是清理和优化一个relation下的entity列表。
+    prompt = f"""你是一个专业的知识分类专家。你的任务是判断哪些entities属于指定的relation，哪些不属于。
 
 ## 当前处理的Relation
 
@@ -395,46 +395,31 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
 
 ## 你的任务
 
-请对这些entities进行两项操作：
+**请专注于一件事**：判断每个entity是否**真正属于**当前relation。
 
-### 1. 剔除不属于该relation的entities
+### 判断标准
 
-**非常重要**：严格根据relation的定义和边界规则，识别哪些entities **不符合**该relation的定义。
-
-判断标准：
 - 仔细对照该relation的"包含范围"和"排除范围"
 - 应用"边界规则"进行精确判断
 - 参考其他relations的完整定义，找到更合适的目标relation
 
-对于每个被移除的entity，提供：
-- 移除原因（明确说明为什么不属于当前relation）
-- 建议目标relation（根据其他relations的定义，判断应该属于哪个relation）
+### 重要提示
 
-### 2. 合并同义词/语义相近的entities
-
-识别哪些entities是**同义词**或**语义相近**（表达同一概念的不同表述），应该合并。
-
-对于每个合并组，选择一个**canonical name**（标准名称，优先选择更通用/更标准的表述）。
-
-**重要**：
-- 只合并真正的同义词，不要合并语义层级不同的entities（如man vs warrior）
-- 只合并同一relation内应该保留的entities，不要合并应该被移除的entities
+- **不要考虑合并问题** - 这个阶段只判断归属，不管同义词
+- **严格遵守排除范围** - 如果entity明确属于排除范围，必须移除
+- **每个entity只能有一个判断** - 要么keep，要么remove，不能同时出现在两个列表
 
 ## 输出格式
 
-请以JSON格式输出，包含两个部分：
+请以JSON格式输出：
 
 ```json
 {
-  "keep_and_merge": {
-    "canonical_name_1": ["entity1", "entity2", "entity3"],
-    "canonical_name_2": ["entity4"],
-    ...
-  },
+  "keep": ["entity1", "entity2", "entity3", ...],
   "remove": {
     "entity_name": {
-      "reason": "移除原因（说明为什么不符合当前relation定义）",
-      "suggested_relation": "建议目标relation（根据其他relations定义判断）"
+      "reason": "明确说明为什么不属于当前relation",
+      "suggested_relation": "根据其他relations定义判断应该去哪里"
     },
     ...
   }
@@ -442,17 +427,13 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
 ```
 
 **说明**：
-- `keep_and_merge`: 保留在当前relation的entities，分组合并。每个group的key是canonical name，value是该组包含的所有entities（包括canonical name自己）
-- `remove`: 被移除的entities，key是entity名称，value包含移除原因和建议目标relation
+- `keep`: 数组，包含所有应该保留在当前relation的entities（原样保留entity名称）
+- `remove`: 对象，包含所有应该移除的entities及其原因和建议目标
 
 **示例**：
 ```json
 {
-  "keep_and_merge": {
-    "human_figure": ["human_portrait", "human_figure", "human_figures"],
-    "landscape": ["landscape"],
-    "building": ["building", "buildings"]
-  },
+  "keep": ["man", "woman", "landscape", "building"],
   "remove": {
     "warrior": {
       "reason": "这是角色类型，不是基础人物类型",
@@ -466,8 +447,86 @@ def build_first_round_prompt(relation: str, entities: List[str], entity_counter:
 }
 ```
 
-请仔细分析每个entity，确保分类准确。
+请仔细分析每个entity，确保分类准确。确保每个entity只出现在keep或remove中的一个位置。
 """
+
+    return prompt
+
+
+def build_merging_prompt(relation: str, entities: List[str]) -> str:
+    """构建Stage 2 prompt：仅合并同义词"""
+
+    rel_def = RELATION_DEFINITIONS.get(relation, {})
+
+    prompt = f"""你是一个专业的知识分类专家。你的任务是识别并合并同义词entities。
+
+## 当前Relation
+
+**Relation名称**: {relation}
+
+**职责**: {rel_def.get('description', '')}
+
+## 已确认属于该Relation的Entities
+
+以下是经过筛选后，确认属于`{relation}`的{len(entities)}个entities：
+
+"""
+
+    # 按字母排序显示entities
+    sorted_entities = sorted(entities)
+    for i, entity in enumerate(sorted_entities, 1):
+        prompt += f"{i}. {entity}\n"
+
+    prompt += """
+
+## 你的任务
+
+**请专注于一件事**：识别哪些entities是同义词或语义相近，应该合并。
+
+### 合并标准
+
+- 只合并**真正的同义词**（表达同一概念的不同表述）
+  - 例如：`human_portrait`, `human_figure`, `human_figures` → 都是指人物画像
+  - 例如：`romance`, `romantic`, `romantic_comedy`, `romantic_drama` → 都围绕浪漫主题
+
+- **不要合并**语义层级不同的entities
+  - 例如：`man` 和 `warrior` 虽然都是人物，但层级不同，不应合并
+  - 例如：`building` 和 `skyscraper` 虽然相关，但具体程度不同
+
+### 选择Canonical Name
+
+- 优先选择**更通用、更标准**的名称作为group的代表
+- 例如：`romance` 优于 `romantic_comedy`
+- 例如：`human_figure` 优于 `human_portrait`
+
+## 输出格式
+
+请以JSON格式输出：
+
+```json
+{
+  "canonical_name_1": ["entity1", "entity2", "entity3"],
+  "canonical_name_2": ["entity4"],
+  ...
+}
+```
+
+**说明**：
+- 每个group的key是canonical name（标准名称）
+- 每个group的value是该组包含的所有entities（包括canonical name自己）
+- 如果某个entity没有同义词，也要包含（value数组只有它自己）
+
+**示例**：
+```json
+{
+  "human_figure": ["human_portrait", "human_figure", "human_figures"],
+  "landscape": ["landscape"],
+  "romance": ["romance", "romantic", "romantic_comedy"],
+  "adventure": ["adventure"]
+}
+```
+
+请仔细分析，只合并真正的同义词。"""
 
     return prompt
 
@@ -528,77 +587,119 @@ def call_gpt4(
         raise
 
 
-def process_relation_first_round(
+def process_relation_two_stage(
     relation: str,
     entity_counter: Counter,
     dry_run: bool = False,
     api_key: Optional[str] = None,
     base_url: Optional[str] = None
 ) -> Dict[str, Any]:
-    """第一轮处理：清理和合并某个relation的entities"""
+    """两阶段处理：先筛选，后合并"""
 
     entities = list(entity_counter.keys())
 
     print(f"\n{'='*80}")
-    print(f"第一轮处理: {relation}")
+    print(f"处理Relation: {relation}")
     print(f"{'='*80}")
-    print(f"当前entities数量: {len(entities)}")
+    print(f"原始entities数量: {len(entities)}")
     print(f"总实例数: {sum(entity_counter.values())}")
 
-    # 构建prompt
-    prompt = build_first_round_prompt(relation, entities, entity_counter)
+    # ========== Stage 1: Filtering ==========
+    print(f"\n{'─'*80}")
+    print("Stage 1: 筛选entities（判断哪些属于该relation）")
+    print(f"{'─'*80}")
+
+    filtering_prompt = build_filtering_prompt(relation, entities)
 
     if dry_run:
-        print("\n[DRY RUN] Prompt预览:")
-        print(prompt[:1000] + "...\n")
+        print("\n[DRY RUN] Stage 1 Prompt预览:")
+        print(filtering_prompt[:1000] + "...\n")
         return {}
 
-    # 调用GPT-4
-    print("正在调用GPT-4...")
-    result = call_gpt4(prompt, api_key=api_key, base_url=base_url)
+    print("正在调用GPT-4进行筛选...")
+    filtering_result = call_gpt4(filtering_prompt, api_key=api_key, base_url=base_url)
 
-    # 分析结果
-    keep_merge = result.get('keep_and_merge', {})
-    remove = result.get('remove', {})
+    keep_entities = filtering_result.get('keep', [])
+    remove_entities = filtering_result.get('remove', {})
 
-    print(f"\n结果:")
-    print(f"  保留并合并: {len(keep_merge)} 个groups（合并前：{sum(len(v) for v in keep_merge.values())} entities）")
-    print(f"  移除: {len(remove)} entities")
+    print(f"\nStage 1 结果:")
+    print(f"  保留: {len(keep_entities)} entities")
+    print(f"  移除: {len(remove_entities)} entities")
 
-    # 显示合并的groups（如果有合并）
-    merged_groups = {k: v for k, v in keep_merge.items() if len(v) > 1}
+    # 显示被移除的entities（前5个）
+    if remove_entities:
+        print(f"\n  被移除的entities（前5个）:")
+        for entity, info in list(remove_entities.items())[:5]:
+            print(f"    - {entity} → {info.get('suggested_relation')}")
+            print(f"      原因: {info.get('reason')}")
+        if len(remove_entities) > 5:
+            print(f"    ... 还有 {len(remove_entities) - 5} 个")
+
+    # ========== Stage 2: Merging ==========
+    if not keep_entities:
+        print("\n⚠️  没有entities被保留，跳过Stage 2合并")
+        return {
+            'relation': relation,
+            'original_entity_count': len(entities),
+            'keep_and_merge': {},
+            'remove': remove_entities,
+            'result_summary': {
+                'kept_groups': 0,
+                'removed_count': len(remove_entities),
+                'compression_rate': 0
+            }
+        }
+
+    print(f"\n{'─'*80}")
+    print("Stage 2: 合并同义词")
+    print(f"{'─'*80}")
+
+    merging_prompt = build_merging_prompt(relation, keep_entities)
+
+    print(f"正在调用GPT-4进行合并（对{len(keep_entities)}个保留的entities）...")
+    merging_result = call_gpt4(merging_prompt, api_key=api_key, base_url=base_url)
+
+    print(f"\nStage 2 结果:")
+    print(f"  合并后groups数: {len(merging_result)}")
+
+    # 显示合并的groups（只显示有多个成员的）
+    merged_groups = {k: v for k, v in merging_result.items() if len(v) > 1}
     if merged_groups:
-        print(f"\n  合并的groups:")
+        print(f"  其中包含多个成员的groups: {len(merged_groups)}")
+        print(f"\n  合并示例（前5个）:")
         for canonical, members in list(merged_groups.items())[:5]:
             print(f"    - {canonical}: {members}")
         if len(merged_groups) > 5:
             print(f"    ... 还有 {len(merged_groups) - 5} 个groups")
+    else:
+        print(f"  没有需要合并的同义词")
 
-    # 显示被移除的entities
-    if remove:
-        print(f"\n  被移除的entities:")
-        for entity, info in list(remove.items())[:5]:
-            print(f"    - {entity} → {info.get('suggested_relation')}")
-            print(f"      原因: {info.get('reason')}")
-        if len(remove) > 5:
-            print(f"    ... 还有 {len(remove) - 5} 个")
+    # ========== 汇总结果 ==========
+    print(f"\n{'='*80}")
+    print(f"最终结果汇总:")
+    print(f"{'='*80}")
+    print(f"  原始entities: {len(entities)}")
+    print(f"  保留: {len(keep_entities)} → 合并为 {len(merging_result)} groups")
+    print(f"  移除: {len(remove_entities)}")
+    print(f"  压缩率: {len(merging_result) / len(entities) * 100:.1f}%")
 
     return {
         'relation': relation,
         'original_entity_count': len(entities),
-        'keep_and_merge': keep_merge,
-        'remove': remove,
+        'keep_and_merge': merging_result,
+        'remove': remove_entities,
         'result_summary': {
-            'kept_groups': len(keep_merge),
-            'removed_count': len(remove),
-            'compression_rate': len(keep_merge) / len(entities) if entities else 0
+            'kept_entities': len(keep_entities),
+            'kept_groups': len(merging_result),
+            'removed_count': len(remove_entities),
+            'compression_rate': len(merging_result) / len(entities) if entities else 0
         }
     }
 
 
 def main():
     print("="*80)
-    print("Phase 2b Entity重分配 - 第一轮清理与合并")
+    print("Phase 2b Entity重分配 - 两阶段处理（筛选+合并）")
     print("="*80)
     print()
 
@@ -694,7 +795,7 @@ def main():
     if process_all:
         # 处理所有relations
         for relation, counter in sorted(relation_entity_counters.items()):
-            result = process_relation_first_round(
+            result = process_relation_two_stage(
                 relation,
                 counter,
                 dry_run=dry_run,
@@ -705,7 +806,7 @@ def main():
                 results[relation] = result
     else:
         # 处理单个relation
-        result = process_relation_first_round(
+        result = process_relation_two_stage(
             selected_relation,
             relation_entity_counters[selected_relation],
             dry_run=dry_run,
