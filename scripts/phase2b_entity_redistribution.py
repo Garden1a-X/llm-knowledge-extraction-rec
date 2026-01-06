@@ -62,18 +62,19 @@ RELATION_DEFINITIONS = {
     },
 
     "visual_theme": {
-        "description": "整体视觉/叙事主题、概念性主题",
+        "description": "整体视觉/叙事主题、概念性主题（不包括电影类型）",
         "includes": [
-            "叙事主题：war, romance, adventure, survival, coming_of_age",
-            "概念主题：urban_life, nature, technology, isolation, freedom",
-            "视觉概念：minimalism, surrealism, realism, abstraction"
+            "叙事主题：war, romance, adventure, survival, coming_of_age, betrayal, revenge",
+            "概念主题：urban_life, nature, technology, isolation, freedom, tradition",
+            "视觉概念：minimalism, surrealism, realism, abstraction, symmetry_theme"
         ],
         "excludes": [
             "单纯颜色 → color_palette",
             "单纯情绪 → mood",
-            "艺术流派 → artistic_styles"
+            "艺术流派 → artistic_styles",
+            "电影类型（horror, thriller, comedy, action, sci-fi等） → genre"
         ],
-        "boundary_rule": "问自己：'这是在描述什么主题/讲什么故事，还是在描述什么颜色/情绪/风格？'如果是主题/故事→visual_theme，否则→对应的专门relation"
+        "boundary_rule": "问自己：'这是在描述什么主题/讲什么故事的内容，还是什么类型的电影/什么颜色/情绪/风格？'主题例子：war战争、freedom自由、betrayal背叛。类型例子：horror恐怖片、thriller惊悚片→genre"
     },
 
     "color_palette": {

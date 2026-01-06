@@ -99,7 +99,7 @@ ELSE IF entity仅描述人物的基础类型/数量/性别:
 
 ### **3. visual_theme**
 
-**职责**：整体视觉/叙事主题、概念性主题
+**职责**：整体视觉/叙事主题、概念性主题（**不包括电影类型**）
 
 **范围**：
 - ✅ 叙事主题：war, romance, adventure, survival, coming_of_age, betrayal, revenge, redemption
@@ -108,36 +108,59 @@ ELSE IF entity仅描述人物的基础类型/数量/性别:
 - ❌ 单纯颜色 → **color_palette**
 - ❌ 单纯情绪 → **mood**
 - ❌ 艺术流派 → **artistic_styles**
+- ❌ 电影类型（horror, thriller, comedy, action, sci-fi等） → **genre**
 
 **核心判断标准**：
-> 问自己："这是在描述**什么主题/讲什么故事**，还是在描述**什么颜色/什么情绪/什么风格**？"
-> - 如果是主题/故事 → visual_theme
+> 问自己："这是在描述**什么主题/讲什么故事的内容**，还是在描述**什么类型的电影/什么颜色/什么情绪/什么风格**？"
+> - 如果是主题/故事内容 → visual_theme
+> - 如果是电影类型 → genre
 > - 如果是颜色/情绪/风格 → 对应的专门relation
+
+**主题 vs 类型的区别**：
+- **主题（theme）**：描述故事讲什么、传达什么概念（war战争, betrayal背叛, freedom自由）
+- **类型（genre）**：描述电影属于什么类别（horror恐怖片, thriller惊悚片, comedy喜剧片）
+- 例子：
+  - "war" = 战争主题 → visual_theme
+  - "war_film" = 战争片类型 → genre
+  - "horror" = 恐怖片类型 → genre（不是"恐怖主题"）
+  - "psychological_thriller" = 心理惊悚片类型 → genre（不是"心理主题"）
 
 **边界规则（最复杂，需仔细判断）**：
 | Entity | 判断 | 原因 |
 |--------|------|------|
+| "war" | ✅ visual_theme | 叙事主题（战争） |
+| "romance" | ✅ visual_theme | 叙事主题（浪漫） |
+| "adventure" | ✅ visual_theme | 叙事主题（冒险） |
+| "betrayal" | ✅ visual_theme | 叙事主题（背叛） |
+| "freedom" | ✅ visual_theme | 概念主题（自由） |
+| "urban_life" | ✅ visual_theme | 概念主题（城市生活） |
+| "minimalism" | ✅ visual_theme | 视觉概念（极简主义） |
+| **--- 以下是genre，不是theme ---** |
+| "horror" | ❌ → genre | 恐怖**片类型**，不是主题 |
+| "thriller" | ❌ → genre | 惊悚**片类型**，不是主题 |
+| "psychological_thriller" | ❌ → genre | 心理惊悚**片类型** |
+| "crime_thriller" | ❌ → genre | 犯罪惊悚**片类型** |
+| "action" | ❌ → genre | 动作**片类型** |
+| "comedy" | ❌ → genre | 喜剧**片类型** |
+| "horror_comedy" | ❌ → genre | 恐怖喜剧**片类型** |
+| "sci-fi" | ❌ → genre | 科幻**片类型** |
+| **--- 其他排除情况 ---** |
 | "red" | ❌ → color_palette | 单纯颜色 |
 | "romantic" | ❌ → mood | 情绪形容词 |
-| "romance" | ✅ visual_theme | 叙事主题 |
-| "romance_theme" | ✅ visual_theme | 明确主题 |
-| "dark" | ❌ → mood | 情绪 |
-| "darkness" | ⚠️ 模糊 | 可能是mood（情绪）或visual_theme（概念） |
-| "darkness_theme" | ✅ visual_theme | 明确概念主题 |
+| "suspenseful" | ❌ → mood | 情绪形容词 |
+| "dark" | ❌ → mood | 情绪描述 |
 | "noir" | ❌ → artistic_styles | 艺术流派 |
-| "film_noir_aesthetic" | ⚠️ 模糊 | 可能是artistic_styles或visual_theme |
-| "vintage" | ❌ → artistic_styles | 复古风格 |
-| "nostalgia" | ❌ → mood | 怀旧情绪 |
-| "nostalgic_theme" | ✅ visual_theme | 概念主题 |
-| "war" | ✅ visual_theme | 叙事主题 |
-| "urban_life" | ✅ visual_theme | 概念主题 |
-| "minimalism" | ✅ visual_theme | 视觉概念 |
 | "minimalist" | ❌ → artistic_styles | 风格形容词 |
 
 **命名规则辅助判断**：
 - 如果是形容词形式（romantic, dark, minimalist） → 倾向mood或artistic_styles
-- 如果是名词形式（romance, darkness, minimalism） → 倾向visual_theme
-- 但有例外，需结合语义判断
+- 如果是名词形式（romance, darkness, minimalism） → 倾向visual_theme（作为概念）
+- 例外：如果名词明确是电影类型词（horror, thriller, comedy），即使是名词也要→ genre
+
+**关于surrealism/minimalism等视觉概念词**：
+- `surrealism`, `minimalism`, `realism` 等名词 → visual_theme（作为视觉概念/主题）
+- `surrealist`, `minimalist`, `realist` 等形容词 → artistic_styles（作为风格）
+- `surrealist_style`, `minimalist_style` → artistic_styles（明确标注为风格）
 
 **为什么保留visual_theme？**
 - 有些概念性主题无法归入其他relations（如war, urban_life, freedom）
