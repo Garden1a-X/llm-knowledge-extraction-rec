@@ -35,29 +35,19 @@ from scripts.phase2b_shared import (
 )
 
 
-def build_filtering_prompt(relation: str, entities: List[str]) -> str:
-    """构建Stage 1 prompt：仅判断每个entity是否属于该relation"""
+def build_single_entity_prompt(relation: str, entity: str) -> str:
+    """构建单个entity的判断prompt"""
 
     rel_def = RELATION_DEFINITIONS.get(relation, {})
 
-    # 构建其他relations的完整定义（供精确参考）
-    other_relations_detail = ""
+    # 构建其他relations的简要说明（供参考）
+    other_relations_brief = ""
     for r, r_def in RELATION_DEFINITIONS.items():
         if r == relation:
             continue
-        other_relations_detail += f"\n### {r}\n"
-        other_relations_detail += f"**职责**: {r_def.get('description', '')}\n\n"
-        other_relations_detail += "**包含范围**:\n"
-        for item in r_def.get('includes', []):
-            other_relations_detail += f"- {item}\n"
-        other_relations_detail += "\n**排除范围**:\n"
-        for item in r_def.get('excludes', []):
-            other_relations_detail += f"- {item}\n"
-        if r_def.get('boundary_rule'):
-            other_relations_detail += f"\n**边界规则**: {r_def['boundary_rule']}\n"
-        other_relations_detail += "\n"
+        other_relations_brief += f"  - **{r}**: {r_def.get('description', '')}\n"
 
-    prompt = f"""你是一个专业的知识分类专家。你的任务是判断哪些entities属于指定的relation，哪些不属于。
+    prompt = f"""你是一个专业的知识分类专家。你的任务是判断一个entity是否属于指定的relation。
 
 ## 当前处理的Relation
 
@@ -80,77 +70,55 @@ def build_filtering_prompt(relation: str, entities: List[str]) -> str:
 
     prompt += f"""
 
-## 所有其他Relations的完整定义（供精确判断移除目标）
+## 其他可用的Relations（供参考）
 
-{other_relations_detail}
+{other_relations_brief}
 
-## 当前Entity列表
+## 要判断的Entity
 
-以下是当前归属于`{relation}`的{len(entities)}个unique entities：
-
-"""
-
-    sorted_entities = sorted(entities)
-    for i, entity in enumerate(sorted_entities, 1):
-        prompt += f"{i}. {entity}\n"
-
-    prompt += """
+**Entity**: `{entity}`
 
 ## 你的任务
 
-**请专注于一件事**：判断每个entity是否**真正属于**当前relation。
+请判断这个entity **`{entity}`** 是否属于relation **`{relation}`**。
 
 ### 判断标准
 
-- 仔细对照该relation的"包含范围"和"排除范围"
-- 应用"边界规则"进行精确判断
-- 参考其他relations的完整定义，找到更合适的目标relation
-
-### 重要提示
-
-- **不要考虑合并问题** - 这个阶段只判断归属，不管同义词
-- **严格遵守排除范围** - 如果entity明确属于排除范围，必须移除
-- **每个entity只能有一个判断** - 要么keep，要么remove，不能同时出现在两个列表
+1. 仔细对照 `{relation}` 的"包含范围"和"排除范围"
+2. 应用"边界规则"进行精确判断
+3. 如果不属于，判断应该去哪个relation
 
 ## 输出格式
 
 请以JSON格式输出：
 
 ```json
-{
-  "keep": ["entity1", "entity2", "entity3", ...],
-  "remove": {
-    "entity_name": {
-      "reason": "明确说明为什么不属于当前relation",
-      "suggested_relation": "根据其他relations定义判断应该去哪里"
-    },
-    ...
-  }
-}
+{{
+  "belongs": true/false,
+  "reason": "简要说明判断理由",
+  "suggested_relation": "如果不属于，建议去哪个relation（如果belongs=true则为null）"
+}}
 ```
 
-**说明**：
-- `keep`: 数组，包含所有应该保留在当前relation的entities（原样保留entity名称）
-- `remove`: 对象，包含所有应该移除的entities及其原因和建议目标
-
-**示例**：
+**示例1（属于）**：
 ```json
-{
-  "keep": ["man", "woman", "landscape", "building"],
-  "remove": {
-    "warrior": {
-      "reason": "这是角色类型，不是基础人物类型",
-      "suggested_relation": "character_type"
-    },
-    "red": {
-      "reason": "这是颜色，不是视觉主体",
-      "suggested_relation": "color_palette"
-    }
-  }
-}
+{{
+  "belongs": true,
+  "reason": "war是典型的叙事主题，描述战争故事",
+  "suggested_relation": null
+}}
 ```
 
-请仔细分析每个entity，确保分类准确。确保每个entity只出现在keep或remove中的一个位置。
+**示例2（不属于）**：
+```json
+{{
+  "belongs": false,
+  "reason": "red是单一颜色，不是视觉主题",
+  "suggested_relation": "color_palette"
+}}
+```
+
+请仔细分析这个entity，给出准确判断。
 """
 
     return prompt
@@ -204,7 +172,7 @@ def process_relation_filtering(
     api_key: Optional[str] = None,
     base_url: Optional[str] = None
 ) -> Dict[str, Any]:
-    """Stage 1处理：筛选entities"""
+    """Stage 1处理：对每个entity单独调用LLM进行筛选"""
 
     entities = list(entity_counter.keys())
 
@@ -214,22 +182,50 @@ def process_relation_filtering(
     print(f"原始entities数量: {len(entities)}")
     print(f"总实例数: {sum(entity_counter.values())}")
 
-    # 构建prompt
-    filtering_prompt = build_filtering_prompt(relation, entities)
-
     if dry_run:
-        print("\n[DRY RUN] Prompt预览:")
-        print(filtering_prompt[:1000] + "...\n")
+        # Dry-run模式：只显示第一个entity的prompt
+        first_entity = entities[0] if entities else "example"
+        prompt = build_single_entity_prompt(relation, first_entity)
+        print(f"\n[DRY RUN] 示例prompt（entity: {first_entity}）:")
+        print(prompt[:1000] + "...\n")
         return {}
 
-    # 调用GPT-4
-    print("\n正在调用GPT-4进行筛选...")
-    filtering_result = call_gpt4(filtering_prompt, api_key=api_key, base_url=base_url)
+    # 逐个处理每个entity
+    keep_entities = []
+    remove_entities = {}
 
-    keep_entities = filtering_result.get('keep', [])
-    remove_entities = filtering_result.get('remove', {})
+    print(f"\n开始逐个判断entities（总共{len(entities)}个）...")
+
+    for idx, entity in enumerate(entities, 1):
+        # 显示进度
+        print(f"\r  处理进度: {idx}/{len(entities)} ({entity})", end="", flush=True)
+
+        # 构建单个entity的prompt
+        prompt = build_single_entity_prompt(relation, entity)
+
+        # 调用GPT-4
+        try:
+            result = call_gpt4(prompt, api_key=api_key, base_url=base_url)
+
+            if result.get('belongs', False):
+                keep_entities.append(entity)
+            else:
+                remove_entities[entity] = {
+                    'reason': result.get('reason', '未提供原因'),
+                    'suggested_relation': result.get('suggested_relation', 'additional_elements')
+                }
+        except Exception as e:
+            print(f"\n⚠️  处理 '{entity}' 时出错: {e}")
+            print(f"    跳过该entity，继续处理下一个...")
+            continue
+
+    print("\n")  # 换行
 
     # Validation检查
+    filtering_result = {
+        'keep': keep_entities,
+        'remove': remove_entities
+    }
     is_valid = validate_filtering_result(filtering_result, entities)
 
     if not is_valid:
