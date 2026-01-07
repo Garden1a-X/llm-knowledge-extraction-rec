@@ -3,15 +3,16 @@
 Phase 2b Stage 2: Entity合并（合并同义词）
 
 目标：
-1. 读取Stage 1的筛选结果
-2. 对保留的entities进行同义词合并
+1. 读取Stage 1.5的重新分配结果（或Stage 1的筛选结果）
+2. 对最终的entities进行同义词合并
 3. 输出最终的合并结果
 
 使用：
   python scripts/phase2b_stage2_merging.py
 
 输入：
-  results/entity_redistribution_stage1_filtering.json (Stage 1输出)
+  results/entity_redistribution_stage1_5_redistributed.json (Stage 1.5输出，推荐)
+  或 results/entity_redistribution_stage1_filtering.json (Stage 1输出，兼容)
 
 输出：
   results/entity_redistribution_stage2_merged.json
@@ -176,12 +177,15 @@ def process_relation_merging(
 ) -> Dict[str, Any]:
     """Stage 2处理：合并同义词"""
 
-    keep_entities = stage1_result.get('keep', [])
+    # 兼容Stage 1和Stage 1.5的输出格式
+    # Stage 1.5: 使用'final_entities'
+    # Stage 1: 使用'keep'
+    keep_entities = stage1_result.get('final_entities', stage1_result.get('keep', []))
 
     print(f"\n{'='*80}")
     print(f"Stage 2 - 合并Relation: {relation}")
     print(f"{'='*80}")
-    print(f"Stage 1保留的entities数量: {len(keep_entities)}")
+    print(f"待合并的entities数量: {len(keep_entities)}")
 
     if not keep_entities:
         print("⚠️  没有entities需要合并，跳过")
@@ -246,33 +250,36 @@ def main():
     print("="*80)
     print()
 
-    # 默认输入文件
-    default_input = 'results/entity_redistribution_stage1_filtering.json'
-    input_file = input(f"Stage 1结果文件路径 (default: {default_input}): ").strip() or default_input
+    # 默认输入文件（优先使用Stage 1.5输出）
+    default_input = 'results/entity_redistribution_stage1_5_redistributed.json'
+    input_file = input(f"输入文件路径 (default: {default_input}): ").strip() or default_input
 
     input_path = PROJECT_ROOT / input_file
 
     # 检查文件是否存在
     if not input_path.exists():
         print(f"❌ 错误: 文件不存在: {input_path}")
-        print("\n请先运行 Stage 1: python scripts/phase2b_stage1_filtering.py")
+        print("\n请先运行:")
+        print("  Stage 1.5 (推荐): python scripts/phase2b_stage1_5_redistribution.py")
+        print("  或 Stage 1: python scripts/phase2b_stage1_filtering.py")
         return
 
-    # 加载Stage 1结果
-    print(f"\n加载Stage 1结果: {input_path}")
+    # 加载结果
+    print(f"\n加载输入文件: {input_path}")
     with open(input_path, 'r') as f:
         stage1_data = json.load(f)
 
     stage1_results = stage1_data.get('results', {})
 
     if not stage1_results:
-        print("❌ 错误: Stage 1结果为空")
+        print("❌ 错误: 结果为空")
         return
 
-    print(f"找到 {len(stage1_results)} 个relations的筛选结果:")
+    print(f"找到 {len(stage1_results)} 个relations:")
     for rel in stage1_results.keys():
-        kept = len(stage1_results[rel].get('keep', []))
-        print(f"  - {rel:25s}: {kept} entities保留")
+        # 兼容Stage 1和Stage 1.5
+        entities = stage1_results[rel].get('final_entities', stage1_results[rel].get('keep', []))
+        print(f"  - {rel:25s}: {len(entities)} entities")
 
     # 交互式配置
     print(f"\n{'='*80}")
@@ -368,20 +375,22 @@ def main():
         output_path = PROJECT_ROOT / output
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # 合并Stage 1和Stage 2的完整结果
+        # 合并Stage 1/1.5和Stage 2的完整结果
         combined_results = {}
         for relation, stage2_result in results.items():
-            stage1_result = stage1_results[relation]
+            prev_stage_result = stage1_results[relation]
+
+            # 兼容Stage 1和Stage 1.5的输出格式
+            entities_for_merging = prev_stage_result.get('final_entities', prev_stage_result.get('keep', []))
+
             combined_results[relation] = {
                 'relation': relation,
-                'original_entity_count': stage1_result.get('original_entity_count', 0),
-                'stage1_keep': stage1_result.get('keep', []),
-                'stage1_remove': stage1_result.get('remove', {}),
+                'original_entity_count': prev_stage_result.get('original_entity_count', 0),
+                'previous_stage_data': prev_stage_result,  # 保留完整的前序阶段数据
                 'stage2_merged_groups': stage2_result.get('merged_groups', {}),
                 'summary': {
-                    'original_count': stage1_result.get('original_entity_count', 0),
-                    'kept_count': len(stage1_result.get('keep', [])),
-                    'removed_count': len(stage1_result.get('remove', {})),
+                    'original_count': prev_stage_result.get('original_entity_count', 0),
+                    'entities_for_merging': len(entities_for_merging),
                     'final_groups': len(stage2_result.get('merged_groups', {}))
                 }
             }
@@ -407,7 +416,7 @@ def main():
         for relation, data in combined_results.items():
             summary = data['summary']
             print(f"  {relation}:")
-            print(f"    原始: {summary['original_count']} → 保留: {summary['kept_count']} → 合并为: {summary['final_groups']} groups")
+            print(f"    原始: {summary['original_count']} → 待合并: {summary['entities_for_merging']} → 合并为: {summary['final_groups']} groups")
         print("\n下一步:")
         print("  1. 检查Stage 2的合并结果")
         print("  2. 继续处理其他relations或进行entity聚类")
