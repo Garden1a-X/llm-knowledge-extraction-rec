@@ -1,8 +1,8 @@
 # LLM知识抽取方案
 
 *Created: 2025-12-27*
-*Last Updated: 2026-01-03*
-*Status: **Phase 2a 完成，Phase 2b 待进行** - Relation聚类+LLM微调完成，待进行Entity聚类*
+*Last Updated: 2026-01-07*
+*Status: **Phase 2b-0 进行中** - Entity Redistribution Stage 1 (Filtering) 测试完成，待执行全量处理*
 
 ---
 
@@ -1253,19 +1253,29 @@ src/
 
 ## 📝 下一步行动
 
-### **当前阶段：Phase 2b Entity重分配与聚类** ⬅️ 我们在这里
+### **当前阶段：Phase 2b-0 Entity Redistribution** ⬅️ 我们在这里
 
-**立即任务**（Phase 2b-0: Entity重分配）：
+**Stage 1: Filtering（筛选）**：
 1. ✅ 分析entity分布，识别relation边界问题
-2. ✅ 定义14+1个relations的职责边界
-3. ⏸️ 设计第一轮LLM prompt（按relation清理+合并entities）
-4. ⏸️ 设计第二轮LLM prompt（重分配孤儿entities）
-5. ⏸️ 实现entity重分配脚本并执行
-6. ⏸️ 人工审核重分配结果
-7. ⏸️ 生成entity_redistribution_mapping.json
+2. ✅ 定义14+1个relations的职责边界（RELATION_DEFINITIONS.md）
+3. ✅ 设计Stage 1 LLM prompt（CoT推理：先分析再判断）
+4. ✅ 实现scripts/phase2b_stage1_filtering.py
+5. ✅ 测试visual_theme relation（100 entities → 42 keep + 58 remove）
+6. ⏸️ **待执行**：对所有15个relations运行Stage 1筛选
 
-**后续任务**（Phase 2b-1: Entity聚类）：
-1. 基于重分配后的clean data进行entity聚类
+**Stage 1.5: Redistribution（重分配）**：
+1. ⏸️ 设计redistribution逻辑（收集remove + 重新分配）
+2. ⏸️ 处理冲突决策机制（entity被多个relations移除）
+3. ⏸️ 实现scripts/phase2b_stage1_5_redistribution.py
+4. ⏸️ 执行重分配并生成最终entity列表
+5. ⏸️ 人工审核重分配结果
+
+**Stage 2: Merging（合并）**：
+1. ✅ 已实现scripts/phase2b_stage2_merging.py
+2. ⏸️ 待执行：对每个relation合并同义词
+
+**Phase 2b-1: Entity Clustering**：
+1. 基于Phase 2b-0清理后的数据进行跨relation聚类
 2. 目标：626 entities → 250-270个标准entities
 3. 保存最终知识词典v1
 
