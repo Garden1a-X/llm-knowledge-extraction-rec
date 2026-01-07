@@ -36,7 +36,7 @@ from scripts.phase2b_shared import (
 
 
 def build_single_entity_prompt(relation: str, entity: str) -> str:
-    """构建单个entity的判断prompt"""
+    """构建单个entity的判断prompt（CoT版本：先分析再判断）"""
 
     rel_def = RELATION_DEFINITIONS.get(relation, {})
 
@@ -80,45 +80,130 @@ def build_single_entity_prompt(relation: str, entity: str) -> str:
 
 ## 你的任务
 
-请判断这个entity **`{entity}`** 是否属于relation **`{relation}`**。
+请**先分析**这个entity的特征，**再判断**它是否属于relation `{relation}`。
 
-### 判断标准
+### Step 1: 分析Entity
 
-1. 仔细对照 `{relation}` 的"包含范围"和"排除范围"
-2. 应用"边界规则"进行精确判断
-3. 如果不属于，判断应该去哪个relation
+请先回答以下问题来分析这个entity：
+
+1. **entity_meaning**: 这个entity描述的是什么？（用一句话说明）
+
+2. **key_features**: 识别关键特征
+   - 词性：是名词、形容词还是动词？
+   - 语义类别：描述的是类型、颜色、情绪、主题、风格、还是其他？
+   - 其他显著特征
+
+3. **exclusion_check**: 排除规则检查（逐项判断）
+   - is_genre_word: 是否是电影类型词？（标准：观众会说"我想看一部XX片"吗？或是否用于电影分类/归档？）
+   - is_color_scheme: 是否是单纯的颜色或配色方案？
+   - is_mood_word: 是否是情绪/氛围形容词？
+   - is_art_style: 是否是艺术流派/风格技法？
+   - is_texture: 是否是物理质感描述？
+
+### Step 2: 基于分析做出判断
+
+根据上述分析，判断entity `{entity}` 是否属于 `{relation}`。
 
 ## 输出格式
 
-请以JSON格式输出：
+请严格按照以下JSON格式输出（**先写analysis，再写判断结果**）：
 
 ```json
 {{
+  "analysis": {{
+    "entity_meaning": "这个entity描述的是什么",
+    "key_features": [
+      "词性：...",
+      "语义类别：...",
+      "其他特征：..."
+    ],
+    "exclusion_check": {{
+      "is_genre_word": "yes/no，理由：...",
+      "is_color_scheme": "yes/no，理由：...",
+      "is_mood_word": "yes/no，理由：...",
+      "is_art_style": "yes/no，理由：...",
+      "is_texture": "yes/no，理由：..."
+    }}
+  }},
   "belongs": true/false,
-  "reason": "简要说明判断理由",
+  "reason": "基于上述分析的判断理由（简短总结）",
   "suggested_relation": "如果不属于，建议去哪个relation（如果belongs=true则为null）"
 }}
 ```
 
-**示例1（属于）**：
+**示例1（属于visual_theme）**：
 ```json
 {{
+  "analysis": {{
+    "entity_meaning": "war描述战争这一叙事主题",
+    "key_features": [
+      "词性：名词",
+      "语义类别：叙事主题，描述故事内容",
+      "其他特征：是讲述的故事类型，不是电影分类"
+    ],
+    "exclusion_check": {{
+      "is_genre_word": "no，war不是电影类型，而是故事主题",
+      "is_color_scheme": "no，不涉及颜色",
+      "is_mood_word": "no，不是情绪词",
+      "is_art_style": "no，不是艺术风格",
+      "is_texture": "no，不是质感"
+    }}
+  }},
   "belongs": true,
-  "reason": "war是典型的叙事主题，描述战争故事",
+  "reason": "war是典型的叙事主题，未命中任何排除规则",
   "suggested_relation": null
 }}
 ```
 
-**示例2（不属于）**：
+**示例2（不属于visual_theme）**：
 ```json
 {{
+  "analysis": {{
+    "entity_meaning": "romantic_comedy是浪漫喜剧电影类型",
+    "key_features": [
+      "词性：名词（复合词）",
+      "语义类别：电影类型/分类",
+      "其他特征：是电影产业的标准类型分类，观众会说'我想看浪漫喜剧片'"
+    ],
+    "exclusion_check": {{
+      "is_genre_word": "yes，romantic_comedy是标准电影类型，用于对电影进行分类",
+      "is_color_scheme": "no",
+      "is_mood_word": "no",
+      "is_art_style": "no",
+      "is_texture": "no"
+    }}
+  }},
   "belongs": false,
-  "reason": "red是单一颜色，不是视觉主题",
+  "reason": "命中genre排除规则：是电影类型词，应归入genre",
+  "suggested_relation": "genre"
+}}
+```
+
+**示例3（不属于visual_theme）**：
+```json
+{{
+  "analysis": {{
+    "entity_meaning": "warm_tones描述暖色调配色方案",
+    "key_features": [
+      "词性：名词",
+      "语义类别：配色方案",
+      "其他特征：描述颜色的温度属性"
+    ],
+    "exclusion_check": {{
+      "is_genre_word": "no",
+      "is_color_scheme": "yes，warm_tones是配色方案，描述暖色系的颜色组合",
+      "is_mood_word": "no",
+      "is_art_style": "no",
+      "is_texture": "no"
+    }}
+  }},
+  "belongs": false,
+  "reason": "命中color_palette排除规则：是配色方案",
   "suggested_relation": "color_palette"
 }}
 ```
 
-请仔细分析这个entity，给出准确判断。
+请仔细按照上述步骤分析entity `{entity}`，**先完成analysis部分，再做出判断**。
 """
 
     return prompt
@@ -192,6 +277,7 @@ def process_relation_filtering(
 
     # 逐个处理每个entity
     keep_entities = []
+    keep_entities_with_analysis = {}  # 保存分析信息
     remove_entities = {}
 
     print(f"\n开始逐个判断entities（总共{len(entities)}个）...")
@@ -209,8 +295,14 @@ def process_relation_filtering(
 
             if result.get('belongs', False):
                 keep_entities.append(entity)
+                # 保存完整的分析信息
+                keep_entities_with_analysis[entity] = {
+                    'analysis': result.get('analysis', {}),
+                    'reason': result.get('reason', '未提供原因')
+                }
             else:
                 remove_entities[entity] = {
+                    'analysis': result.get('analysis', {}),
                     'reason': result.get('reason', '未提供原因'),
                     'suggested_relation': result.get('suggested_relation', 'additional_elements')
                 }
@@ -241,13 +333,30 @@ def process_relation_filtering(
         for entity, info in list(remove_entities.items())[:10]:
             print(f"    - {entity} → {info.get('suggested_relation')}")
             print(f"      原因: {info.get('reason')}")
+            # 显示关键的排除检查结果
+            analysis = info.get('analysis', {})
+            exclusion_check = analysis.get('exclusion_check', {})
+            if exclusion_check:
+                triggered = [k for k, v in exclusion_check.items() if isinstance(v, str) and v.lower().startswith('yes')]
+                if triggered:
+                    print(f"      排除检查: {', '.join(triggered)}")
         if len(remove_entities) > 10:
             print(f"    ... 还有 {len(remove_entities) - 10} 个")
+
+    # 显示保留的entities（前10个）的分析摘要
+    if keep_entities_with_analysis:
+        print(f"\n  保留的entities（前10个示例）:")
+        for entity, info in list(keep_entities_with_analysis.items())[:10]:
+            print(f"    - {entity}")
+            print(f"      原因: {info.get('reason')}")
+        if len(keep_entities_with_analysis) > 10:
+            print(f"    ... 还有 {len(keep_entities_with_analysis) - 10} 个")
 
     return {
         'relation': relation,
         'original_entity_count': len(entities),
         'keep': keep_entities,
+        'keep_with_analysis': keep_entities_with_analysis,  # 保存分析信息
         'remove': remove_entities,
         'validation': {
             'passed': is_valid,
