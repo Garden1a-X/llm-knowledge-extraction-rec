@@ -283,6 +283,15 @@ def extract_entities_by_relation(phase1_data, mapping_data) -> Dict[str, Counter
             if entity:
                 relation_entities[standard_relation].append(entity)
 
+    # 合并depicted_entities到depicted_subject（根据Phase 2b设计决策）
+    if 'depicted_entities' in relation_entities:
+        print("⚠️  检测到depicted_entities，正在合并到depicted_subject...")
+        if 'depicted_subject' not in relation_entities:
+            relation_entities['depicted_subject'] = []
+        relation_entities['depicted_subject'].extend(relation_entities['depicted_entities'])
+        del relation_entities['depicted_entities']
+        print(f"   ✓ 已合并 depicted_entities → depicted_subject")
+
     # 统计频率
     relation_entity_counters = {}
     for relation, entities in relation_entities.items():

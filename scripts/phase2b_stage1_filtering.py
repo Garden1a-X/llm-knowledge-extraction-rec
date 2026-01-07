@@ -47,8 +47,22 @@ def build_single_entity_prompt(relation: str, entity: str) -> str:
             continue
         other_relations_brief += f"  - **{r}**: {r_def.get('description', '')}\n"
 
-    prompt = f"""你是一个专业的知识分类专家。你的任务是判断一个entity是否属于指定的relation。
+    # 针对additional_elements的特殊说明
+    special_note = ""
+    if relation == "additional_elements":
+        special_note = """
+⚠️ **特别注意：additional_elements是"垃圾桶"角色**
+- 这个relation用于接收**无法归类到其他14个relations**的entities
+- **判断原则**：先尝试将entity归类到其他14个relations，只有确实无法归类时才保留
+- **严格标准**：如果entity能勉强归入任何其他relation，就应该移除到那个relation
+- **例子**：
+  - `historical` → 应该去visual_theme（历史主题）
+  - `turbulent_waves` → 应该去depicted_subject（场景）
+  - `sports_gear` → 真的无法归类 → 保留
+"""
 
+    prompt = f"""你是一个专业的知识分类专家。你的任务是判断一个entity是否属于指定的relation。
+{special_note}
 ## 当前处理的Relation
 
 **Relation名称**: {relation}
@@ -103,6 +117,16 @@ def build_single_entity_prompt(relation: str, entity: str) -> str:
 ### Step 2: 基于分析做出判断
 
 根据上述分析，判断entity `{entity}` 是否属于 `{relation}`。
+
+**🔑 判断标准（重要）**：
+- ✅ **宽松保留原则**：只要entity在当前relation的context下有合理的使用场景，就应该保留
+- ❌ **不要过度排除**：不要因为entity"也可能属于其他relation"就排除它
+- 💡 **Context优先**：在`{relation}`的使用场景中，这个entity是否合理？
+
+**示例**：
+- `bright` 在 `color_palette` → "bright colors"是合理的 → 保留
+- `walking_scene` 在 `action_behaviors` → "walking"是核心动作 → 保留
+- `romantic_comedy` 在 `visual_theme` → 明显是电影类型 → 移除
 
 ## 输出格式
 
