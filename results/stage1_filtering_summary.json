@@ -1,0 +1,131 @@
+{
+  "total_relations": 15,
+  "total_entities_original": 725,
+  "total_entities_keep": 479,
+  "total_entities_remove": 246,
+  "overall_keep_rate": 66.06896551724138,
+  "relation_stats": [
+    {
+      "relation": "action_behaviors",
+      "original": 5,
+      "keep": 3,
+      "remove": 2,
+      "keep_rate": 60.0
+    },
+    {
+      "relation": "additional_elements",
+      "original": 9,
+      "keep": 1,
+      "remove": 8,
+      "keep_rate": 11.11111111111111
+    },
+    {
+      "relation": "artistic_styles",
+      "original": 51,
+      "keep": 36,
+      "remove": 15,
+      "keep_rate": 70.58823529411765
+    },
+    {
+      "relation": "character_type",
+      "original": 105,
+      "keep": 63,
+      "remove": 42,
+      "keep_rate": 60.0
+    },
+    {
+      "relation": "color_palette",
+      "original": 19,
+      "keep": 19,
+      "remove": 0,
+      "keep_rate": 100.0
+    },
+    {
+      "relation": "composition_styles",
+      "original": 17,
+      "keep": 15,
+      "remove": 2,
+      "keep_rate": 88.23529411764706
+    },
+    {
+      "relation": "depicted_subject",
+      "original": 126,
+      "keep": 92,
+      "remove": 34,
+      "keep_rate": 73.01587301587301
+    },
+    {
+      "relation": "design_element",
+      "original": 27,
+      "keep": 19,
+      "remove": 8,
+      "keep_rate": 70.37037037037037
+    },
+    {
+      "relation": "genre",
+      "original": 11,
+      "keep": 5,
+      "remove": 6,
+      "keep_rate": 45.45454545454545
+    },
+    {
+      "relation": "lighting",
+      "original": 31,
+      "keep": 25,
+      "remove": 6,
+      "keep_rate": 80.64516129032258
+    },
+    {
+      "relation": "mood",
+      "original": 57,
+      "keep": 55,
+      "remove": 2,
+      "keep_rate": 96.49122807017544
+    },
+    {
+      "relation": "symbolism",
+      "original": 10,
+      "keep": 5,
+      "remove": 5,
+      "keep_rate": 50.0
+    },
+    {
+      "relation": "text_style",
+      "original": 70,
+      "keep": 56,
+      "remove": 14,
+      "keep_rate": 80.0
+    },
+    {
+      "relation": "texture",
+      "original": 87,
+      "keep": 39,
+      "remove": 48,
+      "keep_rate": 44.827586206896555
+    },
+    {
+      "relation": "visual_theme",
+      "original": 100,
+      "keep": 46,
+      "remove": 54,
+      "keep_rate": 46.0
+    }
+  ],
+  "receiving_count": {
+    "additional_elements": 34,
+    "null/unknown": 7,
+    "visual_theme": 15,
+    "depicted_subject": 38,
+    "design_element": 3,
+    "mood": 26,
+    "genre": 25,
+    "text_style": 2,
+    "action_behaviors": 10,
+    "artistic_styles": 35,
+    "texture": 3,
+    "character_type": 8,
+    "color_palette": 34,
+    "composition_styles": 6
+  },
+  "has_conflicts": false
+}
