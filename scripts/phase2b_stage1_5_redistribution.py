@@ -47,8 +47,12 @@ def collect_redistributions(stage1_results: Dict[str, Any]) -> Dict[str, List[Di
         remove_list = result_data.get('remove', {})
 
         for entity, info in remove_list.items():
-            suggested = info.get('suggested_relation', 'additional_elements')
-            reasoning = info.get('reasoning', '')
+            suggested = info.get('suggested_relation')
+            # 如果是None或null，默认分配到additional_elements
+            if suggested is None:
+                suggested = 'additional_elements'
+            # 字段名是'reason'而不是'reasoning'
+            reasoning = info.get('reason', '')
 
             redistribution_map[suggested].append({
                 'entity': entity,
