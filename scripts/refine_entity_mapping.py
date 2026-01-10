@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-使用LLM优化Entity聚类 - 三步迭代法
+使用LLM优化Entity聚类 - 三步迭代法（正确顺序）
 
 三步法：
-1. Split - 检查并分割语义冲突的clusters
-2. Rename - 为每个cluster选择最佳的canonical name
-3. Merge - 根据名字合并语义相似的clusters
+1. Split - 检查并分割语义冲突的clusters（只分割明显冲突）
+2. Merge - 基于entity本身合并相似clusters（还没有独立名字的锚定，目标10-15）
+3. Rename - 为稳定的clusters选择最佳canonical name（最通用/代表性的）
 
 可以多轮迭代，每轮跑完检查结果，不满意可以继续跑
 
@@ -25,19 +25,19 @@ from src.clustering.entity_refiner import EntityRefiner
 
 def main():
     parser = argparse.ArgumentParser(description='Entity聚类LLM优化 - 三步迭代法')
-    parser.add_argument('--continue-from', type=str, help='从中间结果继续（如results/step1_split.json）')
+    parser.add_argument('--continue-from', type=str, help='从中间结果继续（如results/step2_merged.json）')
     parser.add_argument('--start-step', type=int, default=1, choices=[1, 2, 3],
-                       help='从第几步开始: 1=split, 2=rename, 3=merge')
+                       help='从第几步开始: 1=split, 2=merge, 3=rename')
     args = parser.parse_args()
 
     print("="*80)
     print("Entity聚类LLM优化工具 - 三步迭代法")
     print("="*80)
     print()
-    print("工作流程:")
-    print("  第一步: Split - 分割语义冲突的clusters")
-    print("  第二步: Rename - 选择最佳canonical names")
-    print("  第三步: Merge - 合并语义相似的clusters")
+    print("正确顺序（重要！）:")
+    print("  第一步: Split - 分割语义冲突的clusters（保守策略）")
+    print("  第二步: Merge - 合并相似clusters（基于entities本身，目标10-15）")
+    print("  第三步: Rename - 选择最佳canonical names（最通用/代表性）")
     print()
 
     # 配置
@@ -111,15 +111,15 @@ def main():
         print()
         print("中间结果:")
         print("  results/step1_split.json - 第一步：分割语义冲突")
-        print("  results/step2_renamed.json - 第二步：重命名clusters")
-        print("  results/step3_merged.json - 第三步：合并相似clusters")
+        print("  results/step2_merged.json - 第二步：合并相似clusters")
+        print("  results/step3_renamed.json - 第三步：选择最佳canonical names")
         print()
         print(f"最终结果: {output_path}")
         print()
         print("下一步:")
         print("  1. 检查最终结果是否满意")
         print("  2. 如果不满意，可以继续优化:")
-        print("     python scripts/refine_entity_mapping.py --continue-from results/step3_merged.json")
+        print("     python scripts/refine_entity_mapping.py --continue-from results/step3_renamed.json")
         print("  3. 如果满意，可以用于后续的知识图谱构建")
 
     except Exception as e:
