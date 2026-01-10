@@ -159,27 +159,48 @@ DO NOT split if:
 - Entities share a common theme or category
 - They could reasonably belong to the same semantic group
 
-Focus on movie poster knowledge extraction context."""
+Focus on movie poster knowledge extraction context.
 
-        # 构建clusters摘要
-        cluster_list = []
+**CRITICAL: Consider the RELATION context**
+- You are analyzing entities within a specific RELATION (e.g., character_type, mood, color_palette)
+- The relation defines the semantic framework - all entities should make sense within this relation
+- Consider how each cluster fits into the overall structure of this relation"""
+
+        # 构建全局上下文：显示所有clusters
+        all_clusters_list = []
         for canonical, entities in sorted(clusters.items()):
             if canonical.startswith('other_'):
-                continue  # 跳过other
-            if len(entities) == 1:
-                continue  # 单个entity不需要检查
-            cluster_list.append(f"  {canonical}: {', '.join(sorted(entities))}")
+                continue
+            all_clusters_list.append(f"  {canonical}: [{', '.join(sorted(entities))}]")
 
-        if not cluster_list:
+        # 构建需要检查的clusters列表
+        check_list = []
+        for canonical, entities in sorted(clusters.items()):
+            if canonical.startswith('other_'):
+                continue
+            if len(entities) == 1:
+                continue
+            check_list.append(f"  {canonical}: {', '.join(sorted(entities))}")
+
+        if not check_list:
             # 没有需要检查的clusters
             return self.current_mappings[relation]
 
-        user_prompt = f"""Relation: {relation}
+        user_prompt = f"""Relation: **{relation}** (this defines the semantic framework for all clusters)
 
-Current clusters:
-{chr(10).join(cluster_list)}
+GLOBAL CONTEXT - All current clusters in this relation:
+{chr(10).join(all_clusters_list)}
+
+Clusters to check for conflicts:
+{chr(10).join(check_list)}
 
 Please identify ONLY clusters with MAJOR semantic conflicts that MUST be split.
+
+**IMPORTANT CONSIDERATIONS:**
+1. Consider the relation "{relation}" - does each cluster make sense within this semantic framework?
+2. Look at all clusters globally - are there obvious conflicts or contradictions?
+3. Example: In "character_type", protagonist and antagonist are opposite roles and MUST be split
+4. Example: In "additional_elements", beverage and weapons are unrelated and MUST be split
 
 **Output Format:**
 Return a JSON object:
@@ -188,7 +209,7 @@ Return a JSON object:
   "splits": [
     {{
       "original_cluster": "antagonist",
-      "reason": "Contains opposite character types - protagonist and antagonist are fundamentally opposite roles",
+      "reason": "Within character_type relation, contains opposite roles - protagonist (hero) vs antagonist (villain) are fundamentally opposite",
       "new_groups": [
         {{
           "entities": ["protagonist", "heroic_protagonist"],
@@ -209,7 +230,7 @@ Return a JSON object:
 - If all clusters are semantically coherent enough, return {{"splits": []}}
 - Be very conservative - when in doubt, DON'T split
 - Each entity must appear exactly once in the new groups
-- Provide clear reasoning explaining why the conflict is MAJOR
+- Explain reasoning in context of the "{relation}" relation
 
 Now analyze:"""
 
@@ -303,19 +324,35 @@ Examples of what SHOULD be merged:
 - "protagonist", "heroic_protagonist" → same concept
 - "romantic_pair", "couple", "duo" → all paired characters
 
-Only keep separate if entities are clearly distinct semantic categories."""
+Only keep separate if entities are clearly distinct semantic categories.
+
+**CRITICAL: Consider GLOBAL CONTEXT**
+- You are merging clusters within a specific RELATION (e.g., character_type, mood)
+- The relation defines the semantic framework - all clusters should fit coherently within it
+- Consider the OVERALL structure - does the final set of clusters make sense together?
+- Avoid merging clusters that represent fundamentally different concepts within the relation
+- Example: In "character_type", don't merge protagonist with antagonist - they're opposite roles"""
 
         # 构建clusters摘要（显示entities，不只是cluster名）
         cluster_list = []
         for canonical, entities in sorted(mergeable_clusters.items()):
             cluster_list.append(f"  {canonical}: [{', '.join(sorted(entities))}]")
 
-        user_prompt = f"""Relation: {relation}
+        user_prompt = f"""Relation: **{relation}** (this defines the semantic framework)
 
-Current clusters: {current_count} (target: 10-15)
+GLOBAL CONTEXT - All current clusters in this relation:
+Current count: {current_count} clusters (target: 10-15)
+
 {chr(10).join(cluster_list)}
 
 Please identify clusters that should be merged to reach ~10-15 clusters.
+
+**IMPORTANT CONSIDERATIONS:**
+1. Consider the relation "{relation}" - all merged clusters must make sense within this framework
+2. Look at ALL clusters together - does the overall structure make semantic sense?
+3. Example: In "character_type", hero/protagonist are similar (can merge), but protagonist/antagonist are opposite (NEVER merge)
+4. Example: In "mood", joyful/cheerful are similar (can merge), but joyful/somber are opposite (NEVER merge)
+5. DON'T just merge based on word similarity - consider SEMANTIC coherence within the relation
 
 **Output Format:**
 Return a JSON object:
@@ -325,12 +362,12 @@ Return a JSON object:
     {{
       "clusters_to_merge": ["dynamic_action", "dynamic_pose", "dynamic_postures"],
       "merged_name": "dynamic_action",
-      "reason": "All represent dynamic movement/poses - same semantic category"
+      "reason": "Within action_behaviors relation, all represent dynamic movement/poses - same semantic category"
     }},
     {{
       "clusters_to_merge": ["protagonist", "heroic_protagonist"],
       "merged_name": "protagonist",
-      "reason": "Both refer to the same concept - the main character/hero"
+      "reason": "Within character_type relation, both refer to the same concept - the main character/hero"
     }}
   ]
 }}
@@ -339,10 +376,11 @@ Return a JSON object:
 **Important:**
 - Focus on reaching 10-15 clusters (currently have {current_count})
 - Look at the ENTITIES in brackets, not just cluster names
-- Merge semantically similar/overlapping concepts
+- Merge semantically similar/overlapping concepts WITHIN the "{relation}" framework
+- NEVER merge opposite or contradictory concepts (e.g., hero+villain, happy+sad)
 - If already in target range and well-organized, return {{"merges": []}}
 - Choose the most representative entity as merged_name
-- Provide clear reasoning
+- Explain reasoning in context of the "{relation}" relation
 
 Now identify clusters to merge:"""
 
@@ -419,7 +457,17 @@ RULES:
 3. The name should best represent ALL entities in the cluster
 4. Keep "other_xxx" clusters as-is
 5. Choose from the existing entities in the cluster (don't invent new names)
-6. Focus on semantic representativeness, not alphabetical order"""
+6. Focus on semantic representativeness, not alphabetical order
+
+**CRITICAL: Consider GLOBAL CONTEXT**
+- You are naming clusters within a specific RELATION (e.g., character_type, mood)
+- Names should be DISTINCT - avoid duplicate or too-similar names across clusters
+- Names should reflect the cluster's role within the overall relation structure
+- Consider what OTHER clusters exist - names should form a coherent naming system
+- Example: In "character_type", if you have protagonist, don't name antagonist as "protagonist" too"""
+
+        # 构建全局上下文：显示所有cluster名字
+        all_cluster_names = [name for name in sorted(clusters.keys()) if not name.startswith('other_')]
 
         # 构建clusters摘要
         cluster_list = []
@@ -432,12 +480,25 @@ RULES:
             print(f"  无cluster需要rename")
             return self.current_mappings[relation]
 
-        user_prompt = f"""Relation: {relation}
+        user_prompt = f"""Relation: **{relation}** (this defines the semantic framework)
+
+GLOBAL CONTEXT - All cluster names in this relation:
+{', '.join(all_cluster_names)}
+(Ensure new names are DISTINCT and form a coherent naming system)
 
 Finalized clusters to rename:
 {chr(10).join(cluster_list)}
 
 Please choose the best canonical name for each cluster from its entities.
+
+**IMPORTANT CONSIDERATIONS:**
+1. Consider the relation "{relation}" - names should fit this semantic framework
+2. Look at ALL cluster names - avoid duplicates or confusingly similar names
+3. Names should be DISTINCT and clearly differentiate each cluster's semantic role
+4. Example: In "character_type" with clusters for protagonist and antagonist:
+   - DON'T name antagonist as "protagonist" (opposite roles!)
+   - DON'T name detective as "antagonist" (different role!)
+5. Choose names that make the overall structure clear and coherent
 
 **Output Format:**
 Return a JSON object:
@@ -448,13 +509,13 @@ Return a JSON object:
       "old_name": "darts_target",
       "entities": ["weapons", "weapon", "darts_target"],
       "new_name": "weapon",
-      "reason": "weapon is more generic and common, best represents all entities"
+      "reason": "weapon is most generic and common, clearly distinct from other clusters in additional_elements"
     }},
     {{
       "old_name": "dynamic_action",
       "entities": ["dynamic_action", "dynamic_pose", "dynamic_postures"],
       "new_name": "dynamic_action",
-      "reason": "dynamic_action is most generic and covers all movement types"
+      "reason": "dynamic_action is most generic, distinct from other action_behaviors clusters"
     }}
   ]
 }}
@@ -464,7 +525,8 @@ Return a JSON object:
 - Include ALL clusters (even if name stays the same)
 - Choose the most generic/representative entity from the cluster
 - The new_name MUST be one of the entities in the cluster
-- Provide reasoning for your choice
+- Ensure names are DISTINCT across all clusters in "{relation}"
+- Explain reasoning in context of the relation and other cluster names
 
 Now choose the best canonical names:"""
 
