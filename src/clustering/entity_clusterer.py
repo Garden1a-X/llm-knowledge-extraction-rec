@@ -1,6 +1,6 @@
 """
 Entity聚类模块 - Phase 2b Stage 2
-将Stage 1.5重分配后的entities（按relation）聚类合并同义词
+将Stage 1.5重分配后的entities按relation聚类，合并同义词
 """
 
 import json
@@ -14,7 +14,9 @@ class EntityClusterer:
     """
     Entity聚类器（per-relation）
 
-    基于Phase 2a RelationClusterer的成功经验，改编用于Entity层
+    参考RelationClusterer的结构，但针对entity层：
+    - 对每个relation独立处理
+    - 使用BERTopic自适应聚类
     """
 
     def __init__(self, stage1_5_result_path: str):
@@ -43,7 +45,7 @@ class EntityClusterer:
 
         return data
 
-    def extract_entities_by_relation(self, stage1_5_data: Dict) -> Dict[str, Counter]:
+    def extract_entities_by_relation(self, stage1_5_data: Dict) -> Dict[str, List[str]]:
         """
         按relation提取entities
 
@@ -51,7 +53,7 @@ class EntityClusterer:
             stage1_5_data: Stage 1.5数据
 
         Returns:
-            {relation: Counter({entity: count})}
+            {relation: [entity1, entity2, ...]}（包含重复，用于频率统计）
         """
         redistributed = stage1_5_data.get('redistributed', {})
 
@@ -69,7 +71,7 @@ class EntityClusterer:
             print(f"  {relation:25s}: {len(entity_counter):3d} unique entities, "
                   f"{sum(entity_counter.values()):4d} total instances")
 
-        return self.entity_counts_by_relation
+        return self.entities_by_relation
 
     def embed_entities_bge(
         self,
@@ -93,9 +95,7 @@ class EntityClusterer:
 
         unique_entities = list(self.entity_counts_by_relation[relation].keys())
 
-        print(f"\n🔄 Generating embeddings for {len(unique_entities)} entities "
-              f"in relation '{relation}'...")
-
+        print(f"\n🔄 Generating embeddings for {len(unique_entities)} entities in '{relation}'...")
         model = SentenceTransformer(model_name)
         embeddings = model.encode(
             unique_entities,
@@ -107,76 +107,99 @@ class EntityClusterer:
 
         return embeddings, unique_entities
 
-    def cluster_with_agglomerative(
+    def cluster_with_bertopic(
         self,
         relation: str,
         embeddings: np.ndarray,
         unique_entities: List[str],
-        target_compression_ratio: float = 0.33,
-        linkage: str = 'average'
-    ) -> Tuple[np.ndarray, object, int]:
+        min_cluster_size: int = 2,
+        verbose: bool = True
+    ) -> Tuple[object, np.ndarray, np.ndarray]:
         """
-        使用Agglomerative Clustering进行聚类（动态n_clusters）
+        使用BERTopic进行聚类（自适应聚类数）
 
         Args:
             relation: Relation名称
             embeddings: Entity embeddings
             unique_entities: Entity列表
-            target_compression_ratio: 目标压缩比（约1/3）
-            linkage: 连接方法 ('average', 'ward', 'complete')
+            min_cluster_size: HDBSCAN最小cluster大小
+            verbose: 是否输出详细信息
 
         Returns:
-            (cluster_labels, clustering_model, n_clusters)
+            (topic_model, topics, probabilities)
         """
-        from sklearn.cluster import AgglomerativeClustering
+        from bertopic import BERTopic
+        from sentence_transformers import SentenceTransformer
+        from umap import UMAP
+        from hdbscan import HDBSCAN
 
-        n_entities = len(unique_entities)
+        print(f"\n{'='*60}")
+        print(f"BERTopic聚类: {relation}")
+        print(f"{'='*60}")
 
-        # 动态确定n_clusters（目标：压缩到约1/3）
-        n_clusters = max(2, int(n_entities * target_compression_ratio))
-        n_clusters = min(n_clusters, n_entities)  # 不能超过entity数
-
-        print(f"\n🔄 Agglomerative Clustering for '{relation}':")
-        print(f"  Input: {n_entities} entities")
-        print(f"  Target n_clusters: {n_clusters} (compression ratio: {n_clusters/n_entities:.2%})")
-
-        # Agglomerative聚类
-        clustering = AgglomerativeClustering(
-            n_clusters=n_clusters,
-            linkage=linkage,
-            metric='cosine'
+        # 自定义UMAP
+        umap_model = UMAP(
+            n_components=5,
+            n_neighbors=min(15, len(unique_entities) - 1),
+            min_dist=0.0,
+            metric='cosine',
+            random_state=42
         )
 
-        labels = clustering.fit_predict(embeddings)
+        # 自定义HDBSCAN
+        hdbscan_model = HDBSCAN(
+            min_cluster_size=min_cluster_size,
+            metric='euclidean',
+            cluster_selection_method='eom',
+            prediction_data=True
+        )
+
+        # 创建BERTopic模型（不使用embedding_model，直接用预计算的embeddings）
+        topic_model = BERTopic(
+            umap_model=umap_model,
+            hdbscan_model=hdbscan_model,
+            verbose=verbose,
+            calculate_probabilities=True
+        )
+
+        # 聚类（使用预计算的embeddings）
+        topics, probs = topic_model.fit_transform(unique_entities, embeddings)
 
         # 分析结果
+        n_clusters = len(set(topics)) - (1 if -1 in topics else 0)
+        n_noise = sum(1 for t in topics if t == -1)
+
+        print(f"\n✓ BERTopic聚类完成:")
+        print(f"  发现的clusters: {n_clusters}")
+        print(f"  噪声点数量: {n_noise}")
+        print(f"  Entities: {len(unique_entities)} → {n_clusters} clusters")
+
+        # 显示每个topic的entities
         entity_counter = self.entity_counts_by_relation[relation]
+        print(f"\n  Topic分布:")
 
-        print(f"\n✓ Clustering completed:")
-        print(f"  Clusters: {n_clusters}")
-        print(f"\n  Cluster distribution:")
-
-        for cluster_id in range(n_clusters):
-            cluster_entities = [
+        for topic_id in sorted(set(topics)):
+            topic_entities = [
                 unique_entities[i]
-                for i, label in enumerate(labels)
-                if label == cluster_id
+                for i, t in enumerate(topics)
+                if t == topic_id
             ]
-            cluster_counts = [
-                entity_counter[ent]
-                for ent in cluster_entities
-            ]
-            total_count = sum(cluster_counts)
+            topic_counts = [entity_counter[ent] for ent in topic_entities]
+            total_count = sum(topic_counts)
 
-            print(f"    Cluster {cluster_id:2d}: {len(cluster_entities):2d} entities "
-                  f"({total_count:4d} instances) - {', '.join(cluster_entities[:3])}")
+            if topic_id == -1:
+                print(f"    Topic {topic_id:3d} (Noise): {len(topic_entities):2d} entities "
+                      f"({total_count:3d} instances)")
+            else:
+                print(f"    Topic {topic_id:3d}: {len(topic_entities):2d} entities "
+                      f"({total_count:3d} instances) - {', '.join(topic_entities[:3])}")
 
-        return labels, clustering, n_clusters
+        return topic_model, topics, probs
 
     def generate_entity_mapping(
         self,
         relation: str,
-        labels: np.ndarray,
+        topics: np.ndarray,
         unique_entities: List[str],
         method: str = 'frequency'
     ) -> Dict[str, str]:
@@ -185,7 +208,7 @@ class EntityClusterer:
 
         Args:
             relation: Relation名称
-            labels: Cluster标签
+            topics: BERTopic的topic标签
             unique_entities: Entity列表
             method: 选择canonical name的方法（'frequency' 或 'alphabetical'）
 
@@ -196,37 +219,46 @@ class EntityClusterer:
         canonical_entities = []
         entity_counter = self.entity_counts_by_relation[relation]
 
-        # 按cluster分组
-        n_clusters = len(set(labels))
+        # 按topic分组
+        unique_topics = sorted(set(topics))
 
-        for cluster_id in range(n_clusters):
-            # 获取该cluster的所有entities
-            cluster_entities = [
+        for topic_id in unique_topics:
+            # 获取该topic的所有entities
+            topic_entities = [
                 unique_entities[i]
-                for i, label in enumerate(labels)
-                if label == cluster_id
+                for i, t in enumerate(topics)
+                if t == topic_id
             ]
 
-            if method == 'frequency':
-                # 选择频次最高的作为canonical name
-                cluster_counts = [
-                    (ent, entity_counter[ent])
-                    for ent in cluster_entities
-                ]
-                cluster_counts.sort(key=lambda x: x[1], reverse=True)
-                canonical_name = cluster_counts[0][0]
+            if topic_id == -1:
+                # 噪声点：每个entity保持独立
+                for ent in topic_entities:
+                    entity_mapping[ent] = ent
+                    canonical_entities.append(ent)
             else:
-                # 按字母顺序选择第一个
-                canonical_name = sorted(cluster_entities)[0]
+                # 正常topic：选择canonical name
+                if method == 'frequency':
+                    # 选择频次最高的作为canonical name
+                    topic_counts = [
+                        (ent, entity_counter[ent])
+                        for ent in topic_entities
+                    ]
+                    topic_counts.sort(key=lambda x: x[1], reverse=True)
+                    canonical_name = topic_counts[0][0]
+                else:
+                    # 按字母顺序选择第一个
+                    canonical_name = sorted(topic_entities)[0]
 
-            canonical_entities.append(canonical_name)
+                canonical_entities.append(canonical_name)
 
-            # 建立映射
-            for ent in cluster_entities:
-                entity_mapping[ent] = canonical_name
+                # 建立映射
+                for ent in topic_entities:
+                    entity_mapping[ent] = canonical_name
 
         print(f"\n✓ Generated entity mapping for '{relation}':")
+        print(f"  Original entities: {len(entity_mapping)}")
         print(f"  Canonical entities: {len(canonical_entities)}")
+        print(f"  Compression: {len(canonical_entities)/len(entity_mapping)*100:.1f}%")
 
         return entity_mapping
 
@@ -234,6 +266,7 @@ class EntityClusterer:
         self,
         all_entity_mappings: Dict[str, Dict[str, str]],
         output_path: str,
+        method: str = 'bertopic',
         metadata: Optional[Dict] = None
     ):
         """
@@ -242,6 +275,7 @@ class EntityClusterer:
         Args:
             all_entity_mappings: {relation: {original_entity: canonical_entity}}
             output_path: 输出路径
+            method: 聚类方法名称
             metadata: 额外的元数据
         """
         output_path = Path(output_path)
@@ -258,7 +292,7 @@ class EntityClusterer:
         # 构建输出数据
         output_data = {
             'metadata': {
-                'method': 'agglomerative_per_relation',
+                'method': method,
                 'source_file': str(self.stage1_5_result_path),
                 'total_relations': len(all_entity_mappings),
                 'total_entities_before': total_entities_before,
@@ -287,4 +321,4 @@ class EntityClusterer:
 if __name__ == '__main__':
     # 测试代码
     print("EntityClusterer模块已加载")
-    print("使用示例见 scripts/phase2b_stage2_entity_clustering.py")
+    print("使用示例见 notebooks/phase2b_entity_clustering.ipynb")
