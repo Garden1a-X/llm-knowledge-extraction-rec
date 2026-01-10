@@ -47,7 +47,9 @@ def build_merging_prompt(relation: str, entities: List[str]) -> str:
 
 **职责**: {rel_def.get('description', '')}
 
-## 已确认属于该Relation的Entities
+## ⚠️ 输入的Entity列表（共{len(entities)}个）
+
+**重要：下面列出的是全部entities，你只能从这个列表中选择，不能创造新名字！**
 
 以下是经过筛选后，确认属于`{relation}`的{len(entities)}个entities：
 
@@ -58,7 +60,7 @@ def build_merging_prompt(relation: str, entities: List[str]) -> str:
     for i, entity in enumerate(sorted_entities, 1):
         prompt += f"{i}. {entity}\n"
 
-    prompt += """
+    prompt += f"""
 
 ## 你的任务
 
@@ -74,43 +76,71 @@ def build_merging_prompt(relation: str, entities: List[str]) -> str:
   - 例如：`man` 和 `warrior` 虽然都是人物，但层级不同，不应合并
   - 例如：`building` 和 `skyscraper` 虽然相关，但具体程度不同
 
-### 选择Canonical Name
+### ⚠️⚠️⚠️ 选择Canonical Name的规则（极其重要！）
 
-- **必须从输入列表中选择**一个entity作为canonical name
-- 优先选择**更通用、更标准**的名称作为group的代表
-- 例如：`romance` 优于 `romantic_comedy`
-- 例如：`human_figure` 优于 `human_portrait`
-- **不要创造新名字**
+**CRITICAL RULE: 每个group的key（canonical name）必须完全等于上面列表中的某个entity！**
+
+- ✅ 正确示例：如果列表中有 `family_bonding`, `family_humor`，你可以选择：
+  ```json
+  {{"family_bonding": ["family_bonding", "family_humor"]}}
+  ```
+
+- ❌ 错误示例：**绝对不能**创造新名字：
+  ```json
+  {{"family": ["family_bonding", "family_humor"]}}  // ✗ 错误！"family"不在输入列表中
+  ```
+
+- ✅ 如果你想合并这些，**必须**从 `family_bonding` 或 `family_humor` 中选一个作为key
+- 优先选择**更通用、更短**的名称
 
 ## 输出格式
 
 请以JSON格式输出：
 
 ```json
-{
+{{
   "canonical_name_1": ["entity1", "entity2", "entity3"],
   "canonical_name_2": ["entity4"],
   ...
-}
+}}
 ```
 
-**重要规则**：
-- 每个group的key**必须**是输入列表中存在的entity（不能是新创造的名字）
-- 每个group的value是该组包含的所有entities（包括canonical name自己）
-- 如果某个entity没有同义词，也要包含（value数组只有它自己）
-- 所有输入的entities都必须出现在输出中（不能遗漏）
+## ⚠️ 关键规则（再次强调）
 
-**示例**：
+1. **每个group的key必须是编号1-{len(entities)}中的某个entity**
+2. 每个group的value是该组包含的所有entities（包括canonical name自己）
+3. 如果某个entity没有同义词，也要包含（value数组只有它自己）
+4. **所有{len(entities)}个entities都必须出现在输出中（不能遗漏）**
+5. **不要让任何entity出现2次**（每个entity只能属于1个group）
+
+## 示例
+
+假设输入列表是：`["human_figure", "human_portrait", "landscape"]`
+
+✅ 正确输出：
 ```json
-{
-  "human_figure": ["human_portrait", "human_figure", "human_figures"],
-  "landscape": ["landscape"],
-  "romance": ["romance", "romantic", "romantic_comedy"],
-  "adventure": ["adventure"]
-}
+{{
+  "human_figure": ["human_figure", "human_portrait"],
+  "landscape": ["landscape"]
+}}
 ```
 
-请仔细分析，只合并真正的同义词。确保canonical name来自输入列表。
+❌ 错误输出：
+```json
+{{
+  "human": ["human_figure", "human_portrait"],  // ✗ "human"不在输入列表中！
+  "landscape": ["landscape"]
+}}
+```
+
+---
+
+**最后检查清单（输出前请自查）**：
+- [ ] 每个group的key都在上面编号1-{len(entities)}的列表中吗？
+- [ ] 所有{len(entities)}个entities都出现在输出中吗？
+- [ ] 每个entity只出现1次吗？
+
+请现在开始分析并输出JSON结果。
 """
 
     return prompt
