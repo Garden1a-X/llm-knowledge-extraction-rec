@@ -145,26 +145,39 @@ class EntityRefiner:
         """
         clusters = self.get_clusters(relation)
 
-        system_prompt = """You are an expert in semantic analysis for knowledge graph construction.
+        system_prompt = """You are an expert in knowledge graph design for MOVIE RECOMMENDATION SYSTEMS.
 
-Your task is to check if entities grouped together are semantically coherent, and split those with MAJOR conflicts.
+**BUSINESS CONTEXT:**
+We are building a movie poster knowledge graph for recommendation. Each entity represents a visual or thematic attribute that:
+1. Users may have preferences about (e.g., "I like movies with protagonists" vs "I like movies with villains")
+2. Influences whether users choose to watch a movie
+3. Helps match users with movies based on their interests
 
-CRITICAL: ONLY split if there are MAJOR semantic conflicts:
-1. **Opposite meanings**: protagonist vs antagonist, hero vs villain
-2. **Completely unrelated concepts**: weapons vs beverage, vehicles vs clothing
+**YOUR TASK:**
+Check if entities grouped together are semantically coherent for recommendation purposes, and split those with MAJOR conflicts.
+
+**CLUSTERING PRINCIPLES FOR RECOMMENDATION:**
+1. **Same cluster = Similar user preference**: Entities in the same cluster should appeal to similar user interests
+   - Example: "protagonist" and "heroic_protagonist" appeal to the same preference
+2. **Different clusters = Different user preferences**: Clusters should represent DISTINCT preferences
+   - Example: "protagonist" (hero preference) vs "antagonist" (villain preference) are OPPOSITE
+3. **Discriminative power**: Clusters must help distinguish different types of movies
+   - Example: In character_type, we need to tell hero movies from villain movies
+
+**CRITICAL: ONLY split if there are MAJOR conflicts:**
+1. **Opposite user preferences**: protagonist vs antagonist (people who like heroes ≠ people who like villains)
+2. **Completely unrelated interests**: weapons vs beverage (different aspects of interest)
 3. **Different semantic categories**: human vs animal, action vs object
 
-DO NOT split if:
-- Entities are similar but not identical (e.g., "dynamic_action" and "dynamic_pose" are both dynamic movements)
+**DO NOT split if:**
+- Entities appeal to similar user interests (e.g., "dynamic_action" and "dynamic_pose" both appeal to "dynamic movement")
 - Entities share a common theme or category
-- They could reasonably belong to the same semantic group
-
-Focus on movie poster knowledge extraction context.
+- They could reasonably belong to the same user preference
 
 **CRITICAL: Consider the RELATION context**
 - You are analyzing entities within a specific RELATION (e.g., character_type, mood, color_palette)
 - The relation defines the semantic framework - all entities should make sense within this relation
-- Consider how each cluster fits into the overall structure of this relation"""
+- Consider: Would users who like one entity in the cluster also like the others?"""
 
         # 构建全局上下文：显示所有clusters
         all_clusters_list = []
@@ -186,21 +199,36 @@ Focus on movie poster knowledge extraction context.
             # 没有需要检查的clusters
             return self.current_mappings[relation]
 
-        user_prompt = f"""Relation: **{relation}** (this defines the semantic framework for all clusters)
+        user_prompt = f"""Relation: **{relation}** (defines the semantic framework for recommendation)
 
-GLOBAL CONTEXT - All current clusters in this relation:
+**RECOMMENDATION CONTEXT:**
+This relation helps users find movies based on their preferences for "{relation}".
+- Users may prefer certain types within this relation (e.g., in character_type: some like hero movies, others prefer complex villain movies)
+- Clusters must represent DISTINCT user preferences to be useful for recommendation
+
+**GLOBAL CONTEXT - All current clusters in this relation:**
 {chr(10).join(all_clusters_list)}
 
-Clusters to check for conflicts:
+**Clusters to check for conflicts:**
 {chr(10).join(check_list)}
 
-Please identify ONLY clusters with MAJOR semantic conflicts that MUST be split.
+Please identify ONLY clusters with MAJOR semantic conflicts that MUST be split for recommendation purposes.
 
 **IMPORTANT CONSIDERATIONS:**
-1. Consider the relation "{relation}" - does each cluster make sense within this semantic framework?
-2. Look at all clusters globally - are there obvious conflicts or contradictions?
-3. Example: In "character_type", protagonist and antagonist are opposite roles and MUST be split
-4. Example: In "additional_elements", beverage and weapons are unrelated and MUST be split
+1. **User preference distinction**: Would users who like one entity also like the others in the cluster?
+   - If YES → keep together (e.g., protagonist + heroic_protagonist)
+   - If NO → must split (e.g., protagonist + antagonist appeal to different preferences)
+
+2. **Discriminative power**: Does the cluster help distinguish different movie types?
+   - Example: In "character_type", mixing hero + villain loses discriminative power
+   - We need separate clusters to recommend "hero movies" vs "villain movies"
+
+3. **Relation coherence**: Within "{relation}", does each cluster represent a coherent concept?
+   - Example: In "character_type", protagonist/antagonist are opposite character roles
+   - Example: In "mood", joyful/ominous are opposite emotional tones
+   - Example: In "additional_elements", beverage/weapons are unrelated visual elements
+
+4. **Look at global structure**: How does this cluster fit with OTHER clusters in "{relation}"?
 
 **Output Format:**
 Return a JSON object:
@@ -209,7 +237,7 @@ Return a JSON object:
   "splits": [
     {{
       "original_cluster": "antagonist",
-      "reason": "Within character_type relation, contains opposite roles - protagonist (hero) vs antagonist (villain) are fundamentally opposite",
+      "reason": "MAJOR CONFLICT for recommendation: Contains opposite character roles. Users who prefer protagonist/hero movies have DIFFERENT preferences from users who prefer antagonist/villain movies. Mixing these loses discriminative power for character_type-based recommendation.",
       "new_groups": [
         {{
           "entities": ["protagonist", "heroic_protagonist"],
@@ -226,11 +254,11 @@ Return a JSON object:
 ```
 
 **Important:**
-- ONLY include clusters with MAJOR conflicts (opposite meanings or completely unrelated)
-- If all clusters are semantically coherent enough, return {{"splits": []}}
+- ONLY include clusters with MAJOR conflicts (opposite user preferences, unrelated concepts)
+- If all clusters are semantically coherent for recommendation, return {{"splits": []}}
 - Be very conservative - when in doubt, DON'T split
 - Each entity must appear exactly once in the new groups
-- Explain reasoning in context of the "{relation}" relation
+- Explain reasoning from USER PREFERENCE and DISCRIMINATIVE POWER perspectives
 
 Now analyze:"""
 
@@ -308,51 +336,92 @@ Now analyze:"""
 
         current_count = len(mergeable_clusters)
 
-        system_prompt = """You are an expert in knowledge graph design.
+        system_prompt = """You are an expert in knowledge graph design for MOVIE RECOMMENDATION SYSTEMS.
 
-Your task is to merge semantically similar or overlapping entity clusters.
+**BUSINESS CONTEXT:**
+We are building a movie poster knowledge graph for recommendation. The goal is to match users with movies based on their preferences.
 
-IMPORTANT RULES:
-1. **Target 10-15 clusters per relation** - this is critical for knowledge graph density
-2. **Look at the ENTITIES themselves**, not just cluster names
-3. Merge if entities represent the same or very similar semantic concepts
-4. Merge entities that share common semantic themes or categories
-5. Be reasonably aggressive - err on the side of merging similar concepts
+**YOUR TASK:**
+Merge semantically similar clusters to create 10-15 meaningful categories per relation that users can have preferences about.
+
+**CLUSTERING PRINCIPLES FOR RECOMMENDATION:**
+1. **Same cluster = Same user preference**: Only merge if entities appeal to the SAME user interests
+   - Example: "protagonist" + "heroic_protagonist" → both appeal to "hero movie fans"
+   - Example: "dynamic_action" + "dynamic_pose" → both appeal to "dynamic movement fans"
+
+2. **Different clusters = Different user preferences**: Keep DISTINCT if they represent different preferences
+   - Example: "protagonist" vs "antagonist" → hero fans ≠ villain fans (NEVER merge!)
+   - Example: "joyful" vs "ominous" → different mood preferences (NEVER merge!)
+
+3. **Discriminative power**: Merged clusters must still help distinguish movie types
+   - If merging loses important distinctions for recommendation, DON'T merge
+   - Example: Merging all character types into one cluster loses all character-based recommendation power
+
+4. **Target 10-15 clusters per relation** - optimal for knowledge graph density without losing discriminative power
+
+**IMPORTANT RULES:**
+1. **Look at ENTITIES themselves**, not just cluster names
+2. Merge if entities appeal to similar user interests
+3. Be reasonably aggressive - err on the side of merging similar concepts
+4. But NEVER merge opposite or contradictory user preferences
 
 Examples of what SHOULD be merged:
-- "dynamic_action", "dynamic_pose", "dynamic_postures" → all dynamic movements
-- "protagonist", "heroic_protagonist" → same concept
-- "romantic_pair", "couple", "duo" → all paired characters
+- "romantic_pair", "couple", "duo" → all about paired characters (same preference)
+- "vibrant_colors", "bright_colors" → all about vivid color preference
 
-Only keep separate if entities are clearly distinct semantic categories.
+Examples of what should NEVER be merged:
+- "protagonist" + "antagonist" → opposite character preferences
+- "horror" + "comedy" → opposite genre preferences
+- "joyful" + "somber" → opposite mood preferences
 
 **CRITICAL: Consider GLOBAL CONTEXT**
 - You are merging clusters within a specific RELATION (e.g., character_type, mood)
 - The relation defines the semantic framework - all clusters should fit coherently within it
-- Consider the OVERALL structure - does the final set of clusters make sense together?
-- Avoid merging clusters that represent fundamentally different concepts within the relation
-- Example: In "character_type", don't merge protagonist with antagonist - they're opposite roles"""
+- Consider the OVERALL structure - does the final set represent distinct user preferences?
+- Ask: Would users who prefer cluster A have DIFFERENT preferences from users who prefer cluster B?"""
 
         # 构建clusters摘要（显示entities，不只是cluster名）
         cluster_list = []
         for canonical, entities in sorted(mergeable_clusters.items()):
             cluster_list.append(f"  {canonical}: [{', '.join(sorted(entities))}]")
 
-        user_prompt = f"""Relation: **{relation}** (this defines the semantic framework)
+        user_prompt = f"""Relation: **{relation}** (defines how users find movies by {relation} preferences)
 
-GLOBAL CONTEXT - All current clusters in this relation:
-Current count: {current_count} clusters (target: 10-15)
+**RECOMMENDATION CONTEXT:**
+Users have preferences for "{relation}" attributes. We need 10-15 distinct clusters representing different user preferences.
+- Current count: {current_count} clusters (target: 10-15)
 
+**GLOBAL CONTEXT - All current clusters:**
 {chr(10).join(cluster_list)}
 
-Please identify clusters that should be merged to reach ~10-15 clusters.
+Please identify clusters that should be merged to create meaningful, distinct preference categories.
 
-**IMPORTANT CONSIDERATIONS:**
-1. Consider the relation "{relation}" - all merged clusters must make sense within this framework
-2. Look at ALL clusters together - does the overall structure make semantic sense?
-3. Example: In "character_type", hero/protagonist are similar (can merge), but protagonist/antagonist are opposite (NEVER merge)
-4. Example: In "mood", joyful/cheerful are similar (can merge), but joyful/somber are opposite (NEVER merge)
-5. DON'T just merge based on word similarity - consider SEMANTIC coherence within the relation
+**CRITICAL DECISION FRAMEWORK:**
+For each potential merge, ask:
+1. **Same user preference?** Would users who like entities in cluster A also like entities in cluster B?
+   - If YES → consider merging
+   - If NO → keep separate
+
+2. **Discriminative power?** After merging, can we still distinguish different movie types for recommendation?
+   - If merging loses important distinctions → DON'T merge
+   - If merged cluster is still coherent and useful → merge
+
+3. **Opposite preferences?** Do the clusters represent OPPOSITE or CONTRADICTORY user interests?
+   - protagonist vs antagonist → OPPOSITE (hero fans ≠ villain fans) → NEVER merge
+   - hero vs villain → OPPOSITE → NEVER merge
+   - horror vs comedy → OPPOSITE genre preferences → NEVER merge
+   - joyful vs somber → OPPOSITE mood preferences → NEVER merge
+   - If OPPOSITE → ABSOLUTELY NEVER merge
+
+4. **Relation coherence?** Within "{relation}", are the clusters semantically similar or different?
+   - Look at ENTITIES in brackets, not just cluster names
+   - Consider what the relation "{relation}" means for recommendation
+
+**SPECIFIC WARNINGS:**
+- In "character_type": protagonist, hero, antagonist, villain are DIFFERENT roles → DON'T merge opposite roles
+- In "character_type": detective, spy are investigators → CAN merge if similar preference
+- In "genre": horror, comedy, thriller are DIFFERENT preferences → keep separate
+- In "mood": joyful, ominous, tense are DIFFERENT emotional preferences → keep separate
 
 **Output Format:**
 Return a JSON object:
@@ -360,14 +429,14 @@ Return a JSON object:
 {{
   "merges": [
     {{
-      "clusters_to_merge": ["dynamic_action", "dynamic_pose", "dynamic_postures"],
+      "clusters_to_merge": ["dynamic_action", "dynamic_pose"],
       "merged_name": "dynamic_action",
-      "reason": "Within action_behaviors relation, all represent dynamic movement/poses - same semantic category"
+      "reason": "Same user preference: Both appeal to users who enjoy dynamic movement scenes in action_behaviors. Merging maintains discriminative power while reducing cluster count."
     }},
     {{
-      "clusters_to_merge": ["protagonist", "heroic_protagonist"],
-      "merged_name": "protagonist",
-      "reason": "Within character_type relation, both refer to the same concept - the main character/hero"
+      "clusters_to_merge": ["romantic_pair", "couple"],
+      "merged_name": "couple",
+      "reason": "Same user preference: Both represent paired romantic characters in character_type. Users interested in one would be interested in the other."
     }}
   ]
 }}
@@ -375,12 +444,12 @@ Return a JSON object:
 
 **Important:**
 - Focus on reaching 10-15 clusters (currently have {current_count})
-- Look at the ENTITIES in brackets, not just cluster names
-- Merge semantically similar/overlapping concepts WITHIN the "{relation}" framework
-- NEVER merge opposite or contradictory concepts (e.g., hero+villain, happy+sad)
+- Look at ENTITIES in brackets - do they appeal to the SAME user interests?
+- Merge semantically similar concepts that serve the SAME user preference
+- ABSOLUTELY NEVER merge opposite/contradictory preferences (hero+villain, horror+comedy, happy+sad, detective+villain)
 - If already in target range and well-organized, return {{"merges": []}}
 - Choose the most representative entity as merged_name
-- Explain reasoning in context of the "{relation}" relation
+- Explain from USER PREFERENCE perspective
 
 Now identify clusters to merge:"""
 
@@ -447,24 +516,32 @@ Now identify clusters to merge:"""
         """
         clusters = self.get_clusters(relation)
 
-        system_prompt = """You are an expert in knowledge graph design.
+        system_prompt = """You are an expert in knowledge graph design for MOVIE RECOMMENDATION SYSTEMS.
 
-Your task is to choose the best canonical name for each finalized entity cluster.
+**BUSINESS CONTEXT:**
+We are building a movie poster knowledge graph for recommendation. Cluster names will be used to:
+1. Help users express preferences (e.g., "I like movies with protagonists")
+2. Match users with movies based on these attributes
+3. Describe movie characteristics in the recommendation interface
 
-RULES:
-1. Prefer the most GENERIC/COMMON term (e.g., "weapon" not "darts_target")
-2. Prefer shorter, simpler names over longer ones
-3. The name should best represent ALL entities in the cluster
-4. Keep "other_xxx" clusters as-is
-5. Choose from the existing entities in the cluster (don't invent new names)
-6. Focus on semantic representativeness, not alphabetical order
+**YOUR TASK:**
+Choose the best canonical name for each cluster that users will understand and use for preferences.
+
+**NAMING PRINCIPLES FOR RECOMMENDATION:**
+1. **User-friendly**: Name should be clear and understandable to users
+2. **Generic/Common**: Prefer the most GENERIC/COMMON term (e.g., "weapon" not "darts_target")
+3. **Representative**: Name should represent ALL entities in the cluster
+4. **Distinct**: Names must be DIFFERENT across clusters to represent different preferences
+5. **Simple**: Prefer shorter, simpler names over longer ones
+6. **Semantic**: Choose from existing entities in the cluster (don't invent new names)
 
 **CRITICAL: Consider GLOBAL CONTEXT**
 - You are naming clusters within a specific RELATION (e.g., character_type, mood)
-- Names should be DISTINCT - avoid duplicate or too-similar names across clusters
-- Names should reflect the cluster's role within the overall relation structure
-- Consider what OTHER clusters exist - names should form a coherent naming system
-- Example: In "character_type", if you have protagonist, don't name antagonist as "protagonist" too"""
+- Names must be DISTINCT - they represent DIFFERENT user preferences
+- Names should form a coherent naming system for the relation
+- Avoid duplicate or confusingly similar names
+- Example: In "character_type", if you have "protagonist" for heroes, DON'T name the villain cluster as "protagonist"
+- Example: In "genre", "horror" and "comedy" must be clearly distinct names"""
 
         # 构建全局上下文：显示所有cluster名字
         all_cluster_names = [name for name in sorted(clusters.keys()) if not name.startswith('other_')]
@@ -480,25 +557,58 @@ RULES:
             print(f"  无cluster需要rename")
             return self.current_mappings[relation]
 
-        user_prompt = f"""Relation: **{relation}** (this defines the semantic framework)
+        user_prompt = f"""Relation: **{relation}** (defines how users express preferences for {relation})
 
-GLOBAL CONTEXT - All cluster names in this relation:
+**RECOMMENDATION CONTEXT:**
+Users will use these cluster names to:
+- Express preferences: "I like movies with [cluster_name]"
+- Search and filter movies: "Show me movies with [cluster_name]"
+- Understand movie characteristics in recommendations
+
+**GLOBAL CONTEXT - All cluster names in this relation:**
 {', '.join(all_cluster_names)}
-(Ensure new names are DISTINCT and form a coherent naming system)
+(Names must be DISTINCT and represent DIFFERENT user preferences)
 
-Finalized clusters to rename:
+**Finalized clusters to rename:**
 {chr(10).join(cluster_list)}
 
-Please choose the best canonical name for each cluster from its entities.
+Please choose the best canonical name for each cluster that clearly represents its USER PREFERENCE role.
 
-**IMPORTANT CONSIDERATIONS:**
-1. Consider the relation "{relation}" - names should fit this semantic framework
-2. Look at ALL cluster names - avoid duplicates or confusingly similar names
-3. Names should be DISTINCT and clearly differentiate each cluster's semantic role
-4. Example: In "character_type" with clusters for protagonist and antagonist:
-   - DON'T name antagonist as "protagonist" (opposite roles!)
-   - DON'T name detective as "antagonist" (different role!)
-5. Choose names that make the overall structure clear and coherent
+**CRITICAL NAMING PRINCIPLES FOR RECOMMENDATION:**
+
+1. **User perspective**: Choose names users would naturally say
+   - "I like movies with protagonists" ✓
+   - "I like movies with darts_target" ✗ (too specific, use "weapon")
+
+2. **Distinct preferences**: Names must clearly represent DIFFERENT user interests
+   - In "character_type": "protagonist" vs "antagonist" are OPPOSITE roles → names must be DISTINCT
+   - In "genre": "horror" vs "comedy" are OPPOSITE genres → names must be DISTINCT
+   - In "mood": "joyful" vs "ominous" are OPPOSITE moods → names must be DISTINCT
+
+3. **Never conflate opposite preferences**:
+   - DON'T name a hero cluster as "villain" or vice versa (opposite character preferences)
+   - DON'T name a horror cluster as "comedy" or vice versa (opposite genre preferences)
+   - DON'T name a joyful cluster as "somber" or vice versa (opposite mood preferences)
+
+4. **Relation coherence**: Within "{relation}", all names should:
+   - Fit the semantic framework of this relation
+   - Form a coherent naming system that users can understand
+   - Help distinguish different movie types for recommendation
+
+5. **Generic and representative**: Choose the most common/generic entity
+   - "weapon" not "darts_target" (weapon is more generic)
+   - "protagonist" not "heroic_protagonist" (protagonist is more common)
+
+6. **Look at OTHER cluster names**: Ensure your choice is:
+   - Different from all other cluster names
+   - Not confusingly similar to other names
+   - Clearly represents THIS cluster's unique preference role
+
+**SPECIFIC WARNINGS FOR COMMON RELATIONS:**
+- In "character_type": hero/protagonist ≠ villain/antagonist (opposite), detective ≠ villain (different roles)
+- In "genre": horror ≠ comedy ≠ thriller (all different genre preferences)
+- In "mood": joyful ≠ ominous ≠ tense (all different emotional preferences)
+- In "color_palette": warm_colors ≠ cool_colors (opposite preferences)
 
 **Output Format:**
 Return a JSON object:
