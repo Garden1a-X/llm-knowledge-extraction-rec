@@ -19,16 +19,19 @@ class EntityClusterer:
     - 使用BERTopic自适应聚类
     """
 
-    def __init__(self, stage1_5_result_path: str):
+    def __init__(self, stage1_5_result_path: str, phase1_result_path: str):
         """
         初始化
 
         Args:
             stage1_5_result_path: Stage 1.5重分配结果JSON路径
+            phase1_result_path: Phase 1提取结果JSON路径（用于获取entity频率）
         """
         self.stage1_5_result_path = Path(stage1_5_result_path)
+        self.phase1_result_path = Path(phase1_result_path)
         self.entities_by_relation = {}
         self.entity_counts_by_relation = {}
+        self.relation_mapping = None
 
     def load_stage1_5_results(self) -> Dict:
         """
@@ -41,35 +44,95 @@ class EntityClusterer:
             data = json.load(f)
 
         print(f"✓ Loaded Stage 1.5 results from: {self.stage1_5_result_path}")
-        print(f"  Total relations: {data['metadata']['total_relations']}")
+        print(f"  Total redistributed: {data['metadata']['total_redistributed']}")
+        print(f"  Total skipped: {data['metadata']['total_skipped']}")
 
         return data
 
+    def load_phase1_and_mapping(self, relation_mapping_path: str):
+        """
+        加载Phase 1数据和relation mapping（用于统计entity频率）
+
+        Args:
+            relation_mapping_path: Relation映射文件路径
+        """
+        # 加载Phase 1数据
+        with open(self.phase1_result_path, 'r') as f:
+            phase1_data = json.load(f)
+
+        print(f"✓ Loaded Phase 1 results from: {self.phase1_result_path}")
+
+        # 加载relation mapping
+        with open(relation_mapping_path, 'r') as f:
+            mapping_data = json.load(f)
+            self.relation_mapping = mapping_data['relation_mapping']
+
+        print(f"✓ Loaded relation mapping from: {relation_mapping_path}")
+
+        # 从Phase 1提取所有entities（包含重复）并映射到标准relation
+        all_entity_instances = {}  # {relation: [entity1, entity2, ...]}（包含重复）
+
+        results = phase1_data.get('results', [])
+        for result in results:
+            if result.get('status') != 'success':
+                continue
+
+            for kp in result.get('knowledge_points', []):
+                original_relation = kp.get('relation')
+                entity = kp.get('entity')
+
+                if not original_relation or not entity:
+                    continue
+
+                # 映射到标准relation
+                standard_relation = self.relation_mapping.get(original_relation, 'additional_elements')
+
+                if standard_relation not in all_entity_instances:
+                    all_entity_instances[standard_relation] = []
+
+                all_entity_instances[standard_relation].append(entity)
+
+        # 统计每个relation的entity频率
+        self.entity_counts_by_relation = {
+            rel: Counter(entities)
+            for rel, entities in all_entity_instances.items()
+        }
+
+        print(f"\n✓ Extracted entity frequencies from Phase 1:")
+        total_instances = sum(len(entities) for entities in all_entity_instances.values())
+        print(f"  Total entity instances: {total_instances}")
+
     def extract_entities_by_relation(self, stage1_5_data: Dict) -> Dict[str, List[str]]:
         """
-        按relation提取entities
+        按relation提取entities（从Stage 1.5获取最终的entity列表）
 
         Args:
             stage1_5_data: Stage 1.5数据
 
         Returns:
-            {relation: [entity1, entity2, ...]}（包含重复，用于频率统计）
+            {relation: [entity1, entity2, ...]}（唯一entities列表）
         """
-        redistributed = stage1_5_data.get('redistributed', {})
+        results = stage1_5_data.get('results', {})
 
-        for relation, entities in redistributed.items():
-            entity_list = []
-            for entity_data in entities:
-                entity = entity_data['entity']
-                entity_list.append(entity)
+        for relation, relation_data in results.items():
+            # 使用final_entities（已经去重的列表）
+            final_entities = relation_data.get('final_entities', [])
+            self.entities_by_relation[relation] = final_entities
 
-            self.entities_by_relation[relation] = entity_list
-            self.entity_counts_by_relation[relation] = Counter(entity_list)
-
-        print(f"\n✓ Extracted entities by relation:")
-        for relation, entity_counter in self.entity_counts_by_relation.items():
-            print(f"  {relation:25s}: {len(entity_counter):3d} unique entities, "
-                  f"{sum(entity_counter.values()):4d} total instances")
+        print(f"\n✓ Extracted entities by relation from Stage 1.5:")
+        for relation in sorted(self.entities_by_relation.keys()):
+            unique_count = len(self.entities_by_relation[relation])
+            # 如果有频率数据，显示总instances
+            if relation in self.entity_counts_by_relation:
+                total_instances = sum(
+                    self.entity_counts_by_relation[relation][ent]
+                    for ent in self.entities_by_relation[relation]
+                    if ent in self.entity_counts_by_relation[relation]
+                )
+                print(f"  {relation:25s}: {unique_count:3d} unique entities, "
+                      f"{total_instances:4d} total instances")
+            else:
+                print(f"  {relation:25s}: {unique_count:3d} unique entities")
 
         return self.entities_by_relation
 
