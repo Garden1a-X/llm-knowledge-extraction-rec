@@ -74,6 +74,9 @@ class EntityClusterer:
         embeddings: np.ndarray,
         entities: List[str],
         min_cluster_size: int = 2,
+        n_neighbors: int = 15,
+        n_components: int = 5,
+        min_dist: float = 0.0,
         verbose: bool = True
     ) -> Tuple[object, np.ndarray, np.ndarray]:
         """
@@ -84,6 +87,9 @@ class EntityClusterer:
             embeddings: Entity embeddings
             entities: Entity列表
             min_cluster_size: HDBSCAN最小cluster大小
+            n_neighbors: UMAP邻居数
+            n_components: UMAP降维维度
+            min_dist: UMAP最小距离
             verbose: 是否输出详细信息
 
         Returns:
@@ -96,12 +102,15 @@ class EntityClusterer:
         print(f"\n{'='*60}")
         print(f"BERTopic聚类: {relation}")
         print(f"{'='*60}")
+        if verbose:
+            print(f"参数: min_cluster_size={min_cluster_size}, n_neighbors={n_neighbors}, "
+                  f"n_components={n_components}, min_dist={min_dist}")
 
         # UMAP降维
         umap_model = UMAP(
-            n_components=5,
-            n_neighbors=min(15, len(entities) - 1),
-            min_dist=0.0,
+            n_components=n_components,
+            n_neighbors=min(n_neighbors, len(entities) - 1),
+            min_dist=min_dist,
             metric='cosine',
             random_state=42
         )
