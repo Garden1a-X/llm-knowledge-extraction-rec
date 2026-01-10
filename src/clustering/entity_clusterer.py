@@ -164,6 +164,8 @@ class EntityClusterer:
         """
         生成entity映射表（按字母顺序选择canonical name）
 
+        注意：所有noise entities归为一个"other_{relation}" canonical entity
+
         Args:
             relation: Relation名称
             topics: BERTopic的topic标签
@@ -179,10 +181,11 @@ class EntityClusterer:
             topic_entities = [entities[i] for i, t in enumerate(topics) if t == topic_id]
 
             if topic_id == -1:
-                # Noise: 每个entity保持独立
+                # Noise: 所有noise归为一个"other_xxx"
+                other_name = f"other_{relation}"
                 for ent in topic_entities:
-                    entity_mapping[ent] = ent
-                    canonical_entities.append(ent)
+                    entity_mapping[ent] = other_name
+                canonical_entities.append(other_name)
             else:
                 # 正常topic: 按字母顺序选第一个作为canonical name
                 canonical_name = sorted(topic_entities)[0]
