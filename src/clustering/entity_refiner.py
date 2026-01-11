@@ -729,16 +729,29 @@ Now analyze and choose names step by step:"""
         # 应用renames
         new_mapping = {}
 
+        # 获取当前clusters用于推断缺失的entities
+        current_clusters = self.get_clusters(relation)
+
         for rename in result['renames']:
-            # 验证rename对象结构
-            if 'old_name' not in rename or 'new_name' not in rename or 'entities' not in rename:
-                print(f"⚠️  警告: rename对象缺少必需字段，跳过")
+            # 验证rename对象基本结构
+            if 'old_name' not in rename or 'new_name' not in rename:
+                print(f"⚠️  警告: rename对象缺少old_name或new_name，跳过")
                 print(f"  rename对象: {rename}")
                 continue
 
             old_name = rename['old_name']
             new_name = rename['new_name']
-            entities = rename['entities']
+
+            # 如果entities缺失，从当前clusters推断
+            if 'entities' not in rename:
+                if old_name in current_clusters:
+                    entities = current_clusters[old_name]
+                    print(f"  ℹ️  从当前clusters推断entities: {old_name} → {entities}")
+                else:
+                    print(f"⚠️  警告: 无法推断entities，old_name '{old_name}' 不在当前clusters中，跳过")
+                    continue
+            else:
+                entities = rename['entities']
 
             if old_name != new_name:
                 print(f"  Rename: {old_name} → {new_name}")
