@@ -122,14 +122,17 @@ Your task is to analyze movie poster images and extract visual knowledge points 
 NEW ENTITY MECHANISM
 ═══════════════════════════════════════════════════════════════
 
-If you observe an important visual feature that CANNOT be described by any of the {sum(len(ents) for ents in vocabulary.values())} standard entities listed above, you may mark it as NEW_entity_name.
+If you observe an important visual feature that CANNOT be described by any of the {sum(len(ents) for ents in vocabulary.values())} standard entities listed above, you MUST mark it as NEW_entity_name.
+
+⚠️ MANDATORY: If an entity is NOT in the standard list, you MUST add the NEW_ prefix!
 
 Guidelines for NEW entities:
 ✅ Use snake_case naming (e.g., NEW_beverage_with_straw, NEW_neon_lighting)
 ✅ Keep it CONCISE (2-4 words maximum)
 ✅ Make it ABSTRACT and GENERALIZABLE (could apply to multiple movies, not just this one)
+✅ ALWAYS check if the entity exists in the standard list first
 ❌ Do NOT create overly specific descriptions
-❌ Do NOT use NEW_ unless truly necessary - prioritize standard entities
+❌ Do NOT use an entity that's not in the list WITHOUT the NEW_ prefix
 
 ═══════════════════════════════════════════════════════════════
 CRITICAL RULES - READ CAREFULLY!
@@ -139,20 +142,26 @@ CRITICAL RULES - READ CAREFULLY!
    ❌ NEVER create new relations
    ✅ If unsure where an entity belongs, use "additional_elements"
 
-2. Entities: MUST come from the EXACT relation's entity list
+2. Entities: MUST come from the EXACT relation's entity list OR use NEW_ prefix
    ⚠️ CRITICAL: Each relation has its OWN entity list. You MUST:
       - First choose the relation
-      - Then ONLY select entities from THAT relation's list
+      - Then check if your desired entity is in THAT relation's list
+      - ✅ If found in the list → use it directly
+      - ✅ If NOT found in the list → use NEW_entity_name format
+      - ❌ NEVER use an entity that's not in the list WITHOUT the NEW_ prefix
       - ❌ NEVER use an entity from a different relation's list
 
    Example WRONG patterns:
-   ❌ "additional_elements: disaster scenes" (disaster scenes is in depicted_subject)
-   ❌ "action_behaviors: character interaction" (character interaction is in character_type)
-   ❌ "mood: adventurous" (adventurous doesn't exist, use "action" or "energetic")
+   ❌ "mood: adventurous" (adventurous not in mood list, missing NEW_ prefix)
+   ❌ "design_element: formal" (formal not in design_element list, missing NEW_ prefix)
+   ❌ "visual_theme: drama" (drama not in visual_theme list, missing NEW_ prefix)
+   ❌ "additional_elements: disaster scenes" (disaster scenes IS in depicted_subject, wrong relation)
 
    Correct approach:
+   ✅ Want "adventurous" mood → Not in mood list → Use "mood: NEW_adventurous"
+   ✅ Want "formal" design → Not in design_element list → Use "design_element: NEW_formal"
    ✅ See "disaster scenes" in vocabulary → It's under depicted_subject → Use "depicted_subject: disaster scenes"
-   ✅ Want character interaction → Find it in character_type list → Use "character_type: character interaction"
+   ✅ Want "candles" → Not in any list → Choose best relation → Use "additional_elements: NEW_candles"
 
 3. Quantity: Extract AT MOST 10 knowledge points
    ✅ Select the MOST visually significant features
@@ -185,8 +194,9 @@ Output format (one per line, NO numbering):
 
 Remember:
 - Use ONLY the 15 approved relations
-- Prioritize the 165 standard entities
-- Use NEW_entity_name only if necessary
+- Check if entity is in the 165 standard entities list for your chosen relation
+- If entity NOT in the list → MUST use NEW_entity_name (e.g., mood: NEW_adventurous)
+- If entity IS in the list → use it directly (e.g., mood: action)
 - Extract at most 10 knowledge points
 - Focus on the most visually significant features
 - Do NOT add line numbers (wrong: "1. relation: entity", correct: "relation: entity")
