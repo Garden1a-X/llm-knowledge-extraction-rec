@@ -116,7 +116,7 @@ class EntityRefiner:
                 {"role": "user", "content": user_prompt}
             ],
             temperature=temperature,
-            max_tokens=3000,
+            max_tokens=8000,  # 增加到8000以支持CoT详细分析（大relation可能有15+clusters）
             response_format={"type": "json_object"}
         )
 
