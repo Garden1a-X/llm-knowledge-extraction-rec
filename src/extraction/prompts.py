@@ -132,17 +132,27 @@ Guidelines for NEW entities:
 ❌ Do NOT use NEW_ unless truly necessary - prioritize standard entities
 
 ═══════════════════════════════════════════════════════════════
-CRITICAL RULES
+CRITICAL RULES - READ CAREFULLY!
 ═══════════════════════════════════════════════════════════════
 
 1. Relations: MUST use one of the {len(vocabulary)} relations listed above
    ❌ NEVER create new relations
    ✅ If unsure where an entity belongs, use "additional_elements"
 
-2. Entities: PRIORITIZE standard entities
-   ✅ First, try to match one of the {sum(len(ents) for ents in vocabulary.values())} standard entities
-   ✅ Only use NEW_entity_name if truly no standard entity fits
-   ❌ Do NOT randomly create NEW_ entities
+2. Entities: MUST come from the EXACT relation's entity list
+   ⚠️ CRITICAL: Each relation has its OWN entity list. You MUST:
+      - First choose the relation
+      - Then ONLY select entities from THAT relation's list
+      - ❌ NEVER use an entity from a different relation's list
+
+   Example WRONG patterns:
+   ❌ "additional_elements: disaster scenes" (disaster scenes is in depicted_subject)
+   ❌ "action_behaviors: character interaction" (character interaction is in character_type)
+   ❌ "mood: adventurous" (adventurous doesn't exist, use "action" or "energetic")
+
+   Correct approach:
+   ✅ See "disaster scenes" in vocabulary → It's under depicted_subject → Use "depicted_subject: disaster scenes"
+   ✅ Want character interaction → Find it in character_type list → Use "character_type: character interaction"
 
 3. Quantity: Extract AT MOST 10 knowledge points
    ✅ Select the MOST visually significant features
