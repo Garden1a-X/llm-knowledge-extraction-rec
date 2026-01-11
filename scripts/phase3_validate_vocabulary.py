@@ -436,7 +436,8 @@ def main():
             new_samples_needed = num_samples - len(phase1_ids)
             if new_samples_needed > 0:
                 # Get all available IDs and exclude Phase 1
-                available_ids = [rid for rid in poster_loader.recbole_ids if rid not in phase1_ids]
+                all_ids = poster_loader.get_all_item_ids()
+                available_ids = [rid for rid in all_ids if rid not in phase1_ids]
 
                 import random
                 random.seed(args.seed)
@@ -456,7 +457,8 @@ def main():
         print(f"\nForce resampling {num_samples} movies (seed={args.seed})...")
         new_samples_needed = num_samples - len(phase1_ids)
         if new_samples_needed > 0:
-            available_ids = [rid for rid in poster_loader.recbole_ids if rid not in phase1_ids]
+            all_ids = poster_loader.get_all_item_ids()
+            available_ids = [rid for rid in all_ids if rid not in phase1_ids]
 
             import random
             random.seed(args.seed)
