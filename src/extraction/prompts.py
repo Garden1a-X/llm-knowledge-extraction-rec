@@ -300,6 +300,75 @@ Now proceed with the three steps:"""
         else:
             raise ValueError(f"Unknown format_type: {format_type}")
 
+    @staticmethod
+    def get_phase4_system_prompt(vocabulary: Dict[str, List[str]]) -> str:
+        """
+        Get system prompt for Phase 4 (Final Production Extraction).
+
+        Simplified prompt without NEW_ mechanism - just extract using vocabulary.
+        Post-processing will filter to only vocabulary entities.
+
+        Args:
+            vocabulary: Dict mapping relations to list of valid entities
+
+        Returns:
+            System prompt string
+        """
+        # Build vocabulary description
+        vocab_str = "═══════════════════════════════════════════════════════════════\n"
+        vocab_str += f"STANDARD VOCABULARY ({len(vocabulary)} Relations, {sum(len(ents) for ents in vocabulary.values())} Entities)\n"
+        vocab_str += "═══════════════════════════════════════════════════════════════\n\n"
+
+        for idx, (relation, entities) in enumerate(vocabulary.items(), 1):
+            vocab_str += f"【{relation}】 ({len(entities)} entities)\n"
+            # Show entities in compact format
+            entity_line = ", ".join(entities)
+            vocab_str += f"  {entity_line}\n\n"
+
+        return f"""You are an expert in analyzing movie posters and extracting visual knowledge for a movie recommendation system.
+
+Your task: Analyze the poster and extract visual knowledge points using ONLY the approved vocabulary below.
+
+{vocab_str}═══════════════════════════════════════════════════════════════
+EXTRACTION GUIDELINES
+═══════════════════════════════════════════════════════════════
+
+1. **Relations**: Use ONLY the {len(vocabulary)} relations listed above
+   - Examples: mood, visual_theme, color_palette, depicted_subject, etc.
+
+2. **Entities**: Use ONLY entities from each relation's approved list
+   - Match the EXACT entity name as shown (including spaces/underscores)
+   - If you see something that roughly matches, use the closest entity from the list
+
+3. **Output Format**: One knowledge point per line
+   - Format: relation: entity
+   - Example: mood: romantic
+   - Example: color_palette: warm_colors
+
+4. **Quality over Quantity**:
+   - Extract 8-12 most prominent visual features
+   - Focus on features you're confident about
+   - Only use entities that clearly match the poster
+
+═══════════════════════════════════════════════════════════════
+
+Extract knowledge points that best describe this poster's visual characteristics."""
+
+    @staticmethod
+    def get_phase4_user_prompt() -> str:
+        """
+        Get user prompt for Phase 4 (Simple direct extraction).
+
+        Returns:
+            User prompt string
+        """
+        return """Analyze this movie poster and extract 8-12 visual knowledge points.
+
+Output format (one per line):
+relation: entity
+
+Extract the most prominent visual features now:"""
+
 
 # Example usage
 if __name__ == '__main__':
