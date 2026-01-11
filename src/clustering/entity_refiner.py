@@ -214,38 +214,58 @@ This relation helps users find movies based on their preferences for "{relation}
 
 Please identify ONLY clusters with MAJOR semantic conflicts that MUST be split for recommendation purposes.
 
-**IMPORTANT CONSIDERATIONS:**
-1. **User preference distinction**: Would users who like one entity also like the others in the cluster?
-   - If YES → keep together (e.g., protagonist + heroic_protagonist)
-   - If NO → must split (e.g., protagonist + antagonist appeal to different preferences)
+**ANALYSIS PROCESS (complete this BEFORE making split decisions):**
+For each cluster with 2+ entities, analyze:
+1. Map each entity to its user preference
+2. Check if preferences conflict (opposite or completely different)
+3. Assess recommendation impact (does mixing lose discriminative power?)
+4. Make decision: SPLIT or KEEP
 
-2. **Discriminative power**: Does the cluster help distinguish different movie types?
-   - Example: In "character_type", mixing hero + villain loses discriminative power
-   - We need separate clusters to recommend "hero movies" vs "villain movies"
-
-3. **Relation coherence**: Within "{relation}", does each cluster represent a coherent concept?
-   - Example: In "character_type", protagonist/antagonist are opposite character roles
-   - Example: In "mood", joyful/ominous are opposite emotional tones
-   - Example: In "additional_elements", beverage/weapons are unrelated visual elements
-
-4. **Look at global structure**: How does this cluster fit with OTHER clusters in "{relation}"?
-
-**Output Format:**
+**Output Format (先完成analysis，再给出splits):**
 Return a JSON object:
 ```json
 {{
+  "cluster_analysis": {{
+    "villain": {{
+      "entities": ["antagonist", "detective", "spy", "superhero", "villain"],
+      "user_preference_mapping": {{
+        "superhero": "hero/protagonist preference - users who like heroic characters saving the day",
+        "detective": "investigation preference - users who like detective/mystery themes",
+        "spy": "espionage preference - users who like spy/action themes",
+        "antagonist": "villain preference - users who like antagonist/villain characters",
+        "villain": "villain preference - users who like villain characters"
+      }},
+      "conflict_check": "superhero (hero preference) vs villain/antagonist (villain preference) are OPPOSITE. detective/spy are different from both.",
+      "recommendation_impact": "Mixing heroes and villains completely loses discriminative power - cannot distinguish hero movies from villain movies",
+      "decision": "MUST SPLIT into 3 groups"
+    }},
+    "dynamic_action": {{
+      "entities": ["dynamic_action", "dynamic_pose"],
+      "user_preference_mapping": {{
+        "dynamic_action": "users who like dynamic/action movement",
+        "dynamic_pose": "users who like dynamic poses"
+      }},
+      "conflict_check": "Both appeal to same 'dynamic movement' preference",
+      "recommendation_impact": "No conflict - both represent similar user interest",
+      "decision": "KEEP TOGETHER"
+    }}
+  }},
   "splits": [
     {{
-      "original_cluster": "antagonist",
-      "reason": "MAJOR CONFLICT for recommendation: Contains opposite character roles. Users who prefer protagonist/hero movies have DIFFERENT preferences from users who prefer antagonist/villain movies. Mixing these loses discriminative power for character_type-based recommendation.",
+      "original_cluster": "villain",
+      "reason": "Based on analysis: Contains 3 DIFFERENT user preferences (hero vs villain vs investigation). Opposite preferences (hero/villain) MUST be separated for recommendation.",
       "new_groups": [
         {{
-          "entities": ["protagonist", "heroic_protagonist"],
-          "suggested_name": "protagonist"
+          "entities": ["superhero"],
+          "suggested_name": "superhero"
+        }},
+        {{
+          "entities": ["detective", "spy"],
+          "suggested_name": "detective"
         }},
         {{
           "entities": ["antagonist", "villain"],
-          "suggested_name": "antagonist"
+          "suggested_name": "villain"
         }}
       ]
     }}
@@ -254,13 +274,13 @@ Return a JSON object:
 ```
 
 **Important:**
-- ONLY include clusters with MAJOR conflicts (opposite user preferences, unrelated concepts)
-- If all clusters are semantically coherent for recommendation, return {{"splits": []}}
-- Be very conservative - when in doubt, DON'T split
-- Each entity must appear exactly once in the new groups
-- Explain reasoning from USER PREFERENCE and DISCRIMINATIVE POWER perspectives
+- FIRST complete cluster_analysis for ALL clusters with 2+ entities
+- THEN output splits array based on analysis
+- ONLY split if analysis shows MAJOR conflicts (opposite preferences, unrelated concepts)
+- If all clusters are coherent, return {{"cluster_analysis": {{}}, "splits": []}}
+- Be very conservative - when in doubt, decision should be "KEEP TOGETHER"
 
-Now analyze:"""
+Now analyze step by step:"""
 
         if backend == 'openai':
             response = self._call_openai(
@@ -396,62 +416,65 @@ Users have preferences for "{relation}" attributes. We need 10-15 distinct clust
 
 Please identify clusters that should be merged to create meaningful, distinct preference categories.
 
-**CRITICAL DECISION FRAMEWORK:**
-For each potential merge, ask:
-1. **Same user preference?** Would users who like entities in cluster A also like entities in cluster B?
-   - If YES → consider merging
-   - If NO → keep separate
+**ANALYSIS PROCESS (complete this BEFORE making merge decisions):**
+For each potential merge pair, analyze:
+1. Check entities in both clusters - what user preferences do they represent?
+2. Same preference check: Would users who like A also like B?
+3. Opposite check: Are they opposite/contradictory preferences?
+4. Discriminative power check: Does merging lose important distinctions?
+5. Make decision: MERGE or KEEP SEPARATE
 
-2. **Discriminative power?** After merging, can we still distinguish different movie types for recommendation?
-   - If merging loses important distinctions → DON'T merge
-   - If merged cluster is still coherent and useful → merge
-
-3. **Opposite preferences?** Do the clusters represent OPPOSITE or CONTRADICTORY user interests?
-   - protagonist vs antagonist → OPPOSITE (hero fans ≠ villain fans) → NEVER merge
-   - hero vs villain → OPPOSITE → NEVER merge
-   - horror vs comedy → OPPOSITE genre preferences → NEVER merge
-   - joyful vs somber → OPPOSITE mood preferences → NEVER merge
-   - If OPPOSITE → ABSOLUTELY NEVER merge
-
-4. **Relation coherence?** Within "{relation}", are the clusters semantically similar or different?
-   - Look at ENTITIES in brackets, not just cluster names
-   - Consider what the relation "{relation}" means for recommendation
-
-**SPECIFIC WARNINGS:**
-- In "character_type": protagonist, hero, antagonist, villain are DIFFERENT roles → DON'T merge opposite roles
-- In "character_type": detective, spy are investigators → CAN merge if similar preference
-- In "genre": horror, comedy, thriller are DIFFERENT preferences → keep separate
-- In "mood": joyful, ominous, tense are DIFFERENT emotional preferences → keep separate
-
-**Output Format:**
+**Output Format (先完成analysis，再给出merges):**
 Return a JSON object:
 ```json
 {{
+  "merge_analysis": {{
+    "potential_merge_1": {{
+      "clusters": ["dynamic_action", "dynamic_pose"],
+      "entities_in_clusters": {{
+        "dynamic_action": ["dynamic_action", "dynamic_stance"],
+        "dynamic_pose": ["dynamic_pose", "dynamic_postures"]
+      }},
+      "user_preference_check": "dynamic_action appeals to 'action movement fans'; dynamic_pose appeals to 'dynamic pose fans' → SAME underlying preference for dynamic/active scenes",
+      "opposite_check": "NOT opposite - both represent active/dynamic preference (not static vs dynamic)",
+      "discriminative_check": "Merging maintains discriminative power - still distinct from static/calm scenes",
+      "decision": "SHOULD MERGE",
+      "merged_name": "dynamic_action",
+      "reason": "Both serve same user preference for dynamic movement"
+    }},
+    "potential_merge_2": {{
+      "clusters": ["protagonist", "antagonist"],
+      "entities_in_clusters": {{
+        "protagonist": ["protagonist", "heroic_protagonist"],
+        "antagonist": ["antagonist", "villain"]
+      }},
+      "user_preference_check": "protagonist appeals to 'hero movie fans'; antagonist appeals to 'villain movie fans' → DIFFERENT and OPPOSITE preferences",
+      "opposite_check": "YES - hero preference vs villain preference are OPPOSITE",
+      "discriminative_check": "These are KEY distinctions for recommendation - MUST keep separate",
+      "decision": "MUST NOT MERGE",
+      "merged_name": null,
+      "reason": "Opposite user preferences - hero fans ≠ villain fans"
+    }}
+  }},
   "merges": [
     {{
       "clusters_to_merge": ["dynamic_action", "dynamic_pose"],
       "merged_name": "dynamic_action",
-      "reason": "Same user preference: Both appeal to users who enjoy dynamic movement scenes in action_behaviors. Merging maintains discriminative power while reducing cluster count."
-    }},
-    {{
-      "clusters_to_merge": ["romantic_pair", "couple"],
-      "merged_name": "couple",
-      "reason": "Same user preference: Both represent paired romantic characters in character_type. Users interested in one would be interested in the other."
+      "reason": "Based on analysis: Same user preference for dynamic movement. Merging maintains discriminative power."
     }}
   ]
 }}
 ```
 
 **Important:**
+- FIRST complete merge_analysis for ALL potential merge pairs you consider
+- Include both SHOULD MERGE and MUST NOT MERGE cases in analysis (shows reasoning)
+- THEN output merges array containing only the ones that SHOULD MERGE
 - Focus on reaching 10-15 clusters (currently have {current_count})
-- Look at ENTITIES in brackets - do they appeal to the SAME user interests?
-- Merge semantically similar concepts that serve the SAME user preference
-- ABSOLUTELY NEVER merge opposite/contradictory preferences (hero+villain, horror+comedy, happy+sad, detective+villain)
-- If already in target range and well-organized, return {{"merges": []}}
-- Choose the most representative entity as merged_name
-- Explain from USER PREFERENCE perspective
+- NEVER merge opposite preferences (hero+villain, horror+comedy, joyful+somber, protagonist+antagonist)
+- If already in target range and well-organized, return {{"merge_analysis": {{}}, "merges": []}}
 
-Now identify clusters to merge:"""
+Now analyze step by step:"""
 
         if backend == 'openai':
             response = self._call_openai(
@@ -574,71 +597,69 @@ Users will use these cluster names to:
 
 Please choose the best canonical name for each cluster that clearly represents its USER PREFERENCE role.
 
-**CRITICAL NAMING PRINCIPLES FOR RECOMMENDATION:**
+**ANALYSIS PROCESS (complete this BEFORE choosing names):**
+For each cluster, analyze:
+1. What user preference does this cluster represent?
+2. Which entity is most user-friendly and generic?
+3. Is this name distinct from other cluster names?
+4. Does it fit the relation's semantic framework?
+5. Choose the best name
 
-1. **User perspective**: Choose names users would naturally say
-   - "I like movies with protagonists" ✓
-   - "I like movies with darts_target" ✗ (too specific, use "weapon")
-
-2. **Distinct preferences**: Names must clearly represent DIFFERENT user interests
-   - In "character_type": "protagonist" vs "antagonist" are OPPOSITE roles → names must be DISTINCT
-   - In "genre": "horror" vs "comedy" are OPPOSITE genres → names must be DISTINCT
-   - In "mood": "joyful" vs "ominous" are OPPOSITE moods → names must be DISTINCT
-
-3. **Never conflate opposite preferences**:
-   - DON'T name a hero cluster as "villain" or vice versa (opposite character preferences)
-   - DON'T name a horror cluster as "comedy" or vice versa (opposite genre preferences)
-   - DON'T name a joyful cluster as "somber" or vice versa (opposite mood preferences)
-
-4. **Relation coherence**: Within "{relation}", all names should:
-   - Fit the semantic framework of this relation
-   - Form a coherent naming system that users can understand
-   - Help distinguish different movie types for recommendation
-
-5. **Generic and representative**: Choose the most common/generic entity
-   - "weapon" not "darts_target" (weapon is more generic)
-   - "protagonist" not "heroic_protagonist" (protagonist is more common)
-
-6. **Look at OTHER cluster names**: Ensure your choice is:
-   - Different from all other cluster names
-   - Not confusingly similar to other names
-   - Clearly represents THIS cluster's unique preference role
-
-**SPECIFIC WARNINGS FOR COMMON RELATIONS:**
-- In "character_type": hero/protagonist ≠ villain/antagonist (opposite), detective ≠ villain (different roles)
-- In "genre": horror ≠ comedy ≠ thriller (all different genre preferences)
-- In "mood": joyful ≠ ominous ≠ tense (all different emotional preferences)
-- In "color_palette": warm_colors ≠ cool_colors (opposite preferences)
-
-**Output Format:**
+**Output Format (先完成analysis，再给出renames):**
 Return a JSON object:
 ```json
 {{
+  "naming_analysis": {{
+    "darts_target": {{
+      "current_name": "darts_target",
+      "entities": ["weapons", "weapon", "darts_target"],
+      "user_preference": "Users who prefer movies with weapons/combat elements",
+      "user_friendly_check": "weapon (✓ common) vs darts_target (✗ too specific) vs weapons (✓ generic plural)",
+      "generic_check": "weapon is most generic singular form",
+      "distinctness_check": "weapon is distinct from other clusters: beverage, background, character_interaction, etc.",
+      "relation_fit": "Fits additional_elements as a visual object category",
+      "recommended_name": "weapon",
+      "reasoning": "weapon is most generic, user-friendly, and distinct"
+    }},
+    "villain": {{
+      "current_name": "villain",
+      "entities": ["antagonist", "villain"],
+      "user_preference": "Users who prefer movies with villain/antagonist characters",
+      "user_friendly_check": "Both villain and antagonist are user-friendly",
+      "generic_check": "villain is more common in everyday language",
+      "distinctness_check": "Must be distinct from 'protagonist' or 'hero' clusters (opposite preferences)",
+      "relation_fit": "Fits character_type as character role category",
+      "recommended_name": "villain",
+      "reasoning": "villain is more generic and clearly opposite to hero/protagonist"
+    }}
+  }},
   "renames": [
     {{
       "old_name": "darts_target",
       "entities": ["weapons", "weapon", "darts_target"],
       "new_name": "weapon",
-      "reason": "weapon is most generic and common, clearly distinct from other clusters in additional_elements"
+      "reason": "Based on analysis: weapon is most generic and user-friendly, distinct from other clusters"
     }},
     {{
-      "old_name": "dynamic_action",
-      "entities": ["dynamic_action", "dynamic_pose", "dynamic_postures"],
-      "new_name": "dynamic_action",
-      "reason": "dynamic_action is most generic, distinct from other action_behaviors clusters"
+      "old_name": "villain",
+      "entities": ["antagonist", "villain"],
+      "new_name": "villain",
+      "reason": "Based on analysis: villain is more common, clearly distinct from hero/protagonist"
     }}
   ]
 }}
 ```
 
 **Important:**
+- FIRST complete naming_analysis for ALL clusters
+- Show reasoning for each naming choice in analysis
+- THEN output renames array with final decisions
 - Include ALL clusters (even if name stays the same)
-- Choose the most generic/representative entity from the cluster
 - The new_name MUST be one of the entities in the cluster
-- Ensure names are DISTINCT across all clusters in "{relation}"
-- Explain reasoning in context of the relation and other cluster names
+- Names must be DISTINCT - never conflate opposite preferences (hero≠villain, horror≠comedy, joyful≠somber)
+- Choose most generic/user-friendly option
 
-Now choose the best canonical names:"""
+Now analyze and choose names step by step:"""
 
         if backend == 'openai':
             response = self._call_openai(
