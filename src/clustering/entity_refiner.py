@@ -318,11 +318,24 @@ Now analyze step by step:"""
             return new_mapping
 
         for split in result['splits']:
+            # 验证split对象结构
+            if 'original_cluster' not in split or 'new_groups' not in split:
+                print(f"⚠️  警告: split对象缺少必需字段，跳过")
+                print(f"  split对象: {split}")
+                continue
+
             original = split['original_cluster']
             print(f"  Split: {original}")
-            print(f"    理由: {split['reason']}")
+            if 'reason' in split:
+                print(f"    理由: {split['reason']}")
 
             for group in split['new_groups']:
+                # 验证group对象结构
+                if 'entities' not in group or 'suggested_name' not in group:
+                    print(f"⚠️  警告: new_group缺少必需字段，跳过")
+                    print(f"  group对象: {group}")
+                    continue
+
                 group_name = group['suggested_name']
                 for entity in group['entities']:
                     new_mapping[entity] = group_name
@@ -520,11 +533,18 @@ Now analyze step by step:"""
             return new_mapping
 
         for merge in result['merges']:
+            # 验证merge对象结构
+            if 'clusters_to_merge' not in merge or 'merged_name' not in merge:
+                print(f"⚠️  警告: merge对象缺少必需字段，跳过")
+                print(f"  merge对象: {merge}")
+                continue
+
             clusters_to_merge = merge['clusters_to_merge']
             merged_name = merge['merged_name']
 
             print(f"  Merge: {clusters_to_merge} → {merged_name}")
-            print(f"    理由: {merge['reason']}")
+            if 'reason' in merge:
+                print(f"    理由: {merge['reason']}")
 
             # 将所有被合并的clusters指向新名字
             for entity, canonical in new_mapping.items():
@@ -710,13 +730,20 @@ Now analyze and choose names step by step:"""
         new_mapping = {}
 
         for rename in result['renames']:
+            # 验证rename对象结构
+            if 'old_name' not in rename or 'new_name' not in rename or 'entities' not in rename:
+                print(f"⚠️  警告: rename对象缺少必需字段，跳过")
+                print(f"  rename对象: {rename}")
+                continue
+
             old_name = rename['old_name']
             new_name = rename['new_name']
             entities = rename['entities']
 
             if old_name != new_name:
                 print(f"  Rename: {old_name} → {new_name}")
-                print(f"    理由: {rename['reason']}")
+                if 'reason' in rename:
+                    print(f"    理由: {rename['reason']}")
 
             for entity in entities:
                 new_mapping[entity] = new_name
