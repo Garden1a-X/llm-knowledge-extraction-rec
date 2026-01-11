@@ -170,7 +170,7 @@ CRITICAL RULES
 
 Extract visual knowledge points using the approved vocabulary.
 
-Output format (one per line):
+Output format (one per line, NO numbering):
 <relation>: <entity>
 
 Remember:
@@ -179,6 +179,7 @@ Remember:
 - Use NEW_entity_name only if necessary
 - Extract at most 10 knowledge points
 - Focus on the most visually significant features
+- Do NOT add line numbers (wrong: "1. relation: entity", correct: "relation: entity")
 
 Now extract knowledge points from the poster:"""
 
@@ -211,6 +212,12 @@ Now extract knowledge points from the poster:"""
                 if len(parts) == 2:
                     relation = parts[0].strip()
                     entity = parts[1].strip()
+
+                    # Remove numbering prefix (e.g., "1. relation" -> "relation")
+                    # Handle formats like "1. ", "1) ", "1.", etc.
+                    import re
+                    relation = re.sub(r'^\d+[\.)]\s*', '', relation)
+                    entity = re.sub(r'^\d+[\.)]\s*', '', entity)
 
                     # Basic validation
                     if relation and entity:

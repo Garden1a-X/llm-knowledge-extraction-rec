@@ -158,18 +158,20 @@ def save_results(output_file: Path, config: Dict, results: List[Dict], vocabular
 
 def calculate_coverage_stats(results: List[Dict], vocabulary: Dict[str, List[str]]) -> Dict:
     """
-    Calculate vocabulary coverage statistics.
+    Calculate vocabulary coverage statistics with validation.
 
     Args:
         results: List of extraction results
         vocabulary: Standard vocabulary dict
 
     Returns:
-        Dict with coverage statistics
+        Dict with coverage statistics including validation errors
     """
     total_kps = 0
     new_kps = 0
-    new_entities = []  # List of (relation, entity) tuples for NEW_ entities
+    invalid_kps = 0
+    new_entities = []  # List of NEW_ entities
+    invalid_entities = []  # List of entities not in vocabulary (validation errors)
 
     for result in results:
         if result.get('status') != 'success':
@@ -177,25 +179,49 @@ def calculate_coverage_stats(results: List[Dict], vocabulary: Dict[str, List[str
 
         for kp in result.get('knowledge_points', []):
             total_kps += 1
+            relation = kp['relation']
             entity = kp['entity']
 
             if entity.startswith('NEW_'):
                 new_kps += 1
                 new_entities.append({
-                    'relation': kp['relation'],
+                    'relation': relation,
                     'entity': entity,
                     'recbole_id': result['recbole_id']
                 })
+            else:
+                # Validate: check if entity is actually in the vocabulary for this relation
+                if relation in vocabulary:
+                    if entity not in vocabulary[relation]:
+                        invalid_kps += 1
+                        invalid_entities.append({
+                            'relation': relation,
+                            'entity': entity,
+                            'recbole_id': result['recbole_id'],
+                            'reason': f'Entity "{entity}" not in vocabulary for relation "{relation}"'
+                        })
+                else:
+                    # Relation itself is invalid
+                    invalid_kps += 1
+                    invalid_entities.append({
+                        'relation': relation,
+                        'entity': entity,
+                        'recbole_id': result['recbole_id'],
+                        'reason': f'Invalid relation "{relation}"'
+                    })
 
-    coverage_rate = (total_kps - new_kps) / total_kps if total_kps > 0 else 0.0
+    valid_kps = total_kps - new_kps - invalid_kps
+    coverage_rate = valid_kps / total_kps if total_kps > 0 else 0.0
 
     return {
         'total_knowledge_points': total_kps,
-        'matched_entities': total_kps - new_kps,
+        'valid_entities': valid_kps,
         'new_entities_count': new_kps,
+        'invalid_entities_count': invalid_kps,
         'coverage_rate': coverage_rate,
         'coverage_percentage': coverage_rate * 100,
         'new_entities': new_entities,
+        'invalid_entities': invalid_entities,
         'target_coverage': 90.0,
         'meets_target': coverage_rate >= 0.90
     }
@@ -550,12 +576,19 @@ def main():
     print()
     print("VOCABULARY COVERAGE:")
     print(f"  Total knowledge points: {total_kps}")
-    print(f"  Matched entities: {coverage_stats['matched_entities']}")
+    print(f"  Valid matched entities: {coverage_stats['valid_entities']}")
     print(f"  NEW entities: {coverage_stats['new_entities_count']}")
+    print(f"  Invalid entities: {coverage_stats['invalid_entities_count']}")
     print(f"  Coverage rate: {coverage_stats['coverage_percentage']:.2f}%")
     print(f"  Target: {coverage_stats['target_coverage']}%")
     print(f"  Meets target: {'✓ YES' if coverage_stats['meets_target'] else '✗ NO'}")
     print()
+
+    if coverage_stats['invalid_entities_count'] > 0:
+        print(f"⚠ WARNING: {coverage_stats['invalid_entities_count']} invalid entities detected!")
+        print("  LLM is not strictly following the vocabulary.")
+        print(f"  Invalid rate: {100 * coverage_stats['invalid_entities_count'] / total_kps:.2f}%")
+        print()
 
     if not coverage_stats['meets_target']:
         print("⚠ Coverage below 90% - vocabulary expansion needed (v1 → v2)")
