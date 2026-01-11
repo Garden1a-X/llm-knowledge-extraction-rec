@@ -36,15 +36,21 @@
 
 ### **工作日志**
 
-1. **WORK_LOG_20260111_PHASE3.md** ⭐ 最新
-   - **Phase 3实现完成！** 🎉 提取脚本ready
+1. **WORK_LOG_20260111_PHASE3_ITERATION.md** ⭐ 最新
+   - **Phase 3 Prompt优化与Self-Review实现** 🎉
+   - 两轮Prompt迭代（强制NEW_ → Self-Review）
+   - NEW_使用率提升10倍（1.67% → 16.2%）
+   - 有效覆盖率94.9%（超过90%目标）✅
+   - Self-review机制证明有效
+   - **正在运行完整683部验证**
+
+2. **WORK_LOG_20260111_PHASE3.md**
+   - Phase 3实现完成 - 提取脚本ready
    - 完整Prompt设计（165 entities全部列出）
    - 提取脚本实现（增量+错误恢复+实时统计）
-   - Token优化：2200 tokens（比预估低24%）
-   - 成本更低：$0.26 for 630部（比预估$0.34低）
-   - **准备运行Phase 3验证（~800部电影）**
+   - Token优化与成本分析
 
-2. **WORK_LOG_20260111.md**
+3. **WORK_LOG_20260111.md**
    - **Phase 2b完成！** 🎉 Entity聚类与LLM Refinement
    - Stage 2: BERTopic聚类（626 → 133 clusters）
    - Stage 3: LLM三步refinement（Split → Merge → Rename）
@@ -125,13 +131,15 @@
   - 标准vocabulary生成（165 entities + 13 噪声）
 
 ### **正在进行**：
-- 🔄 **Phase 3: 验证与扩充**（实现完成，待运行）✅
-  - ✅ Prompt设计完成（docs/PHASE3_PROMPT_DESIGN.md）
+- 🔄 **Phase 3: 验证与扩充**（Self-Review实现完成，完整验证运行中）
+  - ✅ Prompt设计与优化（两轮迭代）
+  - ✅ Self-Review机制实现（Draft → Review → Final）
   - ✅ 提取脚本完成（scripts/phase3_validate_vocabulary.py）
-  - ⏸️ 待运行：20%数据验证（约800部电影）
+  - ✅ 小样本测试通过（12部，94.9%有效覆盖率）
+  - 🔄 **正在运行：683部电影完整验证（20%数据）**
   - 使用165个标准entities作为vocabulary v1
-  - 限制提取 + 覆盖率统计
-  - 如果覆盖率<90%，扩充vocabulary v1 → v2
+  - NEW_机制运作良好（16.2%使用率）
+  - 完成后根据结果决定是否扩充v1 → v2
 
 ### **下一步**：
 - Phase 3: 验证与扩充（20%数据，约800部电影）
@@ -140,7 +148,7 @@
 - Phase 6: 知识图谱构建（User-Knowledge-Item异构图）
 - Phase 7: 推荐模型训练（带Mask机制的GNN）
 
-**进度**：Phase 2完成 ≈ **40%整体进度** 🎉
+**进度**：Phase 3验证运行中 ≈ **50%整体进度** 🎉
 
 详见 `KNOWLEDGE_EXTRACTION_PLAN.md` 末尾的"下一步行动"章节。
 
