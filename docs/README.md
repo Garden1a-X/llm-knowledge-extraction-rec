@@ -36,14 +36,21 @@
 
 ### **工作日志**
 
-1. **WORK_LOG_20260111.md** ⭐ 最新
+1. **WORK_LOG_20260111_PHASE3.md** ⭐ 最新
+   - **Phase 3实现完成！** 🎉 提取脚本ready
+   - 完整Prompt设计（165 entities全部列出）
+   - 提取脚本实现（增量+错误恢复+实时统计）
+   - Token优化：2200 tokens（比预估低24%）
+   - 成本更低：$0.26 for 630部（比预估$0.34低）
+   - **准备运行Phase 3验证（~800部电影）**
+
+2. **WORK_LOG_20260111.md**
    - **Phase 2b完成！** 🎉 Entity聚类与LLM Refinement
    - Stage 2: BERTopic聚类（626 → 133 clusters）
    - Stage 3: LLM三步refinement（Split → Merge → Rename）
    - 关键创新：CoT Reasoning + Business Context
    - 成功修复：superhero → hero（不再是villain）
    - 标准Entity词汇表提取（165个标准entities）
-   - **准备进入Phase 3验证与扩充**
 
 2. **WORK_LOG_20260108.md**
    - Phase 2b Stage 1 & 1.5完成
@@ -118,9 +125,11 @@
   - 标准vocabulary生成（165 entities + 13 噪声）
 
 ### **正在进行**：
-- 🔄 **Phase 3: 验证与扩充**（准备中）
+- 🔄 **Phase 3: 验证与扩充**（实现完成，待运行）✅
+  - ✅ Prompt设计完成（docs/PHASE3_PROMPT_DESIGN.md）
+  - ✅ 提取脚本完成（scripts/phase3_validate_vocabulary.py）
+  - ⏸️ 待运行：20%数据验证（约800部电影）
   - 使用165个标准entities作为vocabulary v1
-  - 20%数据验证（约800部电影）
   - 限制提取 + 覆盖率统计
   - 如果覆盖率<90%，扩充vocabulary v1 → v2
 

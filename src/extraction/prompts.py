@@ -97,66 +97,88 @@ Now extract knowledge points from the poster:"""
         Get system prompt for Phase 3 (Constrained Extraction with vocabulary).
 
         Args:
-            vocabulary: Dict mapping relations to list of valid entities
+            vocabulary: Dict mapping relations to list of valid entities (standard_entities only)
 
         Returns:
             System prompt string
         """
-        # Build vocabulary description
-        vocab_str = "**Approved Vocabulary:**\n\n"
-        for relation, entities in vocabulary.items():
-            entities_str = ", ".join(entities[:10])
-            if len(entities) > 10:
-                entities_str += f", ... ({len(entities)} total)"
-            vocab_str += f"- {relation}: {entities_str}\n"
+        # Build vocabulary description with ALL entities listed
+        vocab_str = "═══════════════════════════════════════════════════════════════\n"
+        vocab_str += f"APPROVED VOCABULARY ({len(vocabulary)} Relations, {sum(len(ents) for ents in vocabulary.values())} Standard Entities)\n"
+        vocab_str += "═══════════════════════════════════════════════════════════════\n\n"
 
-        return f"""You are an expert in analyzing movie posters and extracting visual knowledge using a standardized vocabulary.
+        for idx, (relation, entities) in enumerate(vocabulary.items(), 1):
+            vocab_str += f"【Relation {idx}: {relation}】\n"
+            vocab_str += f"Standard Entities ({len(entities)} total):\n"
+            for entity in entities:
+                vocab_str += f"- {entity}\n"
+            vocab_str += "\n"
 
-Your task is to analyze movie poster images and extract visual knowledge using ONLY the approved vocabulary below.
+        return f"""You are an expert in analyzing movie posters and extracting visual knowledge using a standardized vocabulary for movie recommendation systems.
 
-{vocab_str}
+Your task is to analyze movie poster images and extract visual knowledge points using ONLY the approved vocabulary below.
 
-**Important:**
-- Use ONLY relations and entities from the approved vocabulary
-- If you see a visual feature that doesn't match any approved entity, use the "others" category for that relation
-- Maintain consistency by using exact terms from the vocabulary
-- Focus on what you can SEE in the poster"""
+{vocab_str}═══════════════════════════════════════════════════════════════
+NEW ENTITY MECHANISM
+═══════════════════════════════════════════════════════════════
+
+If you observe an important visual feature that CANNOT be described by any of the {sum(len(ents) for ents in vocabulary.values())} standard entities listed above, you may mark it as NEW_entity_name.
+
+Guidelines for NEW entities:
+✅ Use snake_case naming (e.g., NEW_beverage_with_straw, NEW_neon_lighting)
+✅ Keep it CONCISE (2-4 words maximum)
+✅ Make it ABSTRACT and GENERALIZABLE (could apply to multiple movies, not just this one)
+❌ Do NOT create overly specific descriptions
+❌ Do NOT use NEW_ unless truly necessary - prioritize standard entities
+
+═══════════════════════════════════════════════════════════════
+CRITICAL RULES
+═══════════════════════════════════════════════════════════════
+
+1. Relations: MUST use one of the {len(vocabulary)} relations listed above
+   ❌ NEVER create new relations
+   ✅ If unsure where an entity belongs, use "additional_elements"
+
+2. Entities: PRIORITIZE standard entities
+   ✅ First, try to match one of the {sum(len(ents) for ents in vocabulary.values())} standard entities
+   ✅ Only use NEW_entity_name if truly no standard entity fits
+   ❌ Do NOT randomly create NEW_ entities
+
+3. Quantity: Extract AT MOST 10 knowledge points
+   ✅ Select the MOST visually significant features
+   ✅ If the poster is simple, fewer than 10 is acceptable
+   ❌ Do NOT fabricate knowledge points to reach 10 - quality over quantity
+
+4. Focus: Extract ONLY what you can SEE in the poster
+   ✅ Visual characteristics only
+   ❌ No plot information, actor names, or external knowledge about the movie"""
 
     @staticmethod
-    def get_phase3_user_prompt(
-        movie_title: str = None,
-        relations: List[str] = None
-    ) -> str:
+    def get_phase3_user_prompt(movie_title: str = None) -> str:
         """
         Get user prompt for Phase 3 (Constrained Extraction).
 
         Args:
             movie_title: Optional movie title for context
-            relations: List of relations to extract (if None, use all)
 
         Returns:
             User prompt string
         """
-        title_context = f' (Movie: "{movie_title}")' if movie_title else ''
-        relations_str = ""
-        if relations:
-            relations_str = "\n**Focus on these relations:**\n"
-            relations_str += "\n".join(f"- {r}" for r in relations)
+        title_context = f' titled "{movie_title}"' if movie_title else ''
 
-        return f"""Analyze this movie poster{title_context} and extract visual knowledge points using the approved vocabulary.
-{relations_str}
+        return f"""Analyze this movie poster{title_context}.
 
-**Output Format:**
-Provide knowledge points as relation-entity pairs, one per line:
-```
+Extract visual knowledge points using the approved vocabulary.
+
+Output format (one per line):
 <relation>: <entity>
-```
 
-**Guidelines:**
-1. Extract 5-12 knowledge points
-2. Use ONLY entities from the approved vocabulary
-3. Use "others" if no approved entity matches
-4. Be precise and consistent
+Remember:
+- Use ONLY the 15 approved relations
+- Prioritize the 165 standard entities
+- Use NEW_entity_name only if necessary
+- Extract at most 10 knowledge points
+- Focus on the most visually significant features
 
 Now extract knowledge points from the poster:"""
 
