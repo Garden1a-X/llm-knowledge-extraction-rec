@@ -116,7 +116,7 @@ class EntityRefiner:
                 {"role": "user", "content": user_prompt}
             ],
             temperature=temperature,
-            max_tokens=8000,  # 增加到8000以支持CoT详细分析（大relation可能有15+clusters）
+            max_tokens=12000,  # 增加到12000以支持超大relation的CoT分析（如text_style有20+entities/cluster）
             response_format={"type": "json_object"}
         )
 
@@ -298,6 +298,15 @@ Now analyze step by step:"""
             result = json.loads(response)
         except json.JSONDecodeError as e:
             print(f"❌ JSON解析失败: {e}")
+            print(f"原始响应长度: {len(response)} 字符")
+
+            # 尝试简单的JSON修复：如果是截断问题，尝试补全
+            if "Expecting property name" in str(e) or "Unterminated string" in str(e):
+                print(f"⚠️  疑似JSON被截断（可能超出max_tokens限制）")
+                print(f"  尝试优雅降级：保持{relation}不变")
+                # 返回原mapping，不做修改
+                return self.current_mappings[relation]
+
             print(f"原始响应:\n{response}")
             raise
 
