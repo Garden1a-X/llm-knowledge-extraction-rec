@@ -175,7 +175,7 @@ CRITICAL RULES - READ CAREFULLY!
     @staticmethod
     def get_phase3_user_prompt(movie_title: str = None) -> str:
         """
-        Get user prompt for Phase 3 (Constrained Extraction).
+        Get user prompt for Phase 3 (Constrained Extraction with self-review).
 
         Args:
             movie_title: Optional movie title for context
@@ -187,26 +187,34 @@ CRITICAL RULES - READ CAREFULLY!
 
         return f"""Analyze this movie poster{title_context}.
 
-Extract visual knowledge points using the approved vocabulary.
+Extract visual knowledge points using the approved vocabulary with self-review.
 
-Output format (one per line, NO numbering):
+## STEP 1: Draft Extraction
+First, list the visual knowledge points you observe (internal draft, can be informal):
+
+## STEP 2: Self-Review
+For EACH knowledge point in your draft, check:
+1. ✓ Is the relation in the 15 approved relations?
+2. ✓ Is the entity in that relation's standard entity list?
+3. ✓ If entity NOT in the list, did I add NEW_ prefix?
+4. ✓ Did I check ALL other relations to ensure the entity doesn't belong elsewhere?
+
+Make corrections as needed.
+
+## STEP 3: Final Output
+After review, output ONLY the corrected knowledge points below this line:
+--- FINAL ---
 <relation>: <entity>
+(one per line, NO numbering, NO explanations, at most 10 knowledge points)
 
-Remember:
-- Use ONLY the 15 approved relations
-- Check if entity is in the 165 standard entities list for your chosen relation
-- If entity NOT in the list → MUST use NEW_entity_name (e.g., mood: NEW_adventurous)
-- If entity IS in the list → use it directly (e.g., mood: action)
-- Extract at most 10 knowledge points
-- Focus on the most visually significant features
-- Do NOT add line numbers (wrong: "1. relation: entity", correct: "relation: entity")
-
-Now extract knowledge points from the poster:"""
+Now proceed with the three steps:"""
 
     @staticmethod
     def parse_extraction_output(output: str) -> List[Dict[str, str]]:
         """
         Parse LLM output into structured knowledge points.
+
+        Supports both simple format and self-review format with "--- FINAL ---" delimiter.
 
         Args:
             output: Raw LLM output text
@@ -219,11 +227,22 @@ Now extract knowledge points from the poster:"""
         # Remove code blocks if present
         output = output.replace('```', '')
 
+        # Check if output contains self-review format with "--- FINAL ---"
+        if '--- FINAL ---' in output:
+            # Extract only the final output after the delimiter
+            parts = output.split('--- FINAL ---')
+            if len(parts) > 1:
+                output = parts[-1]  # Take everything after the last "--- FINAL ---"
+
         for line in output.strip().split('\n'):
             line = line.strip()
 
             # Skip empty lines and comments
             if not line or line.startswith('#') or line.startswith('//'):
+                continue
+
+            # Skip section headers from self-review (STEP 1, STEP 2, etc.)
+            if line.startswith('##') or line.upper().startswith('STEP'):
                 continue
 
             # Parse relation: entity format
