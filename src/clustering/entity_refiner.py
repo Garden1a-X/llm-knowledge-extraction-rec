@@ -301,6 +301,15 @@ Now analyze step by step:"""
             print(f"原始响应:\n{response}")
             raise
 
+        # 验证response结构
+        if 'splits' not in result:
+            print(f"⚠️  警告: LLM返回的JSON缺少'splits'字段")
+            print(f"原始响应:\n{response}")
+            # 尝试从cluster_analysis推断是否需要split
+            if 'cluster_analysis' in result:
+                print(f"  包含cluster_analysis，但没有splits数组，视为无需split")
+            result['splits'] = []
+
         # 应用splits
         new_mapping = dict(self.current_mappings[relation])
 
@@ -495,6 +504,14 @@ Now analyze step by step:"""
             print(f"原始响应:\n{response}")
             raise
 
+        # 验证response结构
+        if 'merges' not in result:
+            print(f"⚠️  警告: LLM返回的JSON缺少'merges'字段")
+            print(f"原始响应:\n{response}")
+            if 'merge_analysis' in result:
+                print(f"  包含merge_analysis，但没有merges数组，视为无需merge")
+            result['merges'] = []
+
         # 应用merges
         new_mapping = dict(self.current_mappings[relation])
 
@@ -679,6 +696,15 @@ Now analyze and choose names step by step:"""
             print(f"❌ JSON解析失败: {e}")
             print(f"原始响应:\n{response}")
             raise
+
+        # 验证response结构
+        if 'renames' not in result:
+            print(f"⚠️  警告: LLM返回的JSON缺少'renames'字段")
+            print(f"原始响应:\n{response}")
+            if 'naming_analysis' in result:
+                print(f"  包含naming_analysis，但没有renames数组，保持原名")
+            # 保持原名不变
+            return self.current_mappings[relation]
 
         # 应用renames
         new_mapping = {}
