@@ -2,7 +2,7 @@
 
 本目录包含项目的所有规划和设计文档。
 
-## 📁 当前文档（2026-01-04更新）
+## 📁 当前文档（2026-01-11更新）
 
 ### **核心文档**
 
@@ -36,16 +36,31 @@
 
 ### **工作日志**
 
-1. **WORK_LOG_20260104.md** ⭐ 最新
+1. **WORK_LOG_20260111.md** ⭐ 最新
+   - **Phase 2b完成！** 🎉 Entity聚类与LLM Refinement
+   - Stage 2: BERTopic聚类（626 → 133 clusters）
+   - Stage 3: LLM三步refinement（Split → Merge → Rename）
+   - 关键创新：CoT Reasoning + Business Context
+   - 成功修复：superhero → hero（不再是villain）
+   - 标准Entity词汇表提取（165个标准entities）
+   - **准备进入Phase 3验证与扩充**
+
+2. **WORK_LOG_20260108.md**
+   - Phase 2b Stage 1 & 1.5完成
+   - Filtering（725 → 479 kept + 246 removed）
+   - Redistribution（626 unique entities，零流失）
+   - Stage 2方法重新设计（Pure LLM失败 → Embedding+LLM）
+
+3. **WORK_LOG_20260104.md**
    - Phase 2b Entity重分配方案设计
    - Relation边界混淆问题分析
    - 两阶段entity重分配策略
    - 关键决策记录（depicted_subject vs character_type等）
 
-2. **WORK_LOG_20250102.md** ⚠️ 已过时
+4. **WORK_LOG_20250102.md** ⚠️ 已过时
    - Phase 2a初步工作记录（LLM微调之前）
    - 记录14个relations的初步聚类结果
-   - 仅作历史参考，实际最终结果是16个relations（见WORK_LOG_20260104.md）
+   - 仅作历史参考，实际最终结果是16个relations
 
 ---
 
@@ -95,21 +110,31 @@
 ### **已完成**：
 - ✅ Phase 1: 小规模探索（170部电影，1869个知识点）
 - ✅ Phase 2a: Relation聚类+LLM微调（128 → 16个标准relations）
-- ✅ Phase 2b-0（部分）：Entity分布分析 + Relation边界定义
+- ✅ **Phase 2b: Entity聚类+LLM Refinement（626 → 165个标准entities）** 🎉
+  - Stage 1: Filtering（725 → 479 kept）
+  - Stage 1.5: Redistribution（626 unique，零流失）
+  - Stage 2: BERTopic聚类（626 → 133 clusters）
+  - Stage 3: LLM三步refinement（Split→Merge→Rename）
+  - 标准vocabulary生成（165 entities + 13 噪声）
 
 ### **正在进行**：
-- 🔄 Phase 2b-0: Entity重分配
-  - 设计LLM prompt（第一轮清理 + 第二轮重分配）
-  - 实现entity重分配脚本
-  - 执行并人工审核
+- 🔄 **Phase 3: 验证与扩充**（准备中）
+  - 使用165个标准entities作为vocabulary v1
+  - 20%数据验证（约800部电影）
+  - 限制提取 + 覆盖率统计
+  - 如果覆盖率<90%，扩充vocabulary v1 → v2
 
 ### **下一步**：
-- Phase 2b-1: Entity聚类（626 → 250-270个标准entities）
-- Phase 3: 验证与扩充（20%数据）
-- Phase 4-7: 全量提取→用户兴趣→图谱→模型
+- Phase 3: 验证与扩充（20%数据，约800部电影）
+- Phase 4: 全量提取（80%数据，约3100部电影）
+- Phase 5: 用户兴趣提取
+- Phase 6: 知识图谱构建（User-Knowledge-Item异构图）
+- Phase 7: 推荐模型训练（带Mask机制的GNN）
+
+**进度**：Phase 2完成 ≈ **40%整体进度** 🎉
 
 详见 `KNOWLEDGE_EXTRACTION_PLAN.md` 末尾的"下一步行动"章节。
 
 ---
 
-*Last updated: 2026-01-04*
+*Last updated: 2026-01-11*

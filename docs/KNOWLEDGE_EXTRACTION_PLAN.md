@@ -1,12 +1,52 @@
 # LLM知识抽取方案
 
 *Created: 2025-12-27*
-*Last Updated: 2026-01-08*
-*Status: **Phase 2b Stage 2 准备中** - Entity Redistribution Stage 1 & 1.5 完成 (626 entities, 零流失), Stage 2方法重新设计 (Embedding+LLM)*
+*Last Updated: 2026-01-11*
+*Status: **Phase 2b 完成！** ✅ - Entity聚类与refinement完成 (165标准entities + 13噪声), 标准vocabulary已生成, 准备Phase 3验证与扩充*
 
 ---
 
 ## 📝 工作日志
+
+### 2026-01-11: Phase 2b Stage 2 & 3 完成！🎉 Entity聚类与LLM Refinement ✅
+
+**重大突破**：Phase 2b完成，双层知识标准化全部完成！
+
+- ✅ **Stage 2: BERTopic聚类完成**（626 → 133 canonical clusters）
+  - 方法：BERTopic自适应聚类（UMAP + HDBSCAN）
+  - 每个relation独立聚类，自动确定最佳cluster数
+  - 输入：626 unique entities（671 instances）
+  - 输出：133 canonical clusters
+  - 压缩率：79.2%
+
+- ✅ **Stage 3: LLM三步Refinement完成**（133 → 178 clusters）
+  - **关键创新**: Split → Merge → Rename（正确顺序）
+  - **CoT Reasoning**: analysis-before-decision JSON结构
+  - **Business Context**: 添加推荐场景说明
+  - **成功修复**: superhero → "hero"（不再是villain）✅
+  - Round 1 + Round 2 refinement
+  - 最终：178 clusters（165标准 + 13噪声）
+
+- ✅ **标准Entity词汇表提取**
+  - 工具：`scripts/extract_entity_vocabulary.py`
+  - 输出：`results/standard_entity_vocabulary.json`
+  - **165个标准entities** 跨15个relations
+  - 13个噪声entities（other_*）
+  - 5/15 relations达标（10-15范围）：33.3%
+  - **准备进入Phase 3验证与扩充**！
+
+- 📊 **关键技术突破**：
+  1. **正确的顺序**：Split → Merge → Rename（避免Name Anchoring）
+  2. **CoT的力量**：利用Transformer自回归生成，先分析再决策
+  3. **Business Context**：明确推荐场景，NEVER merge opposites
+  4. **全面错误处理**：字段验证、JSON截断优雅降级、缺失信息推断
+
+- 🎯 **质量指标**：
+  - 语义质量：✅ 无明显对立混合（hero ≠ villain分离成功）
+  - 覆盖率：5/15达标，10/15可接受
+  - 图谱密度：显著改善（165 vs 626）
+
+详见 `docs/WORK_LOG_20260111.md`
 
 ### 2026-01-08: Phase 2b Stage 1 & 1.5完成，Stage 2方法重新设计 ✅
 - ✅ **Stage 1 Filtering完成**: 所有15个relations处理完成
@@ -1342,50 +1382,107 @@ src/
 
 ## 📝 下一步行动
 
-### **当前阶段：Phase 2b Stage 2** ⬅️ 我们在这里
+### **当前阶段：Phase 3 验证与扩充** ⬅️ 我们在这里
 
-**✅ 已完成：**
+**🎉 Phase 2 已完成！**
 
-**Stage 1: Filtering（筛选）**：
-1. ✅ 分析entity分布，识别relation边界问题
-2. ✅ 定义14+1个relations的职责边界（RELATION_DEFINITIONS.md）
-3. ✅ 设计Stage 1 LLM prompt（CoT推理：先分析再判断）
-4. ✅ 实现scripts/phase2b_stage1_filtering.py
-5. ✅ 对所有15个relations运行Stage 1筛选
-6. ✅ 结果：725 entities → 479 kept + 246 removed
+**Phase 2a（Relation层标准化）**：✅ 100%完成
+- 128个原始relations → 16个标准relations
+- 方法：BGE Embedding + Agglomerative + LLM增量微调
+- 质量：90/100分，覆盖率100%
 
-**Stage 1.5: Redistribution（重分配）**：
-1. ✅ 设计redistribution逻辑（收集remove + 重新分配）
-2. ✅ 实现scripts/phase2b_stage1_5_redistribution.py
-3. ✅ 执行重分配并生成最终entity列表
-4. ✅ 结果：626 unique entities，零流失 ✅
+**Phase 2b（Entity层标准化）**：✅ 100%完成
+- **Stage 1**: Filtering（725 → 479 kept + 246 removed）
+- **Stage 1.5**: Redistribution（626 unique entities，零流失）
+- **Stage 2**: BERTopic聚类（626 → 133 canonical clusters）
+- **Stage 3**: LLM三步Refinement（133 → 178 clusters）
+  - 关键创新：Split→Merge→Rename + CoT + Business Context
+  - 成功修复：superhero → "hero"（不再是villain）
+  - 最终：165个标准entities + 13个噪声entities
+- **Vocabulary提取**：`results/standard_entity_vocabulary.json`
 
-**Stage 2方法设计**：
-1. ✅ Pure LLM方法失败分析
-2. ✅ 方法重新设计：Embedding + LLM混合方法
-3. ✅ 实现scripts/phase2b_stage2_entity_clustering.py
-4. ✅ 支持动态n_clusters（不固定聚类数）
-5. ✅ 支持Agglomerative和HDBSCAN两种聚类方法
+---
 
-**⏸️ 待执行：**
+### **Phase 3：验证与扩充（下一步）**
 
-**Stage 2: Clustering + Merging（聚类+合并同义词）**：
-1. ⏸️ 测试visual_theme relation（58个entities）
-   - 验证压缩率是否达到目标（约1/3）
-   - 检查是否有validation错误
-2. ⏸️ 如果效果好，处理所有15个relations
-3. ⏸️ 人工审核关键合并（高频entities）
-4. ⏸️ 保存最终知识词典v1
-   - 预期：626 entities → 约200-250个标准entities
+**目标**：验证vocabulary v1的覆盖率，决定是否扩充
 
-**后续阶段**：
-1. **Phase 3**：验证与扩充（20%数据）
-2. **Phase 4**：全量提取（80%数据）
-3. **Phase 5**：用户兴趣提取
-4. **Phase 6**：知识图谱构建
-5. **Phase 7**：推荐模型训练
+**数据规模**：
+- 20%数据（约800部电影，包含Phase 1的170部）
+- 新增约630部电影
+
+**任务列表**：
+
+1. ⏸️ **设计限制提取prompt**
+   - 提供15个standard relations
+   - 提供每个relation下的标准entities（165个）
+   - LLM只能从列表中选择
+   - 如果无法匹配，标记为`NEW_entity_name`
+   - 每部电影最多10个知识点
+
+2. ⏸️ **实现Phase 3提取脚本**
+   - `scripts/phase3_validate_vocabulary.py`
+   - 加载`standard_entity_vocabulary.json`
+   - 构建限制提取prompt
+   - 提取约630部新电影
+   - 统计NEW标记的比例
+
+3. ⏸️ **统计覆盖率**
+   - 覆盖率 = (匹配数 / 总知识点数)
+   - 目标：≥90%
+
+4. ⏸️ **决策分支**
+   - **如果覆盖率 ≥90%**：
+     - vocabulary v1足够
+     - 直接进入Phase 4全量提取
+
+   - **如果覆盖率 <90%**：
+     - 收集所有NEW entities
+     - 对NEW entities聚类（类似Phase 2b Stage 2-3）
+     - 扩充vocabulary v1 → v2
+     - 更新`standard_entity_vocabulary.json`
+
+5. ⏸️ **保存最终vocabulary**
+   - 如果扩充：`standard_entity_vocabulary_v2.json`
+   - 预期最终规模：200-250个标准entities
+
+---
+
+### **后续阶段（Phase 4-7）**
+
+**Phase 4**：全量提取（80%数据）
+- 约3100部电影
+- 使用最终vocabulary（v1或v2）
+- 限制提取（不允许NEW标记）
+- 合并Phase 1-4所有结果
+
+**Phase 5**：用户兴趣提取
+- 基于历史观影聚合知识偏好
+- TF-IDF加权
+- 生成用户兴趣表示
+
+**Phase 6**：知识图谱构建
+- User-Knowledge-Item异构图
+- 边类型：interested_in, describes, rated
+- Mask机制：抑制others知识点
+
+**Phase 7**：推荐模型训练
+- 带Mask机制的GNN
+- Baseline对比（13个方法）
+- 消融实验
+
+---
+
+### **关键里程碑**
+
+- ✅ **Phase 1完成**（2026-01-02）：170部电影，1869个知识点
+- ✅ **Phase 2a完成**（2026-01-03）：16个标准relations
+- ✅ **Phase 2b完成**（2026-01-11）：165个标准entities 🎉
+- ⏸️ **Phase 3开始**（2026-01-11+）：验证与扩充
+- ⏸️ **1月13日目标**：提供KG数据给学弟跑baseline
+- ⏸️ **2月9日KDD deadline**
 
 ---
 
 *文档结束*
-*最后更新：2026-01-08*
+*最后更新：2026-01-11*
