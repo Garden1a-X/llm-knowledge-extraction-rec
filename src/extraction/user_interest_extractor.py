@@ -137,23 +137,35 @@ Based on the user's short-term interests and current long-term interests:
 1. **Update long-term interests**: Determine which interests are stable and should be kept
 2. **Add new interests**: Identify emerging patterns from recent periods
 3. **Remove outdated interests**: Remove interests that are no longer relevant
-4. **Update ages**: For kept interests, increase age by {bucket_interval_days} days; for new interests, start at {bucket_interval_days} days
+4. **Update ages**:
+   - For kept interests from current long-term: old_age + {bucket_interval_days}
+   - For new interests appearing now: {bucket_interval_days}
+
+**CRITICAL RULES:**
+1. **Use EXACT relation and entity strings from short-term interests above**
+   - DO NOT modify relation names (e.g., keep "composition_styles" not "composition_style")
+   - DO NOT simplify entities (e.g., keep "bright lighting" not "bright")
+   - Copy-paste exactly as shown
+2. **Age calculation examples:**
+   - If "mood: romantic" exists in current long-term with age=84, keep it → age becomes 168
+   - If "genre: drama" is new from short-term → age becomes {bucket_interval_days}
+3. **Only select from relation-entity pairs shown in short-term interests**
 
 **Output exactly {self.long_term_top_k} long-term interests in JSON format:**
 
 ```json
 [
-  {{"relation": "mood", "entity": "romantic", "age_days": 168}},
-  {{"relation": "genre", "entity": "drama", "age_days": 84}},
+  {{"relation": "composition_styles", "entity": "centered", "age_days": 168}},
+  {{"relation": "lighting", "entity": "bright lighting", "age_days": 84}},
   ...
 ]
 ```
 
-**Important:**
+**Format requirements:**
 - Output ONLY the JSON array, no other text
 - Exactly {self.long_term_top_k} interests
-- Use ONLY relation-entity pairs that appeared in short-term interests
-- Age should reflect how long the interest has been stable
+- relation and entity must match short-term interests EXACTLY (copy-paste)
+- age_days must be a number
 
 Output:"""
 
