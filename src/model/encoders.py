@@ -163,6 +163,7 @@ class KGEncoder(nn.Module):
             # HeteroConv包含多种边类型的GATConv
             # 注意：异构边不能添加self-loops
             hetero_conv = HeteroConv({
+                # Forward edges
                 ('user', 'long_term', 'entity'): GATConv(
                     in_channels,
                     out_channels,
@@ -180,6 +181,31 @@ class KGEncoder(nn.Module):
                     add_self_loops=False
                 ),
                 ('entity', 'describes', 'item'): GATConv(
+                    in_channels,
+                    out_channels,
+                    heads=heads if concat else 1,
+                    dropout=dropout,
+                    concat=concat,
+                    add_self_loops=False
+                ),
+                # Reverse edges (确保所有节点类型都能被更新)
+                ('entity', 'rev_long_term', 'user'): GATConv(
+                    in_channels,
+                    out_channels,
+                    heads=heads if concat else 1,
+                    dropout=dropout,
+                    concat=concat,
+                    add_self_loops=False
+                ),
+                ('entity', 'rev_short_term', 'user'): GATConv(
+                    in_channels,
+                    out_channels,
+                    heads=heads if concat else 1,
+                    dropout=dropout,
+                    concat=concat,
+                    add_self_loops=False
+                ),
+                ('item', 'rev_describes', 'entity'): GATConv(
                     in_channels,
                     out_channels,
                     heads=heads if concat else 1,
@@ -209,6 +235,9 @@ class KGEncoder(nn.Module):
                 ('user', 'long_term', 'entity'): edge_index,
                 ('user', 'short_term', 'entity'): edge_index,
                 ('entity', 'describes', 'item'): edge_index,
+                ('entity', 'rev_long_term', 'user'): edge_index,
+                ('entity', 'rev_short_term', 'user'): edge_index,
+                ('item', 'rev_describes', 'entity'): edge_index,
             }
 
         Returns:

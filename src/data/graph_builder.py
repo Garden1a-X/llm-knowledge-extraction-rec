@@ -196,38 +196,55 @@ class KnowledgeGraphBuilder:
         return graph, cf_graph, stats
 
     def _add_user_entity_edges(self, graph: HeteroData, user_kg: pd.DataFrame):
-        """添加User-Entity边（区分long_term和short_term）"""
+        """添加User-Entity边（区分long_term和short_term），包含反向边"""
         # 分离两种关系
         long_term = user_kg[user_kg['relation_id'] == 'long_term_interest']
         short_term = user_kg[user_kg['relation_id'] == 'short_term_interest']
 
-        # Long-term interest
+        # Long-term interest (双向)
         if len(long_term) > 0:
             user_ids = [self.user_id_map[uid] for uid in long_term['head_id']]
             entity_ids = [self.entity_id_map[eid] for eid in long_term['tail_id']]
 
+            # Forward edge: user -> entity
             edge_index = torch.tensor([user_ids, entity_ids], dtype=torch.long)
             graph['user', 'long_term', 'entity'].edge_index = edge_index
-            logger.info(f"  Added {len(user_ids)} long_term_interest edges")
 
-        # Short-term interest
+            # Reverse edge: entity -> user
+            edge_index_rev = torch.tensor([entity_ids, user_ids], dtype=torch.long)
+            graph['entity', 'rev_long_term', 'user'].edge_index = edge_index_rev
+
+            logger.info(f"  Added {len(user_ids)} long_term_interest edges (bidirectional)")
+
+        # Short-term interest (双向)
         if len(short_term) > 0:
             user_ids = [self.user_id_map[uid] for uid in short_term['head_id']]
             entity_ids = [self.entity_id_map[eid] for eid in short_term['tail_id']]
 
+            # Forward edge: user -> entity
             edge_index = torch.tensor([user_ids, entity_ids], dtype=torch.long)
             graph['user', 'short_term', 'entity'].edge_index = edge_index
-            logger.info(f"  Added {len(user_ids)} short_term_interest edges")
+
+            # Reverse edge: entity -> user
+            edge_index_rev = torch.tensor([entity_ids, user_ids], dtype=torch.long)
+            graph['entity', 'rev_short_term', 'user'].edge_index = edge_index_rev
+
+            logger.info(f"  Added {len(user_ids)} short_term_interest edges (bidirectional)")
 
     def _add_entity_item_edges(self, graph: HeteroData, item_kg: pd.DataFrame):
-        """添加Entity-Item边（Item的视觉特征）"""
+        """添加Entity-Item边（Item的视觉特征），包含反向边"""
         entity_ids = [self.entity_id_map[eid] for eid in item_kg['tail_id']]
         item_ids = [self.item_id_map[iid] for iid in item_kg['head_id']]
 
+        # Forward edge: entity -> item
         edge_index = torch.tensor([entity_ids, item_ids], dtype=torch.long)
         graph['entity', 'describes', 'item'].edge_index = edge_index
 
-        logger.info(f"  Added {len(entity_ids)} entity-item edges")
+        # Reverse edge: item -> entity
+        edge_index_rev = torch.tensor([item_ids, entity_ids], dtype=torch.long)
+        graph['item', 'rev_describes', 'entity'].edge_index = edge_index_rev
+
+        logger.info(f"  Added {len(entity_ids)} entity-item edges (bidirectional)")
 
     def _add_user_item_edges(self, graph: HeteroData, inter: pd.DataFrame):
         """添加User-Item边（评分交互）"""
