@@ -1,0 +1,39 @@
+name: ours_wo_mask
+description: Without learnable mask mechanism
+
+data:
+  item_kg_path: data/recbole/ml-1m/ml-1m.item.kg
+  user_kg_path: data/recbole/ml-1m/ml-1m.user.kg
+  inter_path: data/recbole/ml-1m/ml-1m.inter
+  train_ratio: 0.7
+  val_ratio: 0.1
+  test_ratio: 0.2
+  time_based_split: true
+
+model:
+  embedding_dim: 64
+  num_gnn_layers: 2
+  gat_heads: 4
+  dropout: 0.2
+  use_mask: false  # 禁用Mask
+
+loss:
+  alpha_contrast: 0.1
+  beta_align: 0.05
+  gamma_mask: 0.0  # 关掉Mask正则
+
+train:
+  batch_size: 1024
+  learning_rate: 0.001
+  num_epochs: 300
+  device: cuda
+
+ablation:
+  use_contrast: true
+  use_align: true
+  use_mask: false  # 禁用Mask
+  use_cf_view: true
+  use_kg_view: true
+
+output_dir: outputs
+checkpoint_dir: checkpoints

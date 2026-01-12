@@ -1,0 +1,40 @@
+name: ours_wo_contrast
+description: Without multi-view contrastive learning
+
+# 继承ours_full的大部分配置
+data:
+  item_kg_path: data/recbole/ml-1m/ml-1m.item.kg
+  user_kg_path: data/recbole/ml-1m/ml-1m.user.kg
+  inter_path: data/recbole/ml-1m/ml-1m.inter
+  train_ratio: 0.7
+  val_ratio: 0.1
+  test_ratio: 0.2
+  time_based_split: true
+
+model:
+  embedding_dim: 64
+  num_gnn_layers: 2
+  gat_heads: 4
+  dropout: 0.2
+  use_mask: true
+
+loss:
+  alpha_contrast: 0.0  # 关掉对比损失
+  beta_align: 0.05
+  gamma_mask: 0.01
+
+train:
+  batch_size: 1024
+  learning_rate: 0.001
+  num_epochs: 300
+  device: cuda
+
+ablation:
+  use_contrast: false  # 禁用多视图对比
+  use_align: true
+  use_mask: true
+  use_cf_view: true
+  use_kg_view: true
+
+output_dir: outputs
+checkpoint_dir: checkpoints

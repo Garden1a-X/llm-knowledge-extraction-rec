@@ -1,9 +1,12 @@
-"""
-Data loading and processing modules.
-"""
+"""Data loading and graph building utilities"""
 
-from .loader import MovieLensLoader
+from .graph_builder import KnowledgeGraphBuilder, compute_frequency_mask
+from .dataset import RecDataset, split_data, create_dataloaders
 
 __all__ = [
-    'MovieLensLoader',
+    'KnowledgeGraphBuilder',
+    'compute_frequency_mask',
+    'RecDataset',
+    'split_data',
+    'create_dataloaders',
 ]
