@@ -227,12 +227,19 @@ def summarize_long_term_interests(
     prompt = get_llm_summarization_prompt(short_term_history, current_long_term)
 
     try:
-        response = mllm.generate(
-            text_prompt=prompt,
-            image_data=None,
+        # Direct OpenAI API call for text-only generation
+        messages = [
+            {"role": "user", "content": prompt}
+        ]
+
+        response_obj = mllm.client.chat.completions.create(
+            model=mllm.model_name,
+            messages=messages,
             temperature=temperature,
             max_tokens=max_tokens
         )
+
+        response = response_obj.choices[0].message.content
 
         # Parse JSON from response
         # Try to find JSON array in response
