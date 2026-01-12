@@ -405,7 +405,8 @@ def main(args):
         val_ratio=config.data.val_ratio,
         test_ratio=config.data.test_ratio,
         time_based=config.data.time_based_split,
-        random_seed=config.train.random_seed
+        random_seed=config.train.random_seed,
+        per_user_split=config.data.per_user_split
     )
 
     # === 4. 创建DataLoaders ===

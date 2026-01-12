@@ -9,6 +9,7 @@ data:
   val_ratio: 0.1
   test_ratio: 0.2
   time_based_split: true
+  per_user_split: true  # Per-user Random Split（对齐RecBole RS）
   min_rating: 4.0
 
 model:
@@ -31,13 +32,13 @@ loss:
   num_neg_align: 5
 
 train:
-  batch_size: 1024
+  batch_size: 2048  # 对齐RecBole BPR
   num_negatives: 1
   learning_rate: 0.001
   weight_decay: 0.00001
   num_epochs: 300
-  early_stop_patience: 20
-  eval_every: 5
+  early_stop_patience: 10  # 对齐RecBole stopping_step
+  eval_every: 1  # 每个epoch都评估（对齐RecBole eval_step=1）
   log_every: 1
   save_every: 10
   num_workers: 4

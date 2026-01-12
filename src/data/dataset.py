@@ -145,29 +145,70 @@ def split_data(
     val_ratio: float = 0.1,
     test_ratio: float = 0.2,
     time_based: bool = True,
-    random_seed: int = 42
+    random_seed: int = 42,
+    per_user_split: bool = True
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
-    分割数据集为训练/验证/测试集
+    分割数据集为训练/验证/测试集（对齐RecBole的RS split）
 
     Args:
         inter_path: 交互文件路径
         train_ratio: 训练集比例
         val_ratio: 验证集比例
         test_ratio: 测试集比例
-        time_based: 是否基于时间分割（推荐）
+        time_based: 是否先按时间排序（对每个用户）
         random_seed: 随机种子
+        per_user_split: 是否per-user split（推荐，对齐RecBole RS）
 
     Returns:
         train_df, val_df, test_df
     """
     inter = pd.read_csv(inter_path, sep='\t')
 
-    if time_based:
-        # 基于时间戳排序
-        inter = inter.sort_values('timestamp:float')
+    np.random.seed(random_seed)
 
-        # 按比例分割
+    if per_user_split:
+        # Per-user Random Split（对齐RecBole的RS策略）
+        # 对每个用户的交互序列单独划分70/10/20
+
+        train_list = []
+        val_list = []
+        test_list = []
+
+        for user_id, user_inter in inter.groupby('user_id:token'):
+            # 对该用户的交互按时间排序
+            if time_based:
+                user_inter = user_inter.sort_values('timestamp:float')
+            else:
+                user_inter = user_inter.sample(frac=1, random_state=random_seed)
+
+            n = len(user_inter)
+
+            # 至少需要3条交互才能划分（train/val/test各1条）
+            if n < 3:
+                # 少于3条：全部放入训练集
+                train_list.append(user_inter)
+                continue
+
+            # 按比例划分
+            train_end = max(1, int(n * train_ratio))
+            val_end = min(n - 1, train_end + max(1, int(n * val_ratio)))
+
+            train_list.append(user_inter.iloc[:train_end])
+            val_list.append(user_inter.iloc[train_end:val_end])
+            test_list.append(user_inter.iloc[val_end:])
+
+        train_df = pd.concat(train_list, ignore_index=True)
+        val_df = pd.concat(val_list, ignore_index=True) if val_list else pd.DataFrame(columns=inter.columns)
+        test_df = pd.concat(test_list, ignore_index=True) if test_list else pd.DataFrame(columns=inter.columns)
+
+    else:
+        # Global split（旧版本，不推荐）
+        if time_based:
+            inter = inter.sort_values('timestamp:float')
+        else:
+            inter = inter.sample(frac=1, random_state=random_seed)
+
         n = len(inter)
         train_end = int(n * train_ratio)
         val_end = int(n * (train_ratio + val_ratio))
@@ -175,20 +216,8 @@ def split_data(
         train_df = inter.iloc[:train_end].reset_index(drop=True)
         val_df = inter.iloc[train_end:val_end].reset_index(drop=True)
         test_df = inter.iloc[val_end:].reset_index(drop=True)
-    else:
-        # 随机分割
-        np.random.seed(random_seed)
-        shuffled = inter.sample(frac=1, random_state=random_seed)
 
-        n = len(shuffled)
-        train_end = int(n * train_ratio)
-        val_end = int(n * (train_ratio + val_ratio))
-
-        train_df = shuffled.iloc[:train_end].reset_index(drop=True)
-        val_df = shuffled.iloc[train_end:val_end].reset_index(drop=True)
-        test_df = shuffled.iloc[val_end:].reset_index(drop=True)
-
-    logger.info(f"Data split:")
+    logger.info(f"Data split (per_user={per_user_split}):")
     logger.info(f"  Train: {len(train_df)} ({len(train_df)/len(inter)*100:.1f}%)")
     logger.info(f"  Val:   {len(val_df)} ({len(val_df)/len(inter)*100:.1f}%)")
     logger.info(f"  Test:  {len(test_df)} ({len(test_df)/len(inter)*100:.1f}%)")

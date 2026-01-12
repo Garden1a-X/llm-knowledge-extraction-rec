@@ -24,6 +24,7 @@ class DataConfig:
     val_ratio: float = 0.1
     test_ratio: float = 0.2
     time_based_split: bool = True
+    per_user_split: bool = True  # Per-user Random Split（对齐RecBole RS）
     min_rating: float = 4.0
 
 
