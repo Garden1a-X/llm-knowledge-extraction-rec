@@ -54,12 +54,11 @@ def convert_user_interests_to_kg(
         if long_term:
             stats['users_with_long_term'] += 1
             for interest in long_term:
-                # Use original relation name from interest
-                relation = interest['relation']
+                # Only use entity, not relation (relation is already "long_term_interest")
                 entity = interest['entity']
                 # Normalize entity (replace spaces with underscores)
                 entity = entity.replace(' ', '_')
-                triplets.append((user_id, 'long_term_interest', f"{relation}:{entity}"))
+                triplets.append((user_id, 'long_term_interest', entity))
                 stats['total_long_term'] += 1
 
         # Short-term interests
@@ -67,10 +66,10 @@ def convert_user_interests_to_kg(
         if short_term:
             stats['users_with_short_term'] += 1
             for interest in short_term:
-                relation = interest['relation']
+                # Only use entity, not relation
                 entity = interest['entity']
                 entity = entity.replace(' ', '_')
-                triplets.append((user_id, 'short_term_interest', f"{relation}:{entity}"))
+                triplets.append((user_id, 'short_term_interest', entity))
                 stats['total_short_term'] += 1
 
     stats['total_triplets'] = len(triplets)
