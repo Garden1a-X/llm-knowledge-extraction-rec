@@ -53,8 +53,8 @@ def create_link_file(item_kg_path: str, output_path: str):
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_path, 'w', encoding='utf-8') as f:
-        # 写入header
-        f.write('item_id:token\tentity_id:token\n')
+        # 写入header (RecBole期望的列名，不带:token后缀)
+        f.write('item_id\tentity_id\n')
 
         # 写入item-entity映射
         for item_id in sorted(item_to_entities.keys()):
