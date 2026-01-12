@@ -34,45 +34,62 @@ def find_recbole_kgat():
 
 
 def patch_kgat(kgat_path):
-    """Patch KGAT to remove preserve_nodes parameter."""
+    """Patch KGAT to remove deprecated DGL parameters."""
     print(f"📝 Patching: {kgat_path}")
 
     # Read file
     with open(kgat_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # Check if already patched
-    if 'preserve_nodes=True' not in content:
-        print("✓ Already patched (or different version)")
-        return True
-
-    # Backup original
+    # Backup original (only if not already backed up)
     backup_path = kgat_path + '.backup'
     if not os.path.exists(backup_path):
         with open(backup_path, 'w', encoding='utf-8') as f:
             f.write(content)
         print(f"✓ Backup created: {backup_path}")
 
-    # Apply patch: remove preserve_nodes=True parameter
+    patches_applied = []
+    patched_content = content
+
+    # Patch 1: Remove preserve_nodes=True parameter
     # This line: dgl.edge_subgraph(self.ckg, edge_idxs, preserve_nodes=True)
     # Becomes: dgl.edge_subgraph(self.ckg, edge_idxs)
+    if 'preserve_nodes=True' in patched_content:
+        patched_content = patched_content.replace(
+            'dgl.edge_subgraph(self.ckg, edge_idxs, preserve_nodes=True)',
+            'dgl.edge_subgraph(self.ckg, edge_idxs)'
+        )
+        patches_applied.append("Removed preserve_nodes=True parameter")
 
-    patched_content = content.replace(
-        'dgl.edge_subgraph(self.ckg, edge_idxs, preserve_nodes=True)',
-        'dgl.edge_subgraph(self.ckg, edge_idxs)'
-    )
+    # Patch 2: Remove transpose parameter from adjacency_matrix()
+    # This line: .adjacency_matrix(transpose=False, scipy_fmt="coo")
+    # Becomes: .adjacency_matrix(scipy_fmt="coo")
+    if 'adjacency_matrix(transpose=False,' in patched_content:
+        patched_content = patched_content.replace(
+            '.adjacency_matrix(transpose=False, scipy_fmt="coo")',
+            '.adjacency_matrix(scipy_fmt="coo")'
+        )
+        patches_applied.append("Removed transpose=False parameter")
 
-    if patched_content == content:
-        print("⚠️  Pattern not found - RecBole version may be different")
-        print("    Looking for: dgl.edge_subgraph(self.ckg, edge_idxs, preserve_nodes=True)")
-        return False
+    # Also handle case with True
+    if 'adjacency_matrix(transpose=True,' in patched_content:
+        patched_content = patched_content.replace(
+            '.adjacency_matrix(transpose=True, scipy_fmt="coo")',
+            '.adjacency_matrix(scipy_fmt="coo").T'  # Transpose the result instead
+        )
+        patches_applied.append("Removed transpose=True parameter (transposing result instead)")
+
+    if not patches_applied:
+        print("✓ Already patched (or different version)")
+        return True
 
     # Write patched file
     with open(kgat_path, 'w', encoding='utf-8') as f:
         f.write(patched_content)
 
-    print("✓ Patch applied successfully!")
-    print(f"  Changed: preserve_nodes=True -> removed")
+    print("✓ Patches applied successfully!")
+    for patch in patches_applied:
+        print(f"  - {patch}")
     return True
 
 
