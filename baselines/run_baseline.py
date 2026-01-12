@@ -117,6 +117,10 @@ def get_model_config(model_name: str, use_kg: bool = False):
     if model_name in model_configs:
         config.update(model_configs[model_name])
 
+    # Add KG loading config if use_kg is True
+    if use_kg:
+        config['load_col']['kg'] = ['head_id', 'relation_id', 'tail_id']
+
     return config
 
 
