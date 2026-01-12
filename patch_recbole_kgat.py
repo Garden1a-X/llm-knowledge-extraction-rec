@@ -61,23 +61,32 @@ def patch_kgat(kgat_path):
         )
         patches_applied.append("Removed preserve_nodes=True parameter")
 
-    # Patch 2: Remove transpose parameter from adjacency_matrix()
-    # This line: .adjacency_matrix(transpose=False, scipy_fmt="coo")
-    # Becomes: .adjacency_matrix(scipy_fmt="coo")
-    if 'adjacency_matrix(transpose=False,' in patched_content:
+    # Patch 2: Replace adjacency_matrix() with adj()
+    # In newer DGL, adjacency_matrix() is removed, use adj() instead
+    # Old: .adjacency_matrix(transpose=False, scipy_fmt="coo")
+    # New: .adj(scipy_fmt="coo")
+
+    if 'adjacency_matrix(transpose=False, scipy_fmt="coo")' in patched_content:
         patched_content = patched_content.replace(
             '.adjacency_matrix(transpose=False, scipy_fmt="coo")',
-            '.adjacency_matrix(scipy_fmt="coo")'
+            '.adj(scipy_fmt="coo")'
         )
-        patches_applied.append("Removed transpose=False parameter")
+        patches_applied.append("Replaced adjacency_matrix() with adj()")
 
-    # Also handle case with True
-    if 'adjacency_matrix(transpose=True,' in patched_content:
+    if 'adjacency_matrix(transpose=True, scipy_fmt="coo")' in patched_content:
         patched_content = patched_content.replace(
             '.adjacency_matrix(transpose=True, scipy_fmt="coo")',
-            '.adjacency_matrix(scipy_fmt="coo").T'  # Transpose the result instead
+            '.adj(scipy_fmt="coo").T'
         )
-        patches_applied.append("Removed transpose=True parameter (transposing result instead)")
+        patches_applied.append("Replaced adjacency_matrix() with adj() and transposed result")
+
+    # Also handle case where scipy_fmt is the only parameter
+    if '.adjacency_matrix(scipy_fmt="coo")' in patched_content:
+        patched_content = patched_content.replace(
+            '.adjacency_matrix(scipy_fmt="coo")',
+            '.adj(scipy_fmt="coo")'
+        )
+        patches_applied.append("Replaced adjacency_matrix(scipy_fmt) with adj(scipy_fmt)")
 
     if not patches_applied:
         print("✓ Already patched (or different version)")
