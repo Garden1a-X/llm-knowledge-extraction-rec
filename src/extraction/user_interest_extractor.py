@@ -146,26 +146,33 @@ Based on the user's short-term interests and current long-term interests:
    - DO NOT modify relation names (e.g., keep "composition_styles" not "composition_style")
    - DO NOT simplify entities (e.g., keep "bright lighting" not "bright")
    - Copy-paste exactly as shown
-2. **Age calculation examples:**
-   - If "mood: romantic" exists in current long-term with age=84, keep it → age becomes 168
-   - If "genre: drama" is new from short-term → age becomes {bucket_interval_days}
+
+2. **Age calculation (IMPORTANT!):**
+   - For interests from CURRENT LONG-TERM that you want to KEEP:
+     age_days = their_current_age + {bucket_interval_days}
+   - For interests from SHORT-TERM that are NEW (not in current long-term):
+     age_days = {bucket_interval_days}
+   - Example:
+     * Current long-term has "mood: romantic" with age=84 → keep it → new age = 84 + {bucket_interval_days} = {84 + bucket_interval_days}
+     * "genre: drama" appears in short-term but NOT in current long-term → new → age = {bucket_interval_days}
+
 3. **Only select from relation-entity pairs shown in short-term interests**
 
-**Output exactly {self.long_term_top_k} long-term interests in JSON format:**
+**Output format (JSON array with {self.long_term_top_k} items):**
 
 ```json
 [
-  {{"relation": "composition_styles", "entity": "centered", "age_days": 168}},
-  {{"relation": "lighting", "entity": "bright lighting", "age_days": 84}},
+  {{"relation": "<exact_relation_from_short_term>", "entity": "<exact_entity_from_short_term>", "age_days": <calculated_number>}},
+  {{"relation": "<exact_relation_from_short_term>", "entity": "<exact_entity_from_short_term>", "age_days": <calculated_number>}},
   ...
 ]
 ```
 
 **Format requirements:**
-- Output ONLY the JSON array, no other text
+- Output ONLY the JSON array, no other text before or after
 - Exactly {self.long_term_top_k} interests
 - relation and entity must match short-term interests EXACTLY (copy-paste)
-- age_days must be a number
+- age_days must be calculated correctly using the rules above
 
 Output:"""
 
