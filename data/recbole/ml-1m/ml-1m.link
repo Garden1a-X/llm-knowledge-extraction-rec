@@ -1,4 +1,4 @@
-item_id	entity_id
+item_id:token	entity_id:token
 1	1
 2	2
 3	3
