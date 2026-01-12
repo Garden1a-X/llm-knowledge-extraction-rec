@@ -159,3 +159,4 @@ temp/
 
 # Neo4j
 neo4j/
+outputs/

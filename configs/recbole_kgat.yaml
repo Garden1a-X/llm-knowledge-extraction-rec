@@ -35,7 +35,7 @@ eval_args:
 load_col:
   inter: ['user_id', 'item_id', 'timestamp']
   kg: ['head_id', 'relation_id', 'tail_id']  # KGAT需要KG文件
-  link: ['item_id:token', 'entity_id:token']  # KGAT需要item-entity映射文件
+  link: ['item_id', 'entity_id']  # KGAT需要item-entity映射文件（注意：不要加:token后缀！）
 
 seed: 42
 gpu_id: '0'
