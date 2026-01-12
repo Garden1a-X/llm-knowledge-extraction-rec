@@ -61,32 +61,41 @@ def patch_kgat(kgat_path):
         )
         patches_applied.append("Removed preserve_nodes=True parameter")
 
-    # Patch 2: Replace adjacency_matrix() with adj()
-    # In newer DGL, adjacency_matrix() is removed, use adj() instead
+    # Patch 2: Replace adjacency_matrix() with adj_external()
+    # In newer DGL, adjacency_matrix() is removed
+    # Use adj_external() which returns scipy sparse matrix
     # Old: .adjacency_matrix(transpose=False, scipy_fmt="coo")
-    # New: .adj(scipy_fmt="coo")
+    # New: .adj_external(scipy_fmt="coo")
 
     if 'adjacency_matrix(transpose=False, scipy_fmt="coo")' in patched_content:
         patched_content = patched_content.replace(
             '.adjacency_matrix(transpose=False, scipy_fmt="coo")',
-            '.adj(scipy_fmt="coo")'
+            '.adj_external(scipy_fmt="coo")'
         )
-        patches_applied.append("Replaced adjacency_matrix() with adj()")
+        patches_applied.append("Replaced adjacency_matrix() with adj_external()")
 
     if 'adjacency_matrix(transpose=True, scipy_fmt="coo")' in patched_content:
         patched_content = patched_content.replace(
             '.adjacency_matrix(transpose=True, scipy_fmt="coo")',
-            '.adj(scipy_fmt="coo").T'
+            '.adj_external(scipy_fmt="coo").T'
         )
-        patches_applied.append("Replaced adjacency_matrix() with adj() and transposed result")
+        patches_applied.append("Replaced adjacency_matrix() with adj_external() and transposed")
 
     # Also handle case where scipy_fmt is the only parameter
     if '.adjacency_matrix(scipy_fmt="coo")' in patched_content:
         patched_content = patched_content.replace(
             '.adjacency_matrix(scipy_fmt="coo")',
-            '.adj(scipy_fmt="coo")'
+            '.adj_external(scipy_fmt="coo")'
         )
-        patches_applied.append("Replaced adjacency_matrix(scipy_fmt) with adj(scipy_fmt)")
+        patches_applied.append("Replaced adjacency_matrix(scipy_fmt) with adj_external(scipy_fmt)")
+
+    # Also handle already-patched .adj() calls (from previous incomplete patch)
+    if '.adj(scipy_fmt="coo")' in patched_content:
+        patched_content = patched_content.replace(
+            '.adj(scipy_fmt="coo")',
+            '.adj_external(scipy_fmt="coo")'
+        )
+        patches_applied.append("Replaced adj(scipy_fmt) with adj_external(scipy_fmt)")
 
     if not patches_applied:
         print("✓ Already patched (or different version)")
