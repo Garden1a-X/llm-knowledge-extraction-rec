@@ -161,27 +161,31 @@ class KGEncoder(nn.Module):
                 concat = False
 
             # HeteroConv包含多种边类型的GATConv
+            # 注意：异构边不能添加self-loops
             hetero_conv = HeteroConv({
                 ('user', 'long_term', 'entity'): GATConv(
                     in_channels,
                     out_channels,
                     heads=heads if concat else 1,
                     dropout=dropout,
-                    concat=concat
+                    concat=concat,
+                    add_self_loops=False  # 异构边不能添加自环
                 ),
                 ('user', 'short_term', 'entity'): GATConv(
                     in_channels,
                     out_channels,
                     heads=heads if concat else 1,
                     dropout=dropout,
-                    concat=concat
+                    concat=concat,
+                    add_self_loops=False
                 ),
                 ('entity', 'describes', 'item'): GATConv(
                     in_channels,
                     out_channels,
                     heads=heads if concat else 1,
                     dropout=dropout,
-                    concat=concat
+                    concat=concat,
+                    add_self_loops=False
                 ),
             }, aggr='sum')  # 不同边类型的聚合方式
 
