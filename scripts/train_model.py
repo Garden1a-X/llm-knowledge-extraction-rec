@@ -21,17 +21,44 @@ import numpy as np
 from tqdm import tqdm
 from datetime import datetime
 from collections import defaultdict
+import random
+import string
 
 from src.data import KnowledgeGraphBuilder, compute_frequency_mask, split_data, create_dataloaders
 from src.model import KnowledgeEnhancedRecModel, RecommendationLoss
 from src.utils import load_config, evaluate_ranking
 
-# 设置日志
+# 设置日志 (先临时设置，稍后会重定向到文件)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+
+def generate_run_id(model_name, dataset_name):
+    """
+    生成运行ID（类似RecBole格式）
+
+    返回:
+        timestamp_str: "Dec-27-2025_13-18-09"
+        short_hash: "8c4cec"
+        date_str: "20251227"
+        time_str: "131808"
+    """
+    now = datetime.now()
+
+    # 时间戳格式：Dec-27-2025_13-18-09
+    timestamp_str = now.strftime("%b-%d-%Y_%H-%M-%S")
+
+    # 日期和时间（用于文件夹名）
+    date_str = now.strftime("%Y%m%d")
+    time_str = now.strftime("%H%M%S")
+
+    # 生成6位随机hash
+    short_hash = ''.join(random.choices(string.hexdigits.lower(), k=6))
+
+    return timestamp_str, short_hash, date_str, time_str
 
 
 class Trainer:
@@ -44,15 +71,43 @@ class Trainer:
         self.optimizer = optimizer
         self.device = device
 
-        # 创建输出目录
-        self.output_dir = Path(config.output_dir) / config.name
-        self.output_dir.mkdir(parents=True, exist_ok=True)
+        # 生成运行ID（类似RecBole格式）
+        model_name = config.name
+        dataset_name = "ml-1m"  # 从config中提取
+        timestamp_str, short_hash, date_str, time_str = generate_run_id(model_name, dataset_name)
 
-        self.checkpoint_dir = Path(config.checkpoint_dir) / config.name
+        self.run_id = f"{model_name}-{dataset_name}-{timestamp_str}-{short_hash}"
+        self.checkpoint_id = f"{model_name}_{dataset_name}_{date_str}_{time_str}"
+
+        # 创建输出目录（类似RecBole结构）
+        # 1. log目录：log/{MODEL_NAME}/{RUN_ID}.log
+        log_dir = Path("log") / model_name
+        log_dir.mkdir(parents=True, exist_ok=True)
+        self.log_file = log_dir / f"{self.run_id}.log"
+
+        # 2. TensorBoard目录：log_tensorboard/{RUN_ID}/
+        tensorboard_dir = Path("log_tensorboard") / self.run_id
+        tensorboard_dir.mkdir(parents=True, exist_ok=True)
+        self.writer = SummaryWriter(tensorboard_dir)
+
+        # 3. Checkpoint目录：outputs/ours/{CHECKPOINT_ID}/checkpoints/
+        self.output_dir = Path(config.output_dir) / "ours" / self.checkpoint_id
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.checkpoint_dir = self.output_dir / "checkpoints"
         self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
-        # TensorBoard
-        self.writer = SummaryWriter(self.output_dir / 'tensorboard')
+        # 设置文件日志
+        file_handler = logging.FileHandler(self.log_file)
+        file_handler.setLevel(logging.INFO)
+        file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+        logger.addHandler(file_handler)
+
+        logger.info(f"="*80)
+        logger.info(f"Run ID: {self.run_id}")
+        logger.info(f"Log file: {self.log_file}")
+        logger.info(f"TensorBoard: {tensorboard_dir}")
+        logger.info(f"Checkpoints: {self.checkpoint_dir}")
+        logger.info(f"="*80)
 
         # 最佳指标
         self.best_ndcg = 0.0
@@ -255,7 +310,7 @@ class Trainer:
         return test_metrics
 
     def save_checkpoint(self, epoch, metrics, is_best=False):
-        """保存checkpoint"""
+        """保存checkpoint（RecBole格式）"""
         checkpoint = {
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
@@ -266,9 +321,13 @@ class Trainer:
         }
 
         if is_best:
-            path = self.checkpoint_dir / 'best_model.pt'
+            # Best model: {MODEL_NAME}-{TIMESTAMP}.pth
+            timestamp_str = datetime.now().strftime("%b-%d-%Y_%H-%M-%S")
+            filename = f"{self.config.name}-{timestamp_str}.pth"
+            path = self.checkpoint_dir / filename
         else:
-            path = self.checkpoint_dir / f'checkpoint_epoch_{epoch}.pt'
+            # Regular checkpoint: checkpoint_epoch_{epoch}.pth
+            path = self.checkpoint_dir / f'checkpoint_epoch_{epoch}.pth'
 
         torch.save(checkpoint, path)
         logger.info(f"  Saved checkpoint: {path}")
