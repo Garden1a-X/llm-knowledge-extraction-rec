@@ -64,6 +64,9 @@ def convert_to_recbole_kg(
             relation = kp['relation']
             entity = kp['entity']
 
+            # Normalize entity format: replace spaces with underscores
+            entity = entity.replace(' ', '_')
+
             # Create triplet: (movie_id, relation, entity)
             triplets.append((movie_id, relation, entity))
 
