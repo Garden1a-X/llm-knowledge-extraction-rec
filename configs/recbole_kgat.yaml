@@ -1,0 +1,40 @@
+# KGAT Baseline Configuration
+# Knowledge Graph Attention Network for Recommendation (KDD 2019)
+
+# Data
+dataset: ml-1m
+data_path: data/recbole
+
+# Model
+model: KGAT
+embedding_size: 64
+kg_embedding_size: 64
+reg_weight: 0.00001
+
+# Training
+epochs: 300
+train_batch_size: 2048
+eval_batch_size: 4096
+learning_rate: 0.001
+
+# Evaluation
+stopping_step: 10
+eval_step: 1
+metrics: ['Recall', 'NDCG', 'Precision', 'Hit']
+topk: [10, 20]
+valid_metric: NDCG@10
+
+# Data Split (对齐你们的配置)
+eval_args:
+  split:
+    RS: [0.7, 0.1, 0.2]
+  order: TO
+  mode: full
+
+# Other
+load_col:
+  inter: ['user_id', 'item_id', 'timestamp']
+  kg: ['head_id', 'relation_id', 'tail_id']  # KGAT需要KG文件
+
+seed: 42
+gpu_id: '0'
