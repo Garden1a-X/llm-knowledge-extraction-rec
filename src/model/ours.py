@@ -74,7 +74,10 @@ class KnowledgeEnhancedRecModel(nn.Module):
         if use_mask:
             if mask_init is not None:
                 # 基于频率初始化
-                self.mask_logits = nn.Parameter(torch.logit(mask_init))
+                # 注意：需要clamp避免logit(0)=-inf或logit(1)=inf
+                eps = 1e-7
+                mask_init_clamped = torch.clamp(mask_init, eps, 1 - eps)
+                self.mask_logits = nn.Parameter(torch.logit(mask_init_clamped))
             else:
                 # 全1初始化（等价于no mask）
                 self.mask_logits = nn.Parameter(torch.zeros(num_entities))

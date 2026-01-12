@@ -102,9 +102,20 @@ class Trainer:
 
             loss = loss_dict['loss']
 
+            # 检查NaN
+            if torch.isnan(loss) or torch.isinf(loss):
+                logger.error(f"NaN/Inf detected in loss! Loss components:")
+                for key, value in loss_dict.items():
+                    logger.error(f"  {key}: {value.item()}")
+                raise ValueError("NaN/Inf detected in loss")
+
             # Backward
             self.optimizer.zero_grad()
             loss.backward()
+
+            # Gradient clipping (防止梯度爆炸)
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+
             self.optimizer.step()
 
             # 记录
