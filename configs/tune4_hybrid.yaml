@@ -1,0 +1,61 @@
+name: tune4_hybrid
+description: Hyperparameter Tuning - Hybrid combination of promising settings
+
+data:
+  item_kg_path: data/recbole/ml-1m/ml-1m.item.kg
+  user_kg_path: data/recbole/ml-1m/ml-1m.user.kg
+  inter_path: data/recbole/ml-1m/ml-1m.inter
+  train_ratio: 0.7
+  val_ratio: 0.1
+  test_ratio: 0.2
+  time_based_split: true
+  per_user_split: true
+  min_rating: 4.0
+
+model:
+  # TUNED: Moderate embedding size (between 64 and 128)
+  embedding_dim: 96    # 介于64和128之间
+  num_gnn_layers: 2
+  # TUNED: More heads than baseline
+  gat_heads: 6         # 原来: 4
+  dropout: 0.25        # 介于0.2和0.3之间
+  use_mask: true
+  mask_min_freq: 5
+  mask_max_freq: 1000
+
+loss:
+  # TUNED: Balanced loss weights from tune1
+  alpha_contrast: 0.15  # 介于0.1和0.2之间
+  beta_align: 0.08      # 介于0.05和0.1之间
+  gamma_mask: 0.008     # 介于0.005和0.01之间
+  # TUNED: Lower rec temperature for sharper predictions
+  temperature_rec: 0.15  # 原来: 0.2
+  temperature_contrast: 0.1
+  lambda_sparse: 1.0
+  lambda_entropy: 0.1
+  num_neg_align: 5
+
+train:
+  batch_size: 2048
+  num_negatives: 1
+  # TUNED: Moderate learning rate
+  learning_rate: 0.0015  # 介于0.001和0.002之间
+  weight_decay: 0.00005  # 介于0.00001和0.0001之间
+  num_epochs: 300
+  early_stop_patience: 10
+  eval_every: 1
+  log_every: 1
+  save_every: 10
+  num_workers: 4
+  device: cuda
+  random_seed: 45  # Different seed
+
+ablation:
+  use_contrast: true
+  use_align: true
+  use_mask: true
+  use_cf_view: true
+  use_kg_view: true
+
+output_dir: outputs
+checkpoint_dir: checkpoints
