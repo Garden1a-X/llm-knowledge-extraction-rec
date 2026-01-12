@@ -64,11 +64,14 @@ def run_single_gpu(gpu_id):
     print(f"使用GPU: {gpu_id}")
     print("="*80)
 
+    # 确保log目录存在
+    Path('log').mkdir(exist_ok=True)
+
     start_time = datetime.now()
 
     for i, config in enumerate(CONFIGS, 1):
         config_name = Path(config).stem
-        log_file = f"logs/tune_parallel_{config_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+        log_file = f"log/tune_parallel_{config_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
 
         print(f"\n[{i}/4] 启动实验: {config_name}")
         print(f"  配置文件: {config}")
@@ -123,6 +126,7 @@ def run_multi_gpu(gpu_ids):
     多GPU模式：并行执行4个实验
 
     每个实验占用1个GPU，真正并行运行
+    支持非连续GPU IDs（例如：0,5,6,7）
     """
     import os
 
@@ -135,13 +139,16 @@ def run_multi_gpu(gpu_ids):
         print(f"⚠️  警告: GPU数量({len(gpu_ids)})少于实验数量({len(CONFIGS)})")
         print("   部分实验将共享GPU")
 
+    # 确保log目录存在
+    Path('log').mkdir(exist_ok=True)
+
     start_time = datetime.now()
 
     # 启动所有实验
     for i, config in enumerate(CONFIGS):
         gpu_id = gpu_ids[i % len(gpu_ids)]  # 循环分配GPU
         config_name = Path(config).stem
-        log_file = f"logs/tune_parallel_{config_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+        log_file = f"log/tune_parallel_{config_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
 
         print(f"\n[{i+1}/4] 启动实验: {config_name}")
         print(f"  配置文件: {config}")
@@ -161,7 +168,6 @@ def run_multi_gpu(gpu_ids):
         }
 
         # 启动进程（后台）
-        Path('logs').mkdir(exist_ok=True)
         with open(log_file, 'w') as log_f:
             proc = subprocess.Popen(
                 cmd,
