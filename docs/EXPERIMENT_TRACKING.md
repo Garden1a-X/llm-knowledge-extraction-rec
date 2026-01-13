@@ -180,10 +180,12 @@
 | Ours KG-only | ⏸️ 待运行 | 只用KG视图 | 验证CF视图贡献 |
 | Ours CF-only | ⏸️ 待运行 | 只用CF视图 | 验证KG视图贡献 |
 | **超参数调优（第一轮）** |
-| tune1 (loss_weights) | 🏃 运行中 | alpha↑, beta↑, gamma↓ | 调整损失权重 |
+| tune1 (loss_weights) | 结果不佳 | alpha↑, beta↑, gamma↓ | ✗ 无提升，已停止调参 |
 | tune2 (lr_embed) | 0.1549 | embed=128, lr=0.002 | ✓ 持平baseline |
 | tune3 (depth_dropout) | 0.1241 | layers=3, dropout=0.3 | ✗ 下降20%（过拟合）|
 | tune4 (hybrid) | 0.1400 | 综合策略 | ✗ 下降10%（收敛过快）|
+
+**调参结论**：第一轮调参全部失败，说明当前架构已接近最优，继续调参收益有限。重点转向方法改进和消融实验。
 
 ---
 
