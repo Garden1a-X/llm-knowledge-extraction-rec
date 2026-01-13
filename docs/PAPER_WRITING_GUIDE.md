@@ -75,7 +75,7 @@
 ### 2.4 对比学习在推荐
 - **SimCLR-style**: 数据增强 + InfoNCE loss
 - **图对比**: GCA, SGL - 在图结构上做对比
-- **我们的创新**: CF view vs KG view的跨模态对比
+- **我们的创新**: CF view vs KG view的两视角对比（注意：不是多模态对比，是两个图嵌入视角）
 
 ---
 
@@ -98,9 +98,9 @@ Stage 2: 统一语义图谱构建
   - User KG: 3,706 users → interests, 90K+ edges
   ↓
 Stage 3: 轻量级图神经推荐（一次提取，高效推荐）
-  - CF branch: LightGCN (3-layer)
-  - KG branch: R-GCN (2-layer) with Mask mechanism
-  - 对比学习: CF view vs KG view
+  - CF视角: LightGCN (3-layer) - User-Item交互图
+  - KG视角: R-GCN (2-layer) with Mask - User-Entity-Item知识图谱
+  - 两视角对比学习: 对齐CF和KG的表示空间（非多模态fusion）
   ↓
 Output: User/Item embeddings → Recommendation
 ```
@@ -152,20 +152,32 @@ Poster + Text → MLLM → 统一KP → Knowledge Graph → GNN → Emb
 - **我们**: Poster + Text → MLLM → "Visual Style: Dark, Futuristic" (统一语义空间)
 - **优势**: 无需fusion，语义信息更丰富，可解释性强
 
-### 3.3 Mask Mechanism (核心创新)
-- **问题**: User KG和Item KG不对齐（user有interest节点，item有movie/person节点）
-- **解决**: Dynamic masking
-  - CF branch: Full embedding
-  - KG branch: Mask掉不对齐的维度
-  - Formula: `h_masked = h * mask_vector`
-- **为什么有效**: 避免KG噪声污染CF信号
+### 3.3 自适应Entity Mask机制（对抗LLM幻觉）
+- **问题**: LLM提取的entity中存在幻觉（虚构的entity，对推荐无用）
+- **解决**: 可学习的entity-level mask
+  - 每个entity有一个可训练的mask权重（`mask_logits`，nn.Parameter）
+  - 训练过程中自动学习哪些entity有用，哪些是幻觉
+  - Formula: `entity_emb_masked = entity_emb * sigmoid(mask_logits)`
+- **初始化**: 可基于entity频率初始化（高频→高mask，低频→低mask）
+- **vs Dropout**:
+  - Dropout是随机mask（每次forward不同）
+  - 我们的mask是学习出的固定权重（每个entity确定的mask值）
+- **为什么有效**:
+  - 有用entity → mask ≈ 1（保留）
+  - 幻觉entity → mask ≈ 0（过滤）
+  - 模型自动区分，无需人工标注
 
-### 3.4 Contrastive Learning (核心创新)
-- **设计**: CF view vs KG view的对比
+### 3.4 两视角对比学习（CF view vs KG view）
+**注意**：这里的"两视角"不是多模态！CF和KG都是图嵌入（矩阵存储），是推荐的两个不同视角。
+
+- **设计**: CF view vs KG view的对比学习
+  - CF view: User-Item交互图（协同过滤视角）
+  - KG view: User-Entity-Item知识图谱（知识视角）
+  - 两者都是图嵌入，不是不同模态的encoder
   - Positive: 同一user/item的CF和KG表示
   - Negative: Batch内其他样本
 - **Loss**: InfoNCE，temperature τ=0.2
-- **为什么有效**: 对齐CF和KG两个空间，互相增强
+- **为什么有效**: 对齐CF和KG两个视角的表示空间，互相增强
 
 ### 3.5 Training Details
 - **Optimizer**: AdamW, lr=0.001, weight_decay=1e-4
@@ -266,9 +278,9 @@ Poster + Text → MLLM → 统一KP → Knowledge Graph → GNN → Emb
 4. **User KG价值**: 从用户历史提取兴趣图谱，这是传统方法做不到的
 
 ### 5.2 Ablation Insights (等跑完再写)
-- **Contrastive**: 对齐CF和KG空间，互相增强
-- **Mask**: 避免不对齐的KG噪声污染CF信号
-- **Dual-KG**: CF + KG比单独任一个都好
+- **两视角对比学习**: 对齐CF视角和KG视角的表示空间，互相增强
+- **自适应Mask**: 过滤LLM幻觉entity，保留有用entity，提升KG质量
+- **双侧KG**: Item KG + User KG比单独任一个都好
 - **多模态提取**: 移除视觉信息（只用文本）vs 完整多模态，证明视觉信息的价值
 
 ### 5.3 多模态表示对比分析（重要！）
@@ -347,9 +359,9 @@ Poster + Text → MLLM → "Visual: Dark sci-fi | Theme: AI ethics | ..."
    - vs 在线MLLM（VIP5/LlamaRec）: 我们只需一次性MLLM提取，后续用轻量级GNN
    - Efficiency: 训练快（6分钟），推理快（毫秒级），成本低（一次性$63）
 
-5. **Mask + Contrastive设计**
-   - Mask: 解决user/item KG不对齐问题
-   - Contrastive: CF view vs KG view对比学习
+5. **自适应Mask + 两视角对比设计**
+   - 自适应Mask: 可学习的entity-level权重，过滤LLM幻觉entity
+   - 两视角对比: CF视角 vs KG视角的对比学习（非多模态fusion）
 
 ### 7.2 与现有工作的本质区别
 | 方面 | 传统多模态（MMGCN/MKGAT） | 在线MLLM（VIP5/LlamaRec） | 我们 |
@@ -482,8 +494,9 @@ Poster + Text → MLLM → "Visual: Dark sci-fi | Theme: AI ethics | ..."
 1. **MLLM统一多模态语义**（核心！）: 多模态 → 统一KP → 无需fusion
 2. **基于多模态的KG构建**: Poster + text → MLLM → structured KG
 3. **双侧KG（Item + User）**: 加分项，不是核心
-4. **Mask + Contrastive**: 技术细节，不是主要创新
-5. **Efficiency**: 对比在线MLLM的优势
+4. **自适应Mask机制**: 可学习的entity权重，对抗LLM幻觉
+5. **两视角对比学习**: CF视角 vs KG视角（注意不是多模态）
+6. **Efficiency**: 对比在线MLLM的优势
 
 ### 11.5 对比要准确
 - **vs MMGCN/MKGAT**: 重点对比，他们用单独encoder + fusion，我们用MLLM统一提取
