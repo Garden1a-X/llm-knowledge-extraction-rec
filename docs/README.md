@@ -2,7 +2,7 @@
 
 本目录包含项目的所有规划和设计文档。
 
-## 📁 当前文档（2026-01-11更新）
+## 📁 当前文档（2026-01-13更新）
 
 ### **核心文档**
 
@@ -13,7 +13,8 @@
    - 用户兴趣提取
    - 图谱构建与Mask机制
    - **对应论文Method章节的三个部分**
-   - 最后更新：2026-01-04
+   - **状态**: Phase 1-7全部完成 ✅
+   - 最后更新：2026-01-11
 
 2. **RELATION_DEFINITIONS.md** ⭐ Relation边界定义（新增）
    - 14+1个标准Relations的完整定义
@@ -28,11 +29,39 @@
    - 3条演进路径
    - 消融实验设计
 
-4. **EXPERIMENT_TRACKING.md**
+4. **EXPERIMENT_TRACKING.md** ⭐ 实验跟踪
    - 实验进度实时跟踪
-   - 已完成实验的结果记录
-   - 结果汇总表
-   - 代码仓库链接
+   - Baseline对比结果（BPR, LightGCN, KGAT）
+   - Ours-Full结果：NDCG@10 = 0.1549
+   - 消融实验计划
+   - **状态**: 持续更新中
+   - 最后更新：2026-01-13
+
+5. **MODEL_DESIGN.md** ⭐ 模型架构设计
+   - 异构图结构（User-Entity-Item）
+   - 双视图编码器（CF + KG）
+   - 损失函数设计（4种损失）
+   - 可学习Mask机制
+   - **状态**: 已实现并完成训练 ✅
+
+6. **METHOD_IMPROVEMENTS.md** 方法改进方向
+   - 负采样策略改进
+   - 动态温度调整
+   - 双层对比学习
+   - Hard negative sampling
+   - **状态**: 计划中，未实施
+
+7. **KG4RECEVAL_GUIDE.md** KGAT Baseline指南
+   - KG4RecEval使用方法
+   - KGAT训练步骤
+   - 数据准备与配置
+   - **结果**: 最终用RecBole直接跑KGAT（0.1209）
+
+8. **PHASE5_USER_INTERESTS.md** 用户兴趣提取
+   - Hybrid统计+LLM方法
+   - 短期/长期兴趣提取
+   - RecBole格式输出
+   - **状态**: 已完成 ✅
 
 ### **工作日志**
 
@@ -120,38 +149,43 @@
 
 ## 🚀 当前状态与下一步
 
-### **已完成**：
-- ✅ Phase 1: 小规模探索（170部电影，1869个知识点）
-- ✅ Phase 2a: Relation聚类+LLM微调（128 → 16个标准relations）
-- ✅ **Phase 2b: Entity聚类+LLM Refinement（626 → 165个标准entities）** 🎉
-  - Stage 1: Filtering（725 → 479 kept）
-  - Stage 1.5: Redistribution（626 unique，零流失）
-  - Stage 2: BERTopic聚类（626 → 133 clusters）
-  - Stage 3: LLM三步refinement（Split→Merge→Rename）
-  - 标准vocabulary生成（165 entities + 13 噪声）
+### **已完成** ✅：
+- ✅ **Phase 1-7: 知识提取与模型实现全部完成** 🎉
+  - Phase 1: 小规模探索（170部电影，1869个知识点）
+  - Phase 2a: Relation聚类+LLM微调（128 → 16个标准relations）
+  - Phase 2b: Entity聚类+LLM Refinement（626 → 165个标准entities）
+  - Phase 3: 词汇验证（20%数据，覆盖率85.6%）
+  - Phase 4: 全量电影知识提取（3,415电影，32,675 KPs）
+  - Phase 5: 用户兴趣提取（6,040用户，~90K edges）
+  - Phase 6: RecBole格式转换
+  - Phase 7: 模型实现与训练
 
-### **正在进行**：
-- 🔄 **Phase 3: 验证与扩充**（Self-Review实现完成，完整验证运行中）
-  - ✅ Prompt设计与优化（两轮迭代）
-  - ✅ Self-Review机制实现（Draft → Review → Final）
-  - ✅ 提取脚本完成（scripts/phase3_validate_vocabulary.py）
-  - ✅ 小样本测试通过（12部，94.9%有效覆盖率）
-  - 🔄 **正在运行：683部电影完整验证（20%数据）**
-  - 使用165个标准entities作为vocabulary v1
-  - NEW_机制运作良好（16.2%使用率）
-  - 完成后根据结果决定是否扩充v1 → v2
+- ✅ **Baseline对比实验**
+  - BPR: NDCG@10 = 0.1219 ± 0.0021
+  - LightGCN: NDCG@10 = 0.1267 ± 0.0013 (+3.9% vs BPR)
+  - KGAT: NDCG@10 = 0.1209 (-0.8% vs BPR) ⚠️
+  - **Ours-Full: NDCG@10 = 0.1549 (+27.1% vs BPR)** ⭐⭐⭐
 
-### **下一步**：
-- Phase 3: 验证与扩充（20%数据，约800部电影）
-- Phase 4: 全量提取（80%数据，约3100部电影）
-- Phase 5: 用户兴趣提取
-- Phase 6: 知识图谱构建（User-Knowledge-Item异构图）
-- Phase 7: 推荐模型训练（带Mask机制的GNN）
+- ✅ **关键发现**:
+  - 我们的方法显著超越所有baseline（+22-28%）
+  - KGAT验证了传统KG推荐的局限性（比BPR还低）
+  - 可引用KG4RecEval论文：KGAT的KGER=-0.026
 
-**进度**：Phase 3验证运行中 ≈ **50%整体进度** 🎉
+### **进行中** 🔄：
+- 📝 **文档修复**: 更新所有过时/错误的文档
+- ⏸️ **消融实验**: 4个配置已准备，待运行
+- 🏃 **tune1**: 可能仍在运行，待查看
+
+### **下一步** 📋：
+1. **消融实验**（高优先级）- 验证各组件有效性
+2. **结果分析与整理** - 创建对比表格和可视化
+3. **方法改进**（可选）- 负采样、温度调整等
+4. **论文撰写** - Method + Experiments章节
+
+**进度**：核心实验完成 ≈ **85%整体进度** 🎉
 
 详见 `KNOWLEDGE_EXTRACTION_PLAN.md` 末尾的"下一步行动"章节。
 
 ---
 
-*Last updated: 2026-01-11*
+*Last updated: 2026-01-13*

@@ -203,10 +203,11 @@ Ours-Full ← 你们的方法 💡
 
 ## 📅 实验时间线
 
-### Phase 1: 传统和图谱方法（1-2天）
-- [ ] BPR (5 trials × 300 epochs)
-- [ ] LightGCN (5 trials × 300 epochs)
-- [ ] NGCF (5 trials × 300 epochs)
+### Phase 1: 传统和图谱方法（1-2天）✅ 完成
+- [x] BPR (5 trials × 300 epochs) - **NDCG@10: 0.1219 ± 0.0021**
+- [x] LightGCN (5 trials × 300 epochs) - **NDCG@10: 0.1267 ± 0.0013**
+- [x] KGAT (1 trial) - **NDCG@10: 0.1209**
+- [ ] NGCF - 暂时跳过（与LightGCN类似）
 
 ### Phase 2: 多模态方法（需要实现，3-5天）
 - [ ] VBPR - 需要提取视觉特征
@@ -216,31 +217,33 @@ Ours-Full ← 你们的方法 💡
 - [ ] MMGCN - 需要实现或找开源代码
 - [ ] MGAT - 需要实现或找开源代码
 
-### Phase 4: 你们的方法（核心工作，2-3周）
-- [ ] 实现Ours模型
-- [ ] 消融实验
+### Phase 4: 你们的方法（核心工作，2-3周）✅ 完成
+- [x] 实现Ours模型 - **NDCG@10: 0.1549 (+27.1% vs BPR)**
+- [ ] 消融实验（配置已准备，待运行）
 
 ---
 
 ## 💡 建议
 
-1. **立即开始**：
+1. **已完成** ✅：
    - ✅ 添加 5-core 过滤
-   - ✅ 用新数据重跑 BPR, LightGCN, NGCF
+   - ✅ BPR, LightGCN, KGAT baseline已完成
+   - ✅ Ours-Full模型训练完成（0.1549）
 
-2. **MMGCN/MGAT 实现**：
-   - 查找开源代码
-   - 或者联系作者要代码
-   - 或者参考论文自己实现
+2. **下一步建议**：
+   - 🎯 **消融实验**（高优先级）- 证明各组件有效性
+   - ⏸️ MMGCN/MGAT（可选）- 如果需要更多多模态baseline对比
+   - ⏸️ VBPR（可跳过）- 时间有限，优先保证核心实验
 
-3. **VBPR 可选**：
-   - 如果时间紧，可以跳过单纯的多模态方法
-   - 直接对比多模态图谱方法（MMGCN/MGAT）
-
-4. **优先级**：
+3. **当前优先级**：
    ```
-   BPR > LightGCN > NGCF > MMGCN/MGAT > VBPR > Others
+   消融实验 > 结果分析 > 论文撰写 > MMGCN/MGAT > Others
    ```
+
+4. **关键发现**：
+   - KGAT (0.1209) 比 BPR (0.1219) 还低0.8% ⚠️
+   - 验证了传统KG推荐的局限性
+   - 我们的方法 (+27%) 显著超越所有baseline
 
 ---
 
@@ -257,4 +260,4 @@ Ours-Full ← 你们的方法 💡
 
 ---
 
-*Last updated: 2025-12-27*
+*Last updated: 2026-01-13*

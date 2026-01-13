@@ -1,8 +1,8 @@
 # LLM知识抽取方案
 
 *Created: 2025-12-27*
-*Last Updated: 2026-01-11*
-*Status: **Phase 2b 完成！** ✅ - Entity聚类与refinement完成 (165标准entities + 13噪声), 标准vocabulary已生成, 准备Phase 3验证与扩充*
+*Last Updated: 2026-01-13*
+*Status: **Phase 1-7全部完成！** ✅ - 知识提取、模型实现、训练全部完成，Baseline对比结果优秀（NDCG@10=0.1549, +27.1% vs BPR）*
 
 ---
 
