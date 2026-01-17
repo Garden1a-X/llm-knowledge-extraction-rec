@@ -259,8 +259,8 @@ def main():
                        help='OpenAI API key')
     parser.add_argument('--base_url', type=str,
                        help='Optional API base URL')
-    parser.add_argument('--model', type=str, default='gpt-4o',
-                       help='Model name (default: gpt-4o)')
+    parser.add_argument('--model', type=str, default='gpt-4o-mini',
+                       help='Model name (default: gpt-4o-mini)')
     parser.add_argument('--temperature', type=float, default=0.0,
                        help='Sampling temperature')
     parser.add_argument('--max_tokens', type=int, default=800,
