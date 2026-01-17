@@ -1,0 +1,39 @@
+# LightGCN Baseline Configuration for Amazon Beauty
+# LightGCN: Simplifying and Powering Graph Convolution Network (SIGIR 2020)
+
+# Data
+dataset: amazon-beauty
+data_path: data/recbole
+
+# Model
+model: LightGCN
+embedding_size: 64
+n_layers: 3  # 3-layer GCN (recommended by paper)
+reg_weight: 0.00001
+
+# Training
+epochs: 300
+train_batch_size: 2048
+eval_batch_size: 4096  # Large batch for faster evaluation
+learning_rate: 0.001
+
+# Evaluation
+stopping_step: 1000  # Disable early stopping (Beauty dataset too small)
+eval_step: 1
+metrics: ['Recall', 'NDCG', 'Precision', 'Hit']
+topk: [10, 20]
+valid_metric: NDCG@10
+
+# Data Split (aligned with our config)
+eval_args:
+  split:
+    RS: [0.7, 0.1, 0.2]  # Per-user Random Split
+  order: TO  # Time-based ordering
+  mode: full  # Full evaluation (Beauty has only 58 items)
+
+# Other
+load_col:
+  inter: ['user_id', 'item_id', 'rating', 'timestamp']
+
+seed: 42
+gpu_id: '0'
