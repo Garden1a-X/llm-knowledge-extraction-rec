@@ -1,0 +1,136 @@
+{
+  "dataset": "beauty",
+  "phase": "vocabulary_standardization",
+  "source": "phase1_58_products",
+  "standardized_vocabulary": {
+    "relations": [
+      {
+        "standard_name": "product_type",
+        "description": "Product category/type",
+        "original_relations": ["product_type", "product_category"]
+      },
+      {
+        "standard_name": "color",
+        "description": "Color-related attributes",
+        "original_relations": ["dominant_color", "accent_color", "color_scheme", "primary_color", "secondary_color", "label_color", "text_color"]
+      },
+      {
+        "standard_name": "packaging",
+        "description": "Packaging style and structure",
+        "original_relations": ["packaging_style", "packaging_shape"]
+      },
+      {
+        "standard_name": "material",
+        "description": "Material composition",
+        "original_relations": ["packaging_material", "material", "material_type"]
+      },
+      {
+        "standard_name": "texture",
+        "description": "Surface texture and feel",
+        "original_relations": ["texture", "finish", "finish_type", "texture_finish", "texture_type"]
+      },
+      {
+        "standard_name": "design_style",
+        "description": "Overall design aesthetic",
+        "original_relations": ["design_style", "design_aesthetic", "branding_style", "brand_identity", "visual_theme", "brand_aesthetic"]
+      },
+      {
+        "standard_name": "size",
+        "description": "Product size/dimensions",
+        "original_relations": ["size", "size_category", "product_size", "volume", "height", "length", "weight"]
+      },
+      {
+        "standard_name": "shape",
+        "description": "Physical shape",
+        "original_relations": ["shape", "product_shape", "shape_style"]
+      },
+      {
+        "standard_name": "label_style",
+        "description": "Label and text design",
+        "original_relations": ["label_style", "label_design", "text_style", "font_style", "text_type"]
+      },
+      {
+        "standard_name": "target_audience",
+        "description": "Intended user group",
+        "original_relations": ["target_audience", "intended_user", "user_audience", "audience"]
+      },
+      {
+        "standard_name": "product_feature",
+        "description": "Key features and benefits",
+        "original_relations": ["functionality", "product_feature", "functional_feature", "feature", "benefit", "claims"]
+      },
+      {
+        "standard_name": "scent",
+        "description": "Fragrance/scent profile",
+        "original_relations": ["scent_profile", "fragrance", "fragrance_type", "scent_category", "aroma_category"]
+      },
+      {
+        "standard_name": "brand_element",
+        "description": "Brand-related visual elements",
+        "original_relations": ["branding_element", "branding_elements", "brand_visibility", "logo"]
+      }
+    ]
+  },
+  "entity_standardization_rules": {
+    "general_rules": [
+      "Convert to lowercase",
+      "Replace spaces with underscores",
+      "Remove apostrophes and special characters",
+      "Standardize plurals to singular when possible",
+      "Merge similar concepts (e.g., 'adults' -> 'adult', 'mens_grooming' -> 'men')"
+    ],
+    "common_mappings": {
+      "audience": {
+        "adults": "adult",
+        "children": "child",
+        "mens_grooming": "men",
+        "young_adults": "young_adult",
+        "youth": "young_adult",
+        "teens": "teen",
+        "unisex": "unisex",
+        "beauty_conscious": "beauty_enthusiast",
+        "beauty_enthusiasts": "beauty_enthusiast",
+        "fashion_conscious": "fashion_enthusiast",
+        "dental_health_conscious": "dental_care",
+        "personal_care_users": "general",
+        "all_skin_types": "all_skin"
+      },
+      "colors": {
+        "light_tones": "light",
+        "warm_tones": "warm",
+        "dark_tones": "dark",
+        "pastel_colors": "pastel",
+        "vibrant_colors": "vibrant",
+        "warm_nude": "nude",
+        "light_yellow": "yellow_light",
+        "light_green": "green_light"
+      },
+      "materials": {
+        "packaging_material": "material",
+        "vegetable_based": "plant_based"
+      },
+      "sizes": {
+        "standard_size": "standard",
+        "travel_size": "travel",
+        "bulk_pack": "bulk",
+        "multi_pack": "multi",
+        "single_pack": "single",
+        "compact_length": "compact"
+      }
+    }
+  },
+  "statistics": {
+    "relations_before": 197,
+    "relations_after": 13,
+    "reduction": "93.4%",
+    "entities_before": 536,
+    "estimated_entities_after": 250,
+    "reduction_estimated": "53.4%"
+  },
+  "usage_notes": [
+    "Use these 13 standardized relations for Phase 4 extraction",
+    "Apply entity standardization rules automatically during extraction",
+    "Keep original raw output for reference",
+    "Focus on visual attributes only (no inferred features)"
+  ]
+}
