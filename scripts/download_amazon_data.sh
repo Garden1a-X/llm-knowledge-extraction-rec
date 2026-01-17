@@ -25,11 +25,11 @@ BASE_URL_META="https://jmcauley.ucsd.edu/data/amazon_v2/metaFiles2"
 # Video Games
 echo "1. Downloading Video Games dataset..."
 echo "   - Reviews (5-core)..."
-wget -c "${BASE_URL_REVIEWS}/Video_Games_5.json.gz" \
+wget --no-check-certificate -c "${BASE_URL_REVIEWS}/Video_Games_5.json.gz" \
     -O "${PROJECT_ROOT}/data/raw/amazon-videogames/Video_Games_5.json.gz"
 
 echo "   - Metadata..."
-wget -c "${BASE_URL_META}/meta_Video_Games.json.gz" \
+wget --no-check-certificate -c "${BASE_URL_META}/meta_Video_Games.json.gz" \
     -O "${PROJECT_ROOT}/data/raw/amazon-videogames/meta_Video_Games.json.gz"
 
 echo "✓ Video Games downloaded"
@@ -38,11 +38,11 @@ echo ""
 # Beauty
 echo "2. Downloading Beauty dataset..."
 echo "   - Reviews (5-core)..."
-wget -c "${BASE_URL_REVIEWS}/Beauty_5.json.gz" \
+wget --no-check-certificate -c "${BASE_URL_REVIEWS}/Beauty_5.json.gz" \
     -O "${PROJECT_ROOT}/data/raw/amazon-beauty/Beauty_5.json.gz"
 
 echo "   - Metadata..."
-wget -c "${BASE_URL_META}/meta_Beauty.json.gz" \
+wget --no-check-certificate -c "${BASE_URL_META}/meta_Beauty.json.gz" \
     -O "${PROJECT_ROOT}/data/raw/amazon-beauty/meta_Beauty.json.gz"
 
 echo "✓ Beauty downloaded"
