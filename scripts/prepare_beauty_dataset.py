@@ -85,9 +85,9 @@ def process_beauty_dataset():
     print(f"  Items: {len(final_items):,}")
     print(f"  Interactions: {len(filtered_reviews):,}")
 
-    # Create mappings
-    user_map = {user_id: idx for idx, user_id in enumerate(final_users)}
-    item_map = {asin: idx for idx, asin in enumerate(final_items)}
+    # Create mappings (RecBole format requires IDs starting from 1, not 0)
+    user_map = {user_id: idx + 1 for idx, user_id in enumerate(final_users)}
+    item_map = {asin: idx + 1 for idx, asin in enumerate(final_items)}
 
     # Create .inter file
     print(f"\nCreating {output_dir / 'amazon-beauty.inter'}...")
@@ -135,21 +135,79 @@ def process_beauty_dataset():
 
     print(f"  ✓ Saved filtered metadata ({len(filtered_meta):,} items)")
 
+    # Create .item file (item features)
+    print(f"\nCreating {output_dir / 'amazon-beauty.item'}...")
+    item_path = output_dir / "amazon-beauty.item"
+
+    with open(item_path, 'w', encoding='utf-8') as f:
+        # Header: item_id, title, categories, price
+        f.write("item_id:token\ttitle:token_seq\tcategories:token_seq\tprice:float\n")
+
+        for asin in final_items:
+            item_idx = item_map[asin]
+            meta = meta_dict[asin]
+
+            # Extract title (clean it)
+            title = meta.get('title', '').replace('\t', ' ').replace('\n', ' ').strip()
+            if not title:
+                title = f"Product_{asin}"
+
+            # Extract categories (flatten nested list and join with |)
+            categories = meta.get('category', [])
+            if categories:
+                # Flatten if nested and clean
+                cat_list = []
+                for cat in categories:
+                    if isinstance(cat, str):
+                        cat_list.append(cat.replace('\t', ' ').replace('\n', ' ').strip())
+                category_str = '|'.join(cat_list) if cat_list else 'Unknown'
+            else:
+                category_str = 'Unknown'
+
+            # Extract price
+            price = meta.get('price', 0.0)
+            try:
+                price = float(price) if price else 0.0
+            except (ValueError, TypeError):
+                price = 0.0
+
+            f.write(f"{item_idx}\t{title}\t{category_str}\t{price}\n")
+
+    print(f"  ✓ Wrote {len(final_items):,} items")
+
+    # Create .user file (user features - placeholder, no user features in Beauty dataset)
+    print(f"\nCreating {output_dir / 'amazon-beauty.user'}...")
+    user_path = output_dir / "amazon-beauty.user"
+
+    with open(user_path, 'w', encoding='utf-8') as f:
+        # Header: just user_id (Beauty dataset has no user demographics)
+        f.write("user_id:token\n")
+
+        for user_id in final_users:
+            user_idx = user_map[user_id]
+            f.write(f"{user_idx}\n")
+
+    print(f"  ✓ Wrote {len(final_users):,} users")
+
     # Print statistics
     print(f"\n{'='*70}")
     print("Summary")
     print(f"{'='*70}")
     print(f"Output directory: {output_dir}")
-    print(f"Files created:")
+    print(f"\nRecBole format files created:")
     print(f"  - amazon-beauty.inter ({len(filtered_reviews):,} interactions)")
-    print(f"  - mappings/user_mapping.json ({len(final_users):,} users)")
-    print(f"  - mappings/item_mapping.json ({len(final_items):,} items with images)")
+    print(f"  - amazon-beauty.item ({len(final_items):,} items with features)")
+    print(f"  - amazon-beauty.user ({len(final_users):,} users)")
+    print(f"\nMapping files created:")
+    print(f"  - mappings/user_mapping.json (users: IDs 1-{len(final_users)})")
+    print(f"  - mappings/item_mapping.json (items: IDs 1-{len(final_items)})")
     print(f"  - mappings/filtered_metadata.json ({len(filtered_meta):,} items)")
     print()
     print("Next steps:")
-    print("  1. Extract item knowledge from images: python scripts/extract_beauty_knowledge.py")
-    print("  2. Extract user interests: python scripts/extract_beauty_user_interests.py")
-    print("  3. Create RecBole KG files: python scripts/convert_beauty_to_kg.py")
+    print("  1. Run Phase 4 extraction: python scripts/beauty_phase4_extraction.py")
+    print("  2. Generate item KG: python scripts/convert_beauty_phase4_to_kg.py")
+    print("  3. Extract user interests: python scripts/extract_beauty_user_interests.py")
+    print("  4. Generate user KG: python scripts/convert_beauty_user_interests_to_kg.py")
     print(f"{'='*70}")
     print()
 
