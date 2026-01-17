@@ -241,8 +241,13 @@ class AcceleratedTrainer:
 
         # 计算指标
         eval_mode = self.config.train.eval_mode
-        eval_num_neg = self.config.train.eval_num_neg
         random_seed = self.config.train.random_seed
+
+        # Only use eval_num_neg in uni100 mode
+        if eval_mode == 'uni100':
+            eval_num_neg = self.config.train.eval_num_neg
+        else:
+            eval_num_neg = 99  # Default, not used in full mode
 
         metrics = evaluate_ranking(
             user_emb=user_emb,

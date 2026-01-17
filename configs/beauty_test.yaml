@@ -40,7 +40,6 @@ train:
   early_stop_patience: 10
   eval_every: 1
   eval_mode: full  # Full evaluation (Beauty has only 58 items)
-  eval_num_neg: 99  # Not used in full mode
   log_every: 1
   save_every: 1
   num_workers: 4

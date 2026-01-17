@@ -40,7 +40,6 @@ train:
   early_stop_patience: 10  # Aligned with RecBole stopping_step
   eval_every: 1  # Evaluate every epoch (aligned with RecBole eval_step=1)
   eval_mode: full  # Full evaluation (Beauty has only 58 items, too small for uni100)
-  eval_num_neg: 99  # Not used in full mode
   log_every: 1
   save_every: 10
   num_workers: 4
