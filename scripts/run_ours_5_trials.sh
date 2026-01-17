@@ -61,10 +61,14 @@ for i in {0..4}; do
         --config "${TEMP_CONFIG}" \
         2>&1 | tee "${OUTPUT_DIR}/trial_${TRIAL_NUM}_seed_${SEED}.log"
 
-    if [ $? -eq 0 ]; then
+    # Check exit status from PIPESTATUS (tee doesn't pass through exit code)
+    EXIT_CODE=${PIPESTATUS[0]}
+
+    if [ $EXIT_CODE -eq 0 ]; then
         echo "✓ Trial ${TRIAL_NUM} completed successfully"
     else
-        echo "✗ Trial ${TRIAL_NUM} failed"
+        echo "✗ Trial ${TRIAL_NUM} failed (exit code: $EXIT_CODE)"
+        echo "Check log: ${OUTPUT_DIR}/trial_${TRIAL_NUM}_seed_${SEED}.log"
     fi
 
     echo ""
