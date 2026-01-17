@@ -29,7 +29,7 @@ eval_args:
   split:
     RS: [0.7, 0.1, 0.2]
   order: TO
-  mode: full
+  mode: uni100  # 负采样模式：1 positive + 99 random negatives
 
 # Other
 load_col:
