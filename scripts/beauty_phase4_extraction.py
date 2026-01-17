@@ -47,12 +47,9 @@ def load_vocabulary(vocab_file: Path) -> Dict[str, List[str]]:
 
     vocabulary = {}
 
-    # Extract relation names from standardized_vocabulary
-    for relation_info in data['standardized_vocabulary']['relations']:
-        relation_name = relation_info['standard_name']
-        # For Phase 4, we don't pre-fill entities, just list the relation
-        # The prompt will guide the LLM to extract appropriate entities
-        vocabulary[relation_name] = []
+    # Load the actual entities from vocabulary
+    for relation, info in data['vocabulary'].items():
+        vocabulary[relation] = info['standard_entities']
 
     return vocabulary
 
@@ -92,39 +89,22 @@ def get_phase4_system_prompt(vocabulary: Dict[str, List[str]]) -> str:
     """
     Get system prompt for Beauty Phase 4 extraction.
 
-    Adapted from ML-1M Phase 4 prompts but for beauty products.
+    Lists all allowed entities from vocabulary - LLM must choose from these only.
     """
     # Build vocabulary description
     vocab_str = "═══════════════════════════════════════════════════════════════\n"
-    vocab_str += f"STANDARD VOCABULARY ({len(vocabulary)} Relations)\n"
+    vocab_str += f"STANDARD VOCABULARY ({len(vocabulary)} Relations, {sum(len(ents) for ents in vocabulary.values())} Entities)\n"
     vocab_str += "═══════════════════════════════════════════════════════════════\n\n"
 
-    # Relation descriptions (from beauty_vocabulary_standardized.json)
-    relation_descriptions = {
-        'product_type': 'Product category/type',
-        'color': 'Color-related attributes (dominant, accent, scheme, etc.)',
-        'packaging': 'Packaging style and structure',
-        'material': 'Material composition',
-        'texture': 'Surface texture and feel',
-        'design_style': 'Overall design aesthetic',
-        'size': 'Product size/dimensions',
-        'shape': 'Physical shape',
-        'label_style': 'Label and text design',
-        'target_audience': 'Intended user group',
-        'product_feature': 'Key features and benefits',
-        'scent': 'Fragrance/scent profile',
-        'brand_element': 'Brand-related visual elements'
-    }
-
-    for idx, relation in enumerate(vocabulary.keys(), 1):
-        description = relation_descriptions.get(relation, '')
-        vocab_str += f"{idx}. {relation}: {description}\n"
-
-    vocab_str += "\n"
+    for idx, (relation, entities) in enumerate(vocabulary.items(), 1):
+        vocab_str += f"【{relation}】 ({len(entities)} entities)\n"
+        # Show entities in compact format
+        entity_line = ", ".join(entities)
+        vocab_str += f"  {entity_line}\n\n"
 
     return f"""You are an expert in analyzing product images and extracting visual knowledge for a beauty product recommendation system.
 
-Your task: Analyze the product image and extract visual knowledge points using ONLY the approved relations below.
+Your task: Analyze the product image and extract visual knowledge points using ONLY the approved vocabulary below.
 
 {vocab_str}═══════════════════════════════════════════════════════════════
 EXTRACTION GUIDELINES
@@ -133,10 +113,10 @@ EXTRACTION GUIDELINES
 1. **Relations**: Use ONLY the {len(vocabulary)} relations listed above
    - Examples: product_type, color, packaging, material, texture, etc.
 
-2. **Entities**: Extract appropriate entity values for each relation
-   - Keep entities simple and descriptive (lowercase, underscores)
-   - Examples: "lipstick", "red", "glossy", "tube", "compact"
-   - Avoid overly complex or specific entity names
+2. **Entities**: Use ONLY entities from each relation's approved list
+   - Match the EXACT entity name as shown (including underscores)
+   - If you see something that roughly matches, use the closest entity from the list
+   - DO NOT create new entities - only use what's listed above
 
 3. **Output Format**: One knowledge point per line
    - Format: relation: entity
@@ -147,7 +127,7 @@ EXTRACTION GUIDELINES
 4. **Quality over Quantity**:
    - Extract 8-12 most prominent visual features
    - Focus on features you're confident about
-   - Only extract what you can clearly observe in the image
+   - Only use entities that clearly match the product image
 
 5. **Visual-Only**:
    - Extract ONLY what you can see in the image
@@ -205,6 +185,61 @@ def parse_extraction_output(output: str) -> List[Dict[str, str]]:
     return knowledge_points
 
 
+def filter_to_vocabulary(
+    knowledge_points: List[Dict[str, str]],
+    vocabulary: Dict[str, List[str]]
+) -> List[Dict[str, str]]:
+    """
+    Filter knowledge points to keep only entities in vocabulary.
+
+    Args:
+        knowledge_points: List of extracted knowledge points
+        vocabulary: Dict mapping relations to allowed entities
+
+    Returns:
+        Filtered list with only vocabulary entities
+    """
+    filtered_kps = []
+
+    for kp in knowledge_points:
+        relation = kp['relation']
+        entity = kp['entity']
+
+        # Check if relation exists in vocabulary
+        if relation not in vocabulary:
+            continue
+
+        vocab_entities = vocabulary[relation]
+
+        # Try exact match
+        if entity in vocab_entities:
+            filtered_kps.append(kp)
+            continue
+
+        # Try format variants
+        variants = [
+            entity.replace('_', ' '),      # underscore to space
+            entity.replace(' ', '_'),      # space to underscore
+            entity.lower(),                # lowercase
+            entity.title(),                # title case
+        ]
+
+        matched = False
+        for variant in variants:
+            if variant in vocab_entities:
+                # Use the vocabulary's canonical form
+                filtered_kps.append({
+                    'relation': relation,
+                    'entity': variant
+                })
+                matched = True
+                break
+
+        # If no match found, discard this knowledge point
+
+    return filtered_kps
+
+
 def extract_single_product(
     asin: str,
     title: str,
@@ -212,6 +247,7 @@ def extract_single_product(
     mllm,
     system_prompt: str,
     user_prompt: str,
+    vocabulary: Dict[str, List[str]],
     temperature: float,
     max_tokens: int
 ) -> Dict:
@@ -232,11 +268,14 @@ def extract_single_product(
         # Parse output
         knowledge_points = parse_extraction_output(output)
 
+        # Filter to vocabulary-only entities
+        filtered_knowledge_points = filter_to_vocabulary(knowledge_points, vocabulary)
+
         return {
             'asin': asin,
             'title': title,
-            'num_knowledge_points': len(knowledge_points),
-            'knowledge_points': knowledge_points,
+            'num_knowledge_points': len(filtered_knowledge_points),
+            'knowledge_points': filtered_knowledge_points,
             'raw_output': output,
             'timestamp': datetime.now().isoformat(),
             'status': 'success'
@@ -352,6 +391,7 @@ def extract_concurrent(
                 mllm,
                 system_prompt,
                 get_phase4_user_prompt(item.get('title', 'Unknown Product')),
+                vocabulary,
                 temperature,
                 max_tokens
             ): item['asin']
