@@ -18,7 +18,7 @@ def extract_recbole_metrics_from_log(log_file: Path) -> Dict[str, float]:
     Extract test metrics from RecBole BPR log file.
 
     RecBole format:
-    INFO  test result: {'recall@10': 0.1234, 'ndcg@10': 0.5678, ...}
+    INFO  test result: OrderedDict([('recall@10', 0.7665), ('recall@20', 0.8652), ...])
 
     Returns dict with lowercase metric names (e.g., 'ndcg@10', 'recall@20')
     """
@@ -26,22 +26,28 @@ def extract_recbole_metrics_from_log(log_file: Path) -> Dict[str, float]:
         content = f.read()
 
     # Find test result line
-    # Pattern: INFO  test result: {'recall@10': 0.1234, 'ndcg@10': 0.5678, ...}
-    test_pattern = r"test result:\s*(\{[^}]+\})"
-    match = re.search(test_pattern, content)
+    # Pattern: INFO  test result: OrderedDict([('recall@10', 0.7665), ...])
+    test_pattern = r"test result:\s*OrderedDict\(\[(.*?)\]\)"
+    match = re.search(test_pattern, content, re.DOTALL)
 
     if not match:
-        raise ValueError(f"Could not find 'test result' in {log_file}")
+        raise ValueError(f"Could not find 'test result: OrderedDict' in {log_file}")
 
-    # Extract the dictionary string
-    result_str = match.group(1)
+    # Extract the content inside OrderedDict([...])
+    pairs_str = match.group(1)
 
-    # Parse as dictionary (replace single quotes with double quotes)
-    result_str = result_str.replace("'", '"')
-    metrics = json.loads(result_str)
+    # Parse each (key, value) pair
+    # Pattern: ('metric@k', value)
+    pair_pattern = r"\('([^']+)',\s*([\d.]+)\)"
+    metrics = {}
 
-    # Convert all keys to lowercase for consistency
-    metrics = {k.lower(): v for k, v in metrics.items()}
+    for pair_match in re.finditer(pair_pattern, pairs_str):
+        metric_name = pair_match.group(1).lower()  # e.g., 'recall@10' -> 'recall@10'
+        metric_value = float(pair_match.group(2))
+        metrics[metric_name] = metric_value
+
+    if not metrics:
+        raise ValueError(f"Could not parse metrics from {log_file}")
 
     return metrics
 
