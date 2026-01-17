@@ -18,6 +18,7 @@ echo ""
 # Create directories
 mkdir -p "${PROJECT_ROOT}/data/raw/amazon-videogames"
 mkdir -p "${PROJECT_ROOT}/data/raw/amazon-beauty"
+mkdir -p "${PROJECT_ROOT}/data/raw/amazon-toys"
 
 BASE_URL_REVIEWS="https://jmcauley.ucsd.edu/data/amazon_v2/categoryFilesSmall"
 BASE_URL_META="https://jmcauley.ucsd.edu/data/amazon_v2/metaFiles2"
@@ -48,6 +49,19 @@ wget --no-check-certificate -c "${BASE_URL_META}/meta_All_Beauty.json.gz" \
 echo "✓ Beauty downloaded"
 echo ""
 
+# Toys and Games
+echo "3. Downloading Toys and Games dataset..."
+echo "   - Reviews (5-core)..."
+wget --no-check-certificate -c "${BASE_URL_REVIEWS}/Toys_and_Games_5.json.gz" \
+    -O "${PROJECT_ROOT}/data/raw/amazon-toys/Toys_and_Games_5.json.gz"
+
+echo "   - Metadata..."
+wget --no-check-certificate -c "${BASE_URL_META}/meta_Toys_and_Games.json.gz" \
+    -O "${PROJECT_ROOT}/data/raw/amazon-toys/meta_Toys_and_Games.json.gz"
+
+echo "✓ Toys and Games downloaded"
+echo ""
+
 echo "=========================================="
 echo "Download complete!"
 echo "=========================================="
@@ -57,6 +71,8 @@ echo "  data/raw/amazon-videogames/Video_Games_5.json.gz"
 echo "  data/raw/amazon-videogames/meta_Video_Games.json.gz"
 echo "  data/raw/amazon-beauty/All_Beauty_5.json.gz"
 echo "  data/raw/amazon-beauty/meta_All_Beauty.json.gz"
+echo "  data/raw/amazon-toys/Toys_and_Games_5.json.gz"
+echo "  data/raw/amazon-toys/meta_Toys_and_Games.json.gz"
 echo ""
 echo "Next steps:"
 echo "  1. Unzip: gunzip data/raw/amazon-*/*.gz"

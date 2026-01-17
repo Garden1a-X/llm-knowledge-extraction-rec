@@ -208,6 +208,21 @@ def main():
         if not beauty_meta:
             print(f"   Missing: meta_All_Beauty.json or .json.gz")
 
+    # Toys and Games
+    toys_dir = base_path / "amazon-toys"
+    toys_reviews = find_file(toys_dir, "Toys_and_Games_5")
+    toys_meta = find_file(toys_dir, "meta_Toys_and_Games")
+
+    if toys_reviews and toys_meta:
+        explore_reviews(toys_reviews, "Toys and Games")
+        explore_metadata(toys_meta, "Toys and Games")
+    else:
+        print(f"⚠ Toys and Games dataset not found at {toys_dir}")
+        if not toys_reviews:
+            print(f"   Missing: Toys_and_Games_5.json or .json.gz")
+        if not toys_meta:
+            print(f"   Missing: meta_Toys_and_Games.json or .json.gz")
+
     print(f"\n{'='*60}")
     print("Exploration complete!")
     print(f"{'='*60}\n")
