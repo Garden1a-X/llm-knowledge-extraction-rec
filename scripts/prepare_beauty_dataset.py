@@ -57,28 +57,20 @@ def process_beauty_dataset():
     items_with_meta = [asin for asin in review_items if asin in meta_dict]
     print(f"  Items with metadata: {len(items_with_meta):,} ({len(items_with_meta)/len(review_items)*100:.1f}%)")
 
-    # Filter items: only keep those with complete info (title + description + image)
-    items_with_complete = []
+    # Filter items: only keep those with image
+    items_with_image = []
     for asin in items_with_meta:
         meta = meta_dict[asin]
-        has_title = 'title' in meta and meta['title']
-        has_desc = False
-        if 'description' in meta:
-            desc = meta['description']
-            if isinstance(desc, str) and desc.strip():
-                has_desc = True
-            elif isinstance(desc, list) and any(d.strip() for d in desc if isinstance(d, str)):
-                has_desc = True
         has_image = ('imageURL' in meta and meta['imageURL']) or \
                    ('imageURLHighRes' in meta and meta['imageURLHighRes'])
 
-        if has_title and has_desc and has_image:
-            items_with_complete.append(asin)
+        if has_image:
+            items_with_image.append(asin)
 
-    print(f"  Items with complete info (title+desc+image): {len(items_with_complete):,} ({len(items_with_complete)/len(review_items)*100:.1f}%)")
+    print(f"  Items with image: {len(items_with_image):,} ({len(items_with_image)/len(review_items)*100:.1f}%)")
 
-    # Use items with complete info
-    valid_items = set(items_with_complete)
+    # Use items with image
+    valid_items = set(items_with_image)
 
     # Filter reviews: only keep those with valid items
     filtered_reviews = [r for r in reviews if r['asin'] in valid_items]
@@ -151,11 +143,11 @@ def process_beauty_dataset():
     print(f"Files created:")
     print(f"  - amazon-beauty.inter ({len(filtered_reviews):,} interactions)")
     print(f"  - mappings/user_mapping.json ({len(final_users):,} users)")
-    print(f"  - mappings/item_mapping.json ({len(final_items):,} items)")
+    print(f"  - mappings/item_mapping.json ({len(final_items):,} items with images)")
     print(f"  - mappings/filtered_metadata.json ({len(filtered_meta):,} items)")
     print()
     print("Next steps:")
-    print("  1. Extract item knowledge: python scripts/extract_beauty_knowledge.py")
+    print("  1. Extract item knowledge from images: python scripts/extract_beauty_knowledge.py")
     print("  2. Extract user interests: python scripts/extract_beauty_user_interests.py")
     print("  3. Create RecBole KG files: python scripts/convert_beauty_to_kg.py")
     print(f"{'='*70}")
