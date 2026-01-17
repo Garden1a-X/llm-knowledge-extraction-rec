@@ -75,6 +75,8 @@ class TrainConfig:
     num_workers: int = 4
     device: str = 'cuda'
     random_seed: int = 42
+    eval_mode: str = 'full'  # 'full' or 'uni100'
+    eval_num_neg: int = 99  # Number of negatives for uni100 mode
 
 
 @dataclass

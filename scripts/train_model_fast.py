@@ -120,6 +120,19 @@ class AcceleratedTrainer:
         logger.info(f"Checkpoints: {self.checkpoint_dir}")
         logger.info(f"Gradient accumulation steps: {grad_accum_steps}")
         logger.info(f"Effective batch size: {config.train.batch_size * grad_accum_steps}")
+        logger.info("")
+        logger.info("Training Configuration:")
+        logger.info(f"  Random seed: {config.train.random_seed}")
+        logger.info(f"  Epochs: {config.train.num_epochs}")
+        logger.info(f"  Learning rate: {config.train.learning_rate}")
+        logger.info(f"  Early stop patience: {config.train.early_stop_patience}")
+        logger.info("")
+        logger.info("Evaluation Configuration:")
+        logger.info(f"  Eval mode: {config.train.eval_mode}")
+        if config.train.eval_mode == 'uni100':
+            logger.info(f"  Num negatives: {config.train.eval_num_neg} (1 pos + {config.train.eval_num_neg} neg)")
+        logger.info(f"  Eval every: {config.train.eval_every} epoch(s)")
+        logger.info(f"  Metrics: NDCG@[5,10,20], Recall@[5,10,20], Precision@[5,10,20], Hit@[5,10,20]")
         logger.info("="*80)
 
         # 最佳指标
@@ -227,9 +240,9 @@ class AcceleratedTrainer:
             item_emb = outputs['item_fused']
 
         # 计算指标
-        eval_mode = self.config.train.get('eval_mode', 'full')
-        eval_num_neg = self.config.train.get('eval_num_neg', 99)
-        random_seed = self.config.train.get('random_seed', 42)
+        eval_mode = self.config.train.eval_mode
+        eval_num_neg = self.config.train.eval_num_neg
+        random_seed = self.config.train.random_seed
 
         metrics = evaluate_ranking(
             user_emb=user_emb,

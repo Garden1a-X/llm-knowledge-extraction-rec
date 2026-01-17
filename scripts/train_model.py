@@ -202,9 +202,9 @@ class Trainer:
         item_emb = outputs['item_fused']
 
         # 计算指标
-        eval_mode = self.config.train.get('eval_mode', 'full')
-        eval_num_neg = self.config.train.get('eval_num_neg', 99)
-        random_seed = self.config.train.get('random_seed', 42)
+        eval_mode = self.config.train.eval_mode
+        eval_num_neg = self.config.train.eval_num_neg
+        random_seed = self.config.train.random_seed
 
         metrics = evaluate_ranking(
             user_emb=user_emb,
