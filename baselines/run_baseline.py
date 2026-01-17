@@ -63,7 +63,7 @@ def get_model_config(model_name: str, use_kg: bool = False):
         'eval_args': {
             'split': {'RS': [0.7, 0.1, 0.2]},  # 70% train, 10% val, 20% test
             'order': 'TO',  # Time-based ordering (TO) or Random (RO)
-            'mode': 'full',  # Full ranking
+            'mode': 'uni100',  # 负采样：1 positive + 99 random negatives
         },
 
         # Data loading - IMPORTANT: load timestamp for temporal split
