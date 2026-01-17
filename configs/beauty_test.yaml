@@ -37,7 +37,7 @@ train:
   learning_rate: 0.001
   weight_decay: 0.00001
   num_epochs: 1  # Only 1 epoch for testing
-  early_stop_patience: 10
+  early_stop_patience: 1000  # Disabled (not relevant for 1-epoch test)
   eval_every: 1
   eval_mode: full  # Full evaluation (Beauty has only 58 items)
   log_every: 1
