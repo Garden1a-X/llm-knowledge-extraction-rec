@@ -20,8 +20,9 @@ def test_api_connection(api_key: str, base_url: str = None, model: str = 'gpt-4o
     print("Testing OpenAI API Connection")
     print("="*70)
     print(f"\nModel: {model}")
-    print(f"Base URL: {base_url or 'default (api.openai.com)'}")
-    print(f"API Key: {api_key[:10]}...{api_key[-4:] if len(api_key) > 14 else ''}")
+    print(f"Base URL: {base_url if base_url else 'None (using default)'}")
+    print(f"API Key: {api_key}")
+    print(f"API Key length: {len(api_key)} characters")
     print()
 
     try:
