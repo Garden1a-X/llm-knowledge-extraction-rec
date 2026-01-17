@@ -5,64 +5,25 @@
   "vocabulary": {
     "product_type": {
       "standard_entities": [
-        "after_shave",
-        "bath_mitt",
-        "blush",
-        "body_lotion",
-        "body_wash",
-        "body_wash_buffer",
-        "booties",
-        "cleansing_milk",
-        "coconut_oil",
-        "comb",
-        "compact_parfum",
-        "conditioner",
-        "cream",
-        "cuticle_oil",
-        "deodorant",
-        "dental_floss",
-        "dhoop_cones",
-        "dietary_supplement",
-        "electric_shaver",
-        "electric_toothbrush",
-        "face_cream",
-        "facial_cleanser",
-        "facial_serum",
-        "hair_clip",
-        "hair_mousse",
-        "hot_air_brush",
-        "lipstick",
-        "liquid_soap",
-        "nail_polish",
-        "ointment",
-        "pre_shave",
-        "pressed_powder",
-        "razor_blades",
-        "sensitivity_strips",
-        "shampoo",
-        "shampoo_and_conditioner",
-        "shaving_cream",
-        "shaving_lotion",
-        "shower_gel",
-        "shower_tool",
-        "soap_bar",
-        "socks",
-        "toner",
-        "toothpaste",
-        "water_flosser"
+        "bath_body",
+        "cosmetics",
+        "dental_care",
+        "hair_care",
+        "nail_care",
+        "shaving",
+        "skincare",
+        "tools_accessories"
       ]
     },
     "color": {
       "standard_entities": [
-        "amber",
         "black",
         "blue",
         "brown",
-        "burgundy",
-        "cream",
         "gold",
         "gray",
         "green",
+        "neutral",
         "orange",
         "pink",
         "purple",
@@ -75,18 +36,14 @@
       "standard_entities": [
         "bottle",
         "box",
-        "canister",
-        "case",
         "compact",
         "jar",
         "standalone",
-        "tube",
-        "wrapper"
+        "tube"
       ]
     },
     "material": {
       "standard_entities": [
-        "cardboard",
         "fabric",
         "glass",
         "metal",
@@ -101,8 +58,7 @@
         "matte",
         "rough",
         "smooth",
-        "soft",
-        "textured"
+        "soft"
       ]
     },
     "design_style": {
@@ -113,8 +69,7 @@
         "elegant",
         "modern",
         "natural",
-        "playful",
-        "traditional"
+        "playful"
       ]
     },
     "size": {
@@ -131,26 +86,18 @@
         "circular",
         "curved",
         "cylindrical",
-        "ergonomic",
         "flat",
         "geometric",
-        "rectangular",
-        "square",
-        "vertical"
+        "rectangular"
       ]
     },
     "label_style": {
       "standard_entities": [
-        "bold_text",
-        "branded",
+        "bold",
         "colorful",
         "decorative",
-        "detailed",
-        "embossed",
-        "graphic",
         "minimalistic",
         "modern",
-        "natural",
         "printed",
         "vintage"
       ]
@@ -165,67 +112,42 @@
     },
     "product_feature": {
       "standard_entities": [
-        "adjustable_pressure",
         "anti_aging",
-        "buildable_color",
-        "cavity_protection",
-        "cooling_effect",
-        "decorative",
-        "digital_display",
-        "double_edge",
-        "easy_to_use",
-        "ergonomic_handle",
+        "cooling",
         "exfoliating",
-        "fluoride",
-        "gel_formula",
-        "gum_health",
-        "hand_made",
-        "highly_pigmented",
         "hydrating",
-        "kissproof",
         "long_lasting",
-        "mineral_formula",
         "moisturizing",
         "natural",
         "organic",
-        "purifying",
-        "skin_protectant",
-        "soothing",
-        "specialty_formula",
-        "suitable_for_all_skin_types",
-        "volumizing"
+        "sensitive_skin",
+        "soothing"
       ]
     },
     "scent": {
       "standard_entities": [
-        "almond",
-        "anise",
-        "apricot",
         "citrus",
         "floral",
         "fresh",
-        "grapefruit",
-        "lavender",
-        "mint",
-        "musk",
-        "nag_champa",
-        "raspberry",
-        "sandalwood",
-        "strawberry",
-        "unscented"
+        "fruity",
+        "herbal",
+        "spicy",
+        "sweet",
+        "unscented",
+        "woody"
       ]
     },
     "brand_element": {
       "standard_entities": [
-        "award_badge",
         "graphic",
-        "logo"
+        "logo",
+        "minimal"
       ]
     }
   },
   "statistics": {
     "num_relations": 13,
-    "num_unique_entities": 200,
+    "num_unique_entities": 97,
     "num_products": 58,
     "total_knowledge_points": 668
   }
