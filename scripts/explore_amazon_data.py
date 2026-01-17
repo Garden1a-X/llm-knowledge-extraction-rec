@@ -92,10 +92,19 @@ def explore_metadata(filepath, name):
     print(f"Total items: {len(metadata):,}")
 
     # Field coverage
-    fields = ['title', 'description', 'price', 'brand', 'category', 'image', 'feature']
+    fields = {
+        'title': lambda x: x.get('title'),
+        'description': lambda x: x.get('description') and (x['description'] if isinstance(x['description'], str) else any(x['description'])),
+        'price': lambda x: x.get('price'),
+        'brand': lambda x: x.get('brand'),
+        'category': lambda x: x.get('category') and len(x['category']) > 0 if isinstance(x.get('category'), list) else x.get('category'),
+        'imageURL': lambda x: x.get('imageURL') or x.get('image'),
+        'imageURLHighRes': lambda x: x.get('imageURLHighRes'),
+        'feature': lambda x: x.get('feature') and (len(x['feature']) > 0 if isinstance(x['feature'], list) else x['feature'])
+    }
     print(f"\nField coverage:")
-    for field in fields:
-        count = sum(1 for item in metadata if field in item and item[field])
+    for field, check_fn in fields.items():
+        count = sum(1 for item in metadata if check_fn(item))
         pct = count / len(metadata) * 100
         print(f"  {field:15s}: {count:6,} ({pct:5.1f}%)")
 
@@ -143,10 +152,13 @@ def explore_metadata(filepath, name):
         print(f"  Brand: {sample['brand']}")
     if 'category' in sample:
         print(f"  Category: {sample['category']}")
-    if 'image' in sample:
-        print(f"  Images: {len(sample['image'])} URLs")
-        if sample['image']:
-            print(f"    Example: {sample['image'][0][:60]}...")
+    # Check for both image field names
+    image_field = 'imageURL' if 'imageURL' in sample else ('image' if 'image' in sample else None)
+    if image_field and sample[image_field]:
+        print(f"  Images ({image_field}): {len(sample[image_field])} URLs")
+        print(f"    Example: {sample[image_field][0][:80]}...")
+    if 'imageURLHighRes' in sample and sample['imageURLHighRes']:
+        print(f"  High-res images: {len(sample['imageURLHighRes'])} URLs")
 
 
 def find_file(directory, basename):
