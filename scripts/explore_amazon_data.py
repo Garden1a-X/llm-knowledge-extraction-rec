@@ -10,12 +10,32 @@ from pathlib import Path
 from collections import Counter, defaultdict
 
 
-def load_jsonl_gz(filepath):
-    """Load gzipped JSON lines file"""
+def load_jsonl(filepath):
+    """Load JSON lines file (supports both .json and .json.gz)"""
     data = []
-    with gzip.open(filepath, 'rt', encoding='utf-8') as f:
-        for line in f:
-            data.append(json.loads(line.strip()))
+    filepath = Path(filepath)
+
+    # Try .json.gz first, then .json
+    if filepath.suffix == '.gz':
+        with gzip.open(filepath, 'rt', encoding='utf-8') as f:
+            for line in f:
+                data.append(json.loads(line.strip()))
+    else:
+        # Try without .gz
+        json_path = filepath.with_suffix('') if filepath.suffix == '.gz' else filepath
+        if not json_path.exists():
+            # Maybe it's .json.gz but passed without .gz
+            json_path = Path(str(filepath) + '.gz')
+            if json_path.exists():
+                with gzip.open(json_path, 'rt', encoding='utf-8') as f:
+                    for line in f:
+                        data.append(json.loads(line.strip()))
+            else:
+                raise FileNotFoundError(f"File not found: {filepath}")
+        else:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    data.append(json.loads(line.strip()))
     return data
 
 
@@ -25,7 +45,7 @@ def explore_reviews(filepath, name):
     print(f"Reviews: {name}")
     print(f"{'='*60}\n")
 
-    reviews = load_jsonl_gz(filepath)
+    reviews = load_jsonl(filepath)
 
     # Basic statistics
     print(f"Total reviews: {len(reviews):,}")
@@ -66,7 +86,7 @@ def explore_metadata(filepath, name):
     print(f"Metadata: {name}")
     print(f"{'='*60}\n")
 
-    metadata = load_jsonl_gz(filepath)
+    metadata = load_jsonl(filepath)
 
     # Basic statistics
     print(f"Total items: {len(metadata):,}")
@@ -129,29 +149,52 @@ def explore_metadata(filepath, name):
             print(f"    Example: {sample['image'][0][:60]}...")
 
 
+def find_file(directory, basename):
+    """Find file with .json or .json.gz extension"""
+    json_path = directory / f"{basename}.json"
+    gz_path = directory / f"{basename}.json.gz"
+
+    if json_path.exists():
+        return json_path
+    elif gz_path.exists():
+        return gz_path
+    else:
+        return None
+
+
 def main():
     """Main function"""
     base_path = Path("data/raw")
 
     # Video Games
-    vg_reviews = base_path / "amazon-videogames" / "Video_Games_5.json.gz"
-    vg_meta = base_path / "amazon-videogames" / "meta_Video_Games.json.gz"
+    vg_dir = base_path / "amazon-videogames"
+    vg_reviews = find_file(vg_dir, "Video_Games_5")
+    vg_meta = find_file(vg_dir, "meta_Video_Games")
 
-    if vg_reviews.exists() and vg_meta.exists():
+    if vg_reviews and vg_meta:
         explore_reviews(vg_reviews, "Video Games")
         explore_metadata(vg_meta, "Video Games")
     else:
-        print(f"⚠ Video Games dataset not found at {base_path / 'amazon-videogames'}")
+        print(f"⚠ Video Games dataset not found at {vg_dir}")
+        if not vg_reviews:
+            print(f"   Missing: Video_Games_5.json or .json.gz")
+        if not vg_meta:
+            print(f"   Missing: meta_Video_Games.json or .json.gz")
 
     # Beauty
-    beauty_reviews = base_path / "amazon-beauty" / "All_Beauty_5.json.gz"
-    beauty_meta = base_path / "amazon-beauty" / "meta_All_Beauty.json.gz"
+    beauty_dir = base_path / "amazon-beauty"
+    beauty_reviews = find_file(beauty_dir, "All_Beauty_5")
+    beauty_meta = find_file(beauty_dir, "meta_All_Beauty")
 
-    if beauty_reviews.exists() and beauty_meta.exists():
+    if beauty_reviews and beauty_meta:
         explore_reviews(beauty_reviews, "Beauty")
         explore_metadata(beauty_meta, "Beauty")
     else:
-        print(f"⚠ Beauty dataset not found at {base_path / 'amazon-beauty'}")
+        print(f"⚠ Beauty dataset not found at {beauty_dir}")
+        if not beauty_reviews:
+            print(f"   Missing: All_Beauty_5.json or .json.gz")
+        if not beauty_meta:
+            print(f"   Missing: meta_All_Beauty.json or .json.gz")
 
     print(f"\n{'='*60}")
     print("Exploration complete!")
