@@ -35,15 +35,15 @@ wget --no-check-certificate -c "${BASE_URL_META}/meta_Video_Games.json.gz" \
 echo "✓ Video Games downloaded"
 echo ""
 
-# Beauty
+# Beauty (All_Beauty in Amazon 2018 dataset)
 echo "2. Downloading Beauty dataset..."
 echo "   - Reviews (5-core)..."
-wget --no-check-certificate -c "${BASE_URL_REVIEWS}/Beauty_5.json.gz" \
-    -O "${PROJECT_ROOT}/data/raw/amazon-beauty/Beauty_5.json.gz"
+wget --no-check-certificate -c "${BASE_URL_REVIEWS}/All_Beauty_5.json.gz" \
+    -O "${PROJECT_ROOT}/data/raw/amazon-beauty/All_Beauty_5.json.gz"
 
 echo "   - Metadata..."
-wget --no-check-certificate -c "${BASE_URL_META}/meta_Beauty.json.gz" \
-    -O "${PROJECT_ROOT}/data/raw/amazon-beauty/meta_Beauty.json.gz"
+wget --no-check-certificate -c "${BASE_URL_META}/meta_All_Beauty.json.gz" \
+    -O "${PROJECT_ROOT}/data/raw/amazon-beauty/meta_All_Beauty.json.gz"
 
 echo "✓ Beauty downloaded"
 echo ""
@@ -55,8 +55,8 @@ echo ""
 echo "Files downloaded:"
 echo "  data/raw/amazon-videogames/Video_Games_5.json.gz"
 echo "  data/raw/amazon-videogames/meta_Video_Games.json.gz"
-echo "  data/raw/amazon-beauty/Beauty_5.json.gz"
-echo "  data/raw/amazon-beauty/meta_Beauty.json.gz"
+echo "  data/raw/amazon-beauty/All_Beauty_5.json.gz"
+echo "  data/raw/amazon-beauty/meta_All_Beauty.json.gz"
 echo ""
 echo "Next steps:"
 echo "  1. Unzip: gunzip data/raw/amazon-*/*.gz"

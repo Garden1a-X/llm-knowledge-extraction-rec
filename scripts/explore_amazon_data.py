@@ -144,8 +144,8 @@ def main():
         print(f"⚠ Video Games dataset not found at {base_path / 'amazon-videogames'}")
 
     # Beauty
-    beauty_reviews = base_path / "amazon-beauty" / "Beauty_5.json.gz"
-    beauty_meta = base_path / "amazon-beauty" / "meta_Beauty.json.gz"
+    beauty_reviews = base_path / "amazon-beauty" / "All_Beauty_5.json.gz"
+    beauty_meta = base_path / "amazon-beauty" / "meta_All_Beauty.json.gz"
 
     if beauty_reviews.exists() and beauty_meta.exists():
         explore_reviews(beauty_reviews, "Beauty")
