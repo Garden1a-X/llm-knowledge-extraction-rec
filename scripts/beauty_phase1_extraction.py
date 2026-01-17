@@ -298,11 +298,16 @@ def main():
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
     # Create MLLM
-    mllm = create_mllm(
-        api_key=args.api_key,
-        base_url=args.base_url,
-        model_name=args.model
-    )
+    mllm_kwargs = {
+        'backend': 'openai',
+        'model_name': args.model,
+        'api_key': args.api_key
+    }
+    if args.base_url:
+        mllm_kwargs['base_url'] = args.base_url
+        print(f"Using custom base URL: {args.base_url}")
+
+    mllm = create_mllm(**mllm_kwargs)
     print(f"Using model: {args.model}")
 
     # Extract
