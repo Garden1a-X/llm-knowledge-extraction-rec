@@ -18,7 +18,7 @@ eval_batch_size: 4096
 learning_rate: 0.001
 
 # Evaluation
-stopping_step: 10
+stopping_step: 1000  # Disable early stopping (Beauty dataset too small, let it train fully)
 eval_step: 1
 metrics: ['Recall', 'NDCG', 'Precision', 'Hit']
 topk: [10, 20]
