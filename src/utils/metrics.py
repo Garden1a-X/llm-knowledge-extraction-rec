@@ -201,10 +201,12 @@ def evaluate_ranking(
     test_user_items: Dict[int, List[int]],
     k_list: List[int] = [5, 10, 20],
     exclude_train: bool = True,
-    train_user_items: Dict[int, List[int]] = None
+    train_user_items: Dict[int, List[int]] = None,
+    mode: str = 'full',
+    num_neg: int = 99
 ) -> Dict[str, float]:
     """
-    完整的ranking评估（针对整个测试集）
+    Ranking评估（支持full ranking和负采样）
 
     Args:
         user_emb: [num_users, dim] - 用户embedding
@@ -213,6 +215,8 @@ def evaluate_ranking(
         k_list: K值列表
         exclude_train: 是否排除训练集物品
         train_user_items: 训练集中每个用户的物品（用于排除）
+        mode: 'full' 或 'uni100' - 评估模式
+        num_neg: 负采样数量（mode='uni100'时使用，默认99）
 
     Returns:
         metrics: 平均指标
@@ -227,21 +231,55 @@ def evaluate_ranking(
         if user_id >= user_emb.size(0):
             continue
 
-        # 计算该用户对所有物品的分数
-        scores = (user_emb[user_id] @ item_emb.T).cpu()  # [num_items]
+        if mode == 'uni100':
+            # uni100 模式：1 positive + num_neg random negatives
+            # 选择一个正样本
+            if len(test_items) == 0:
+                continue
+            pos_item = test_items[0]  # 取第一个正样本
 
-        # 构建标签
-        labels = torch.zeros(num_items)
-        for item_id in test_items:
-            if item_id < num_items:
-                labels[item_id] = 1
+            # 负采样：排除训练集和测试集物品
+            excluded_items = set(test_items)
+            if exclude_train and train_user_items is not None:
+                excluded_items.update(train_user_items.get(user_id, []))
 
-        # 排除训练集物品（将分数设为-inf）
-        if exclude_train and train_user_items is not None:
-            train_items = train_user_items.get(user_id, [])
-            for item_id in train_items:
+            # 候选负样本池
+            candidate_items = [i for i in range(num_items) if i not in excluded_items]
+            if len(candidate_items) < num_neg:
+                continue  # 候选池不够，跳过这个用户
+
+            # 随机采样 num_neg 个负样本
+            import random
+            neg_items = random.sample(candidate_items, num_neg)
+
+            # 构建候选集：1 pos + num_neg neg
+            eval_items = [pos_item] + neg_items
+
+            # 计算分数
+            eval_item_emb = item_emb[eval_items]  # [num_neg+1, dim]
+            scores = (user_emb[user_id] @ eval_item_emb.T).cpu()  # [num_neg+1]
+
+            # 构建标签（第一个是正样本）
+            labels = torch.zeros(len(eval_items))
+            labels[0] = 1
+
+        else:
+            # full ranking 模式（原逻辑）
+            # 计算该用户对所有物品的分数
+            scores = (user_emb[user_id] @ item_emb.T).cpu()  # [num_items]
+
+            # 构建标签
+            labels = torch.zeros(num_items)
+            for item_id in test_items:
                 if item_id < num_items:
-                    scores[item_id] = float('-inf')
+                    labels[item_id] = 1
+
+            # 排除训练集物品（将分数设为-inf）
+            if exclude_train and train_user_items is not None:
+                train_items = train_user_items.get(user_id, [])
+                for item_id in train_items:
+                    if item_id < num_items:
+                        scores[item_id] = float('-inf')
 
         # 计算指标
         for k in k_list:

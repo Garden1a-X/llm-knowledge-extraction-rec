@@ -39,6 +39,8 @@ train:
   num_epochs: 300
   early_stop_patience: 10  # 对齐RecBole stopping_step
   eval_every: 1  # 每个epoch都评估（对齐RecBole eval_step=1）
+  eval_mode: uni100  # 评估模式：full 或 uni100（1 positive + 99 negatives）
+  eval_num_neg: 99  # uni100 模式的负样本数
   log_every: 1
   save_every: 10
   num_workers: 4
