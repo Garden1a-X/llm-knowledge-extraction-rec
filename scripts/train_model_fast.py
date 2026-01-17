@@ -229,6 +229,7 @@ class AcceleratedTrainer:
         # 计算指标
         eval_mode = self.config.train.get('eval_mode', 'full')
         eval_num_neg = self.config.train.get('eval_num_neg', 99)
+        random_seed = self.config.train.get('random_seed', 42)
 
         metrics = evaluate_ranking(
             user_emb=user_emb,
@@ -238,7 +239,8 @@ class AcceleratedTrainer:
             k_list=[5, 10, 20],
             exclude_train=True,
             mode=eval_mode,
-            num_neg=eval_num_neg
+            num_neg=eval_num_neg,
+            seed=random_seed
         )
 
         return metrics
