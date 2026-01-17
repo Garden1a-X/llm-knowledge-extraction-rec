@@ -10,6 +10,7 @@
         "blush",
         "body_lotion",
         "body_wash",
+        "body_wash_buffer",
         "booties",
         "cleansing_milk",
         "coconut_oil",
@@ -20,6 +21,7 @@
         "cuticle_oil",
         "deodorant",
         "dental_floss",
+        "dhoop_cones",
         "dietary_supplement",
         "electric_shaver",
         "electric_toothbrush",
@@ -29,7 +31,6 @@
         "hair_clip",
         "hair_mousse",
         "hot_air_brush",
-        "incense",
         "lipstick",
         "liquid_soap",
         "nail_polish",
@@ -37,7 +38,9 @@
         "pre_shave",
         "pressed_powder",
         "razor_blades",
+        "sensitivity_strips",
         "shampoo",
+        "shampoo_and_conditioner",
         "shaving_cream",
         "shaving_lotion",
         "shower_gel",
@@ -52,7 +55,6 @@
     "color": {
       "standard_entities": [
         "amber",
-        "beige",
         "black",
         "blue",
         "brown",
@@ -205,6 +207,7 @@
         "grapefruit",
         "lavender",
         "mint",
+        "musk",
         "nag_champa",
         "raspberry",
         "sandalwood",
@@ -222,7 +225,7 @@
   },
   "statistics": {
     "num_relations": 13,
-    "num_unique_entities": 197,
+    "num_unique_entities": 200,
     "num_products": 58,
     "total_knowledge_points": 668
   }
