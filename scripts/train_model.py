@@ -202,13 +202,18 @@ class Trainer:
         item_emb = outputs['item_fused']
 
         # 计算指标
+        eval_mode = self.config.train.get('eval_mode', 'full')
+        eval_num_neg = self.config.train.get('eval_num_neg', 99)
+
         metrics = evaluate_ranking(
             user_emb=user_emb,
             item_emb=item_emb,
             test_user_items=test_user_items,
             train_user_items=train_user_items,
             k_list=[5, 10, 20],
-            exclude_train=True
+            exclude_train=True,
+            mode=eval_mode,
+            num_neg=eval_num_neg
         )
 
         return metrics

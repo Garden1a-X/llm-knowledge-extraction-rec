@@ -7,6 +7,7 @@ Evaluation metrics for recommendation
 
 import torch
 import numpy as np
+import random
 from typing import List, Dict, Union
 import logging
 
@@ -203,7 +204,8 @@ def evaluate_ranking(
     exclude_train: bool = True,
     train_user_items: Dict[int, List[int]] = None,
     mode: str = 'full',
-    num_neg: int = 99
+    num_neg: int = 99,
+    seed: int = 0
 ) -> Dict[str, float]:
     """
     Ranking评估（支持full ranking和负采样）
@@ -217,6 +219,7 @@ def evaluate_ranking(
         train_user_items: 训练集中每个用户的物品（用于排除）
         mode: 'full' 或 'uni100' - 评估模式
         num_neg: 负采样数量（mode='uni100'时使用，默认99）
+        seed: 随机种子（用于uni100负采样的可复现性，默认0）
 
     Returns:
         metrics: 平均指标
@@ -226,6 +229,11 @@ def evaluate_ranking(
                    for k in k_list}
 
     num_items = item_emb.size(0)
+
+    # uni100模式下设置随机种子以保证可复现性
+    if mode == 'uni100':
+        random.seed(seed)
+        np.random.seed(seed)
 
     for user_id, test_items in test_user_items.items():
         if user_id >= user_emb.size(0):
@@ -249,7 +257,6 @@ def evaluate_ranking(
                 continue  # 候选池不够，跳过这个用户
 
             # 随机采样 num_neg 个负样本
-            import random
             neg_items = random.sample(candidate_items, num_neg)
 
             # 构建候选集：1 pos + num_neg neg
