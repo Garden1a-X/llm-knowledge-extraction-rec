@@ -28,12 +28,15 @@ def test_api_connection(api_key: str, base_url: str = None, model: str = 'gpt-4o
     try:
         # Create MLLM
         print("Creating MLLM interface...")
-        mllm = create_mllm(
-            backend='openai',
-            model_name=model,
-            api_key=api_key,
-            base_url=base_url
-        )
+        mllm_kwargs = {
+            'backend': 'openai',
+            'model_name': model,
+            'api_key': api_key
+        }
+        if base_url:
+            mllm_kwargs['base_url'] = base_url
+
+        mllm = create_mllm(**mllm_kwargs)
         print("✓ MLLM interface created")
 
         # Test with a simple white image
