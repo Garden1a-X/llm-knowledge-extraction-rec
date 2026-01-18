@@ -349,21 +349,36 @@
 ### **2026-01-18: LightGCN和KGAT Baseline完成**
 
 #### **LightGCN (uni100, 5 trials)**
+**关键指标**：
 - **NDCG@10**: 0.2255 ± 0.0012
 - **Recall@10**: 0.1536 ± 0.0020
 - **NDCG@20**: 0.2497 ± 0.0011
 - **Recall@20**: 0.2448 ± 0.0016
-- **vs BPR**: +2.7% (NDCG@10)
-- **结论**: LightGCN通过图结构学到更好的表示，比纯CF的BPR略优
 
-#### **KGAT (Original KG, uni100, 5 trials)**
-- **NDCG@10**: 0.2215 ± ? (待提取完整统计)
-- **Recall@10**: 0.1516 ± ?
-- **NDCG@20**: 0.2454 ± ?
-- **Recall@20**: 0.2425 ± ?
-- **vs BPR**: +0.9% (NDCG@10)
-- **KG来源**: 使用RecBole原始metadata KG（genre, director, year等）
-- **结论**: 传统metadata KG带来的提升很小，验证了我们LLM-KG的必要性
+**所有指标**：
+- Hit@10: 0.7489 ± 0.0043
+- Hit@20: 0.8719 ± 0.0016
+- Precision@10: 0.1877 ± 0.0009
+- Precision@20: 0.1621 ± 0.0008
+
+**vs BPR**: +2.7% (NDCG@10)
+**结论**: LightGCN通过图结构学到更好的表示，比纯CF的BPR略优
+
+#### **KGAT (Original KG, uni100, 5 trials)** ⚠️ 部分数据待补全
+**已找到的结果（Trial 4 & 5）**：
+- Trial 4 (05:21): NDCG@10 = 0.2226, Recall@10 = 0.1525, NDCG@20 = 0.2455, Recall@20 = 0.2415
+- Trial 5 (06:32): NDCG@10 = 0.2215, Recall@10 = 0.1516, NDCG@20 = 0.2454, Recall@20 = 0.2425
+
+**初步统计（仅2个trials）**：
+- **NDCG@10**: 0.2221 ± 0.0008
+- **Recall@10**: 0.1521 ± 0.0006
+- **NDCG@20**: 0.2455 ± 0.0001
+- **Recall@20**: 0.2420 ± 0.0007
+
+**状态**: Trial 2和3的日志丢失，需要从checkpoint重新评估以获得完整的5-trial统计
+**KG来源**: RecBole原始metadata KG（genre, director, year等）
+**vs BPR**: +1.1% (基于2个trials的NDCG@10)
+**结论**: 传统metadata KG带来的提升很小，验证了我们LLM-KG的必要性
 
 #### **Baseline对比总结（uni100）**
 | 方法 | NDCG@10 | 提升 vs BPR | 关键差异 |
