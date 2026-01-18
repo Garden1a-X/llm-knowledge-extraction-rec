@@ -62,7 +62,9 @@ class KGDataLoader:
         """Load KG triplets and build neighbor dictionary."""
         print(f"Loading KG from {kg_file}...")
 
-        relation_id = 0
+        relation_id = 1  # Start from 1 for RecBole compatibility
+        entity_map = {}  # Map entity names to IDs
+        next_entity_id = self.n_entities // 10 + 1  # Start after item IDs
 
         with open(kg_file, 'r') as f:
             next(f)  # Skip header
@@ -74,17 +76,23 @@ class KGDataLoader:
 
                 head, relation, tail = parts
 
-                # Map head and tail to entity IDs (assuming they are item IDs)
+                # Map head and tail to entity IDs
                 try:
                     head_id = int(head)
-                    # Tail might be an entity name, we need to create entity IDs
-                    # For simplicity, we'll hash tail names to IDs
+
+                    # Tail might be an entity name or item ID
                     if tail.isdigit():
                         tail_id = int(tail)
                     else:
-                        # Create entity ID for non-item entities
-                        tail_id = hash(tail) % (self.n_entities * 10) + self.n_entities
-                        tail_id = min(tail_id, self.n_entities * 10 - 1)
+                        # Create entity ID for non-item entities using a mapping dict
+                        if tail not in entity_map:
+                            entity_map[tail] = next_entity_id
+                            next_entity_id += 1
+                            # Safety check
+                            if next_entity_id > self.n_entities:
+                                print(f"Warning: Entity ID exceeded limit, skipping {tail}")
+                                continue
+                        tail_id = entity_map[tail]
 
                     # Map relation to ID
                     if relation not in self.relation_dict:
@@ -101,9 +109,11 @@ class KGDataLoader:
 
         print(f"✓ Loaded KG:")
         print(f"  Entities with neighbors: {len(self.kg_dict)}")
+        print(f"  Total entities (including attributes): {len(entity_map) + len(self.kg_dict)}")
         print(f"  Relations: {len(self.relation_dict)}")
 
         self.n_relations = len(self.relation_dict)
+        self.max_entity_id = max(next_entity_id - 1, max(self.kg_dict.keys()) if self.kg_dict else 0)
 
     def sample_neighbors(self, entity_ids, n_neighbors=8, n_layers=3):
         """

@@ -145,9 +145,10 @@ class MKGAT(nn.Module):
         self.reg_weight = reg_weight
 
         # User and entity embeddings
-        self.user_embed = nn.Embedding(n_users, embedding_dim)
-        self.entity_embed = nn.Embedding(n_entities, embedding_dim)
-        self.relation_embed = nn.Embedding(n_relations, embedding_dim)
+        # RecBole uses 1-indexed IDs, so we need n+1 embeddings (index 0 unused)
+        self.user_embed = nn.Embedding(n_users + 1, embedding_dim)
+        self.entity_embed = nn.Embedding(n_entities + 1, embedding_dim)
+        self.relation_embed = nn.Embedding(n_relations + 1, embedding_dim)
 
         # Visual feature projection
         # Project 2048-dim ResNet features to embedding_dim
