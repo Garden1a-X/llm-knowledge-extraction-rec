@@ -7,42 +7,92 @@
 
 ## 📋 整体结构
 
+**核心Narrative**: "别的图谱不行，我们的图谱好" - 重点在知识提取质量
+
 ```
 Method
-├── 3.1 Knowledge Extraction from Multimodal Data
+├── 3.1 LLM-Powered Visual Knowledge Extraction (70%)
 │   ├── 3.1.1 Three-Stage Item Knowledge Extraction
+│   │   ├── Stage 1: Exploratory Extraction (发现知识空间)
+│   │   ├── Stage 2: Vocabulary Standardization (构建标准词表)
+│   │   └── Stage 3: Constrained Full Extraction (全量提取)
+│   │
 │   └── 3.1.2 Temporal User Interest Extraction
+│       ├── Temporal Bucketing Strategy (21天分桶)
+│       ├── Short-term Statistical Aggregation (统计聚合)
+│       └── Long-term LLM Summarization (LLM推理)
 │
-└── 3.2 Knowledge-Enhanced Heterogeneous Graph Recommendation
-    ├── 3.2.1 Heterogeneous Graph Construction
-    ├── 3.2.2 Multi-View Contrastive Learning
-    ├── 3.2.3 Learnable Mask Mechanism
-    └── 3.2.4 Training Objective
+└── 3.2 Knowledge-Enhanced Recommendation Model (30%)
+    └── 一个整体section，简要说明：
+        - 异构图构建 (User-Entity-Item)
+        - 双视图对比学习 (CF + KG)
+        - 可学习Mask机制
+        - 训练目标
 ```
+
+**篇幅分配**：
+- 3.1.1 Item Knowledge: ~40%
+- 3.1.2 User Interest: ~30%
+- 3.2 Recommendation Model: ~30% (不细分subsections)
 
 ---
 
-## 📝 3.1 Knowledge Extraction from Multimodal Data
+## 📝 3.1 LLM-Powered Visual Knowledge Extraction
 
-### **开场段落（问题动机）**
+### **开场段落：为什么我们的图谱好？（1-2段，关键！）**
+
+**核心Narrative**：
+- ❌ **传统KG方法的问题**：依赖预定义属性（genre, director），覆盖有限、表达粗糙
+- ❌ **多模态baseline的问题**：CNN特征不可解释、无法协同过滤
+- ✅ **我们的优势**：LLM提取细粒度、可解释、可共享的视觉知识
 
 **写什么**：
-- 传统推荐系统依赖稀疏的User-Item交互
-- 多模态数据（图片、文本）包含丰富的语义信息但被忽略
-- LLM作为信息提取器的能力未被充分利用
+1. **先批评传统方法**：
+   - 传统KG：依赖metadata（genre, cast），但metadata稀疏、表达能力有限
+   - 多模态方法：提取dense features（CNN embeddings），但不可解释、无法协同过滤
 
-**实际方法对应**：
-- ML-1M: 电影海报图片（3,706部电影，每部1张海报）
-- 用户评分历史（6,040用户，平均149条评分/用户）
-- 使用GPT-4o-mini作为knowledge extractor
+2. **再说我们的创新**：
+   - LLM从图片提取结构化知识：(relation, entity) pairs
+   - 细粒度（180个entities vs. 传统的18个genres）
+   - 可解释（"warm_colors" vs. CNN的784维向量）
+   - 可共享（多个电影有"romantic_mood"，支持CF）
 
-**写作要点**：
+**实际对比数据**：
 ```
-We propose a two-stage knowledge extraction framework that leverages
-large language models (LLMs) as information extractors to convert raw
-multimodal data into structured knowledge graphs. Specifically, we
-extract visual knowledge from item images and temporal interest patterns
-from user interaction histories.
+传统KG (MovieLens metadata):
+  - 18 genres (固定类别)
+  - 3,883 actors (长尾分布，70%只出现1次)
+  - 稀疏性：平均2.8 genres/movie
+
+我们的视觉KG:
+  - 180 entities (标准化，高频共享)
+  - 平均5.6 KPs/movie
+  - 92%的entities至少在5部电影中出现
+  - 支持协同过滤：用户喜欢"warm_colors"→推荐其他warm_colors电影
+```
+
+**写作示例**：
+```
+Existing knowledge graphs for recommendation rely on predefined metadata
+(e.g., genres, actors), which suffer from limited coverage and coarse
+granularity. For instance, MovieLens provides only 18 genres, forcing diverse
+movies into broad categories like "Drama" or "Action". Multimodal approaches
+extract dense visual features using CNNs, but these representations are
+uninterpretable black boxes that cannot enable collaborative filtering—two
+movies with similar CNN features may not share user preferences.
+
+We propose a fundamentally different approach: leveraging large language models
+(LLMs) to extract structured, interpretable, and shareable visual knowledge from
+item images. Our method produces fine-grained knowledge triplets like
+(color_palette, warm_colors) and (mood, romantic), which are:
+(1) Interpretable: humans understand "warm colors" vs. 784-dim vectors,
+(2) Shareable: multiple items share entities, enabling collaborative filtering,
+(3) Comprehensive: 180 standardized entities vs. 18 genres, capturing richer
+    visual semantics.
+
+This section describes our three-stage extraction pipeline that balances
+knowledge diversity (Stage 1) and standardization (Stage 2-3), ensuring both
+coverage and collaborative signal.
 ```
 
 ---
@@ -348,315 +398,191 @@ item knowledge graph.
 
 ---
 
-## 📝 3.2 Knowledge-Enhanced Heterogeneous Graph Recommendation
+## 📝 3.2 Knowledge-Enhanced Recommendation Model
 
-### **3.2.1 Heterogeneous Graph Construction**
+**注意**：这个section不分subsections，一气呵成，简洁明了。重点在"我们的图谱质量好"，模型创新点适度即可。
 
-#### **图结构定义**
+---
 
-**写什么**：
-- 节点类型：User, Item, Entity
-- 边类型：
-  - CF视图：`(User, rated, Item)` - 传统协同过滤
-  - KG视图：
-    - `(User, long_term_interest, Entity)`
-    - `(User, short_term_interest, Entity)`
-    - `(Entity, describes, Item)`
+### **整体写作框架（3-4段）**
 
-**关键设计**：
-- User和Item不直接连接（在KG视图中）
-- 通过共享Entity间接连接
-- 支持双视图对比学习
+#### **第1段：异构图构建**
 
-**实际规模**（ML-1M）：
-```python
-Nodes:
-  - 6,040 users
-  - 3,706 items (movies)
-  - ~180 entities
+**写什么**（1-2段，简短）：
+- 构建异构图G = (U, I, E)，三种节点
+- 两类边：CF视图(User-Item直接交互) + KG视图(User-Entity-Item知识路径)
+- 关键设计：通过共享Entity连接User和Item
 
-Edges (CF View):
-  - 900,000 user-item interactions
-
-Edges (KG View):
-  - 30,179 user-entity (long-term)
-  - 59,921 user-entity (short-term)
-  - 20,750 entity-item
-```
+**实际规模**：
+- 6,040 users, 3,706 movies, 180 entities
+- CF edges: 900K, KG edges: 110K
 
 **写作示例**：
 ```
-We construct a heterogeneous graph G = (V, E) where V = {U, I, E} represents
-users, items, and knowledge entities. The graph contains two types of edges:
-(1) CF edges (U, rated, I) representing user-item interactions, and
-(2) KG edges connecting users and items through shared entities via two paths:
-    U → (long/short-term interest) → E → (describes) → I
-
-This design enables collaborative filtering through both direct interactions
-and knowledge-mediated semantic matching.
+We construct a heterogeneous graph G = (V, E) with three node types: users (U),
+items (I), and knowledge entities (E). Unlike traditional knowledge graphs that
+directly connect items to attributes, our graph enables collaborative filtering
+through shared entities: users and items are linked via common visual and
+interest knowledge. Specifically, the graph contains two view: (1) a CF view
+with user-item interaction edges, and (2) a KG view with user→entity and
+entity→item edges, forming knowledge-mediated paths: U → E → I.
 ```
 
 ---
 
-### **3.2.2 Multi-View Contrastive Learning**
+#### **第2段：双视图对比学习**
 
-#### **双视图编码器**
-
-**写什么**：
-- CF视图编码器：简单的User-Item bipartite graph
-- KG视图编码器：异构图，包含User-Entity-Item三方
-
-**实际架构**：
-```python
-# CF View: 2-layer GAT
-CF_Encoder:
-  - Input: User/Item embeddings
-  - Layer 1: GAT(dim=64, heads=4)
-  - Layer 2: GAT(dim=64, heads=1)
-  - Output: user_emb_cf, item_emb_cf
-
-# KG View: 2-layer Heterogeneous GAT
-KG_Encoder:
-  - Input: User/Item/Entity embeddings (Entity masked)
-  - Layer 1: HeteroGAT for all 3 edge types
-  - Layer 2: HeteroGAT
-  - Output: user_emb_kg, item_emb_kg
-```
+**写什么**（1段，简明）：
+- 两个编码器：CF编码器(GAT on User-Item) + KG编码器(Hetero-GAT)
+- 对比损失：让同一user的两个view表示接近
+- 目的：融合协同过滤信号和知识增强信号
 
 **写作示例**：
 ```
-We employ two graph encoders to learn complementary representations:
+We employ a dual-view architecture to learn complementary user and item
+representations. A CF-view encoder applies graph attention networks (GAT)
+on the user-item interaction graph, while a KG-view encoder uses heterogeneous
+GAT to propagate information through knowledge paths. To align the two views,
+we apply a contrastive loss that encourages the CF and KG embeddings of the
+same user to be similar:
 
-CF View Encoder uses a 2-layer Graph Attention Network (GAT) on the user-item
-interaction graph, capturing collaborative filtering signals.
+    L_contrast = -log(exp(sim(u_cf, u_kg)/τ) / Σ_v exp(sim(u_cf, v_kg)/τ))
 
-KG View Encoder uses a heterogeneous GAT to propagate information through
-the knowledge-enriched paths (User → Entity → Item). This encoder learns
-semantic representations based on shared visual and interest knowledge.
+This ensures the knowledge-enhanced representations complement rather than
+conflict with collaborative filtering signals.
 ```
 
 ---
 
-#### **视图对比损失**
+#### **第3段：可学习Mask机制**
 
-**写什么**：
-- 目的：让两个视图学到的user表示一致但互补
-- 方法：InfoNCE对比损失
-
-**实际公式**：
-```python
-def multiview_contrast_loss(emb_cf, emb_kg, temperature=0.1):
-    """
-    Positive: 同一user的两个视图表示
-    Negative: 不同user的cross-view表示
-    """
-    emb_cf = F.normalize(emb_cf, dim=-1)
-    emb_kg = F.normalize(emb_kg, dim=-1)
-
-    pos_sim = (emb_cf * emb_kg).sum(dim=-1) / temperature
-    neg_sim = emb_cf @ emb_kg.T / temperature
-
-    logits = torch.cat([pos_sim.unsqueeze(1), neg_sim], dim=1)
-    labels = torch.arange(batch_size)
-
-    loss = F.cross_entropy(logits, labels)
-    return loss
-```
+**写什么**（1段）：
+- 动机：对抗LLM提取中的潜在噪声/幻觉
+- 方法：每个entity有可学习的mask权重m_e ∈ [0, 1]
+- 正则化：鼓励大部分entity保留（稀疏性）+ 明确决策（熵正则）
 
 **写作示例**：
 ```
-To align the two views, we employ a contrastive loss that encourages the
-CF and KG representations of the same user to be similar, while pushing
-apart representations from different users:
-
-L_contrast = -log( exp(sim(u_cf, u_kg) / τ) /
-                   Σ_v exp(sim(u_cf, v_kg) / τ) )
-
-where τ is a temperature hyperparameter. This ensures the knowledge-enhanced
-view complements rather than conflicts with the collaborative filtering view.
+To mitigate potential noise in LLM-extracted knowledge, we introduce learnable
+entity masks. Each entity e is associated with a trainable weight m_e ∈ [0, 1]
+that modulates its embedding: ẽ_e = m_e · e_e. The masks are regularized to
+encourage sparsity (most entities retained) and confidence (weights near 0 or 1).
+This allows the model to automatically suppress unreliable knowledge while
+preserving useful entities.
 ```
 
 ---
 
-### **3.2.3 Learnable Mask Mechanism**
+#### **第4段：训练目标**
 
-#### **动机**
-
-**写什么**：
-- 问题：LLM提取的知识可能包含幻觉（hallucinations）
-- 目标：让模型自动学习哪些entities不可靠，降低其权重
-- 方法：为每个entity学习一个mask权重 ∈ [0, 1]
-
-**实际实现**：
-```python
-class MaskModule(nn.Module):
-    def __init__(self, num_entities):
-        self.mask_logits = nn.Parameter(torch.zeros(num_entities))
-
-    def forward(self, entity_emb):
-        mask = torch.sigmoid(self.mask_logits)  # [0, 1]
-        return entity_emb * mask.unsqueeze(1)
-```
+**写什么**（1段，极简）：
+- 主损失：InfoNCE ranking loss
+- 辅助损失：对比损失 + entity-item对齐 + mask正则
+- 简单列出公式，不展开
 
 **写作示例**：
 ```
-To mitigate potential hallucinations in LLM-extracted knowledge, we introduce
-a learnable mask mechanism. Each entity e has a learnable weight m_e ∈ [0, 1]
-that modulates its embedding:
+The model is trained with a combined objective:
 
-    ẽ_e = m_e · e_e
-
-The mask weights are initialized based on entity frequency (low-frequency
-entities are more likely to be unreliable) and optimized during training.
-This allows the model to automatically suppress noisy knowledge while
-retaining useful entities.
-```
-
----
-
-#### **Mask正则化**
-
-**写什么**：
-- 正则项：鼓励稀疏性（大部分entity保留）+ 确定性（接近0或1）
-
-**实际公式**：
-```python
-def mask_regularization(mask):
-    # 稀疏性：鼓励接近1（不mask）
-    L_sparse = (1 - mask).sum()
-
-    # 熵正则：鼓励确定性（避免0.5）
-    entropy = -(mask * log(mask) + (1-mask) * log(1-mask)).mean()
-
-    loss = λ_sparse * L_sparse - λ_entropy * entropy
-    return loss
-```
-
-**写作示例**：
-```
-We regularize the mask weights with two terms: (1) a sparsity term encouraging
-most entities to be retained (m_e ≈ 1), and (2) an entropy term encouraging
-binary decisions (m_e ≈ 0 or 1). This prevents the model from over-masking
-useful knowledge while clearly identifying unreliable entities.
-```
-
----
-
-### **3.2.4 Training Objective**
-
-#### **总损失函数**
-
-**写什么**：
-- 主损失：InfoNCE推荐损失
-- 辅助损失：多视图对比 + Entity-Item对齐 + Mask正则
-
-**实际公式**：
-```
-L_total = L_rec + α·L_contrast + β·L_align + γ·L_mask
-
-where:
-  L_rec: InfoNCE recommendation loss
-  L_contrast: Multi-view contrastive loss
-  L_align: Entity-item alignment loss
-  L_mask: Mask regularization
-
-Hyperparameters:
-  α = 0.1, β = 0.05, γ = 0.01
-```
-
-**各项损失详解**：
-
-1. **L_rec (InfoNCE推荐损失)**：
-```python
-L_rec = -log( exp(⟨u, i_pos⟩ / τ) /
-             (exp(⟨u, i_pos⟩ / τ) + Σ_{i_neg} exp(⟨u, i_neg⟩ / τ)) )
-```
-
-2. **L_align (Entity-Item对齐)**：
-```python
-# 让entity和它描述的item在embedding空间接近
-L_align = Σ_{(e,i)∈describes} -log σ(⟨e, i⟩ - ⟨e, i_neg⟩)
-```
-
-**写作示例**：
-```
-The training objective combines four loss terms:
-
-1. Recommendation Loss (L_rec): An InfoNCE loss that encourages the model
-   to rank positive items higher than negatives for each user.
-
-2. Contrastive Loss (L_contrast): Aligns the CF and KG view representations
-   as described in Section 3.2.2.
-
-3. Alignment Loss (L_align): Ensures entities and the items they describe
-   have similar embeddings, maintaining semantic consistency.
-
-4. Mask Regularization (L_mask): Regularizes the entity mask weights to
-   prevent over-masking and encourage binary decisions.
-
-The final objective is:
     L = L_rec + α·L_contrast + β·L_align + γ·L_mask
-with α=0.1, β=0.05, γ=0.01.
+
+where L_rec is an InfoNCE ranking loss, L_contrast is the contrastive loss
+described above, L_align ensures entity-item embedding consistency, and
+L_mask regularizes the mask weights. We set α=0.1, β=0.05, γ=0.01.
 ```
+
+---
+
+### **总结：3.2整个section = 4段 ≈ 1-1.5页**
+
+这样就把推荐模型部分控制在30%篇幅内，不过分展开，重点强调：
+1. 异构图设计（利用我们提取的高质量KG）
+2. 双视图融合（CF + KG）
+3. Mask机制（处理噪声）
+4. 训练目标（简短）
+
+**不需要的细节**（删掉）：
+- ❌ 详细的GAT层数、heads配置
+- ❌ 每个loss的详细推导
+- ❌ Mask初始化策略的详细讨论
+- ❌ 负采样策略
+- ❌ 优化器、学习率等训练细节
+
+**保留的核心**：
+- ✅ 图结构设计（凸显我们的KG质量）
+- ✅ 双视图对比（方法创新点）
+- ✅ Mask机制（处理LLM噪声）
+- ✅ 损失函数公式（一句话带过）
 
 ---
 
 ## 🎯 写作建议
 
-### **Method章节长度分配**
+### **Method章节长度分配（调整后）**
 
 ```
-3.1 Knowledge Extraction: 40%
-  - 3.1.1 Item Knowledge: 25%
-  - 3.1.2 User Interest: 15%
+3.1 LLM-Powered Knowledge Extraction: 70%
+  - 开场段落（批评传统KG + 说明我们的优势）: 10%
+  - 3.1.1 Item Knowledge (三阶段): 40%
+  - 3.1.2 User Interest (时序提取): 20%
 
-3.2 Recommendation Model: 60%
-  - 3.2.1 Graph Construction: 10%
-  - 3.2.2 Multi-View Learning: 25%
-  - 3.2.3 Mask Mechanism: 15%
-  - 3.2.4 Training Objective: 10%
+3.2 Recommendation Model: 30%
+  - 整体一个section，不分subsections
+  - 4段：图构建 + 双视图 + Mask + 损失
 ```
 
-### **图表建议**
+### **图表建议（精简为3个）**
 
-1. **Figure 1: 三阶段知识提取流程图**
-   - Stage 1: 5% sampling → Exploratory extraction
-   - Stage 2: Vocabulary standardization
-   - Stage 3: Constrained full extraction
+1. **Figure 1: 三阶段知识提取Pipeline + 对比**
+   - 上半部分：Stage 1→2→3流程图
+   - 下半部分：对比表格（传统KG vs. 多模态 vs. 我们）
+   - 重点展示：147 relations→15, 1200 entities→180
 
-2. **Figure 2: 用户兴趣提取pipeline**
-   - Temporal bucketing (21 days)
-   - Short-term aggregation
-   - Long-term LLM summarization
+2. **Figure 2: 知识图谱质量示例**
+   - 选几部电影，展示提取的knowledge triplets
+   - 对比传统metadata (genre: Drama)
+   - 突出细粒度和可解释性
 
-3. **Figure 3: 异构图结构**
-   - 节点：User, Item, Entity
-   - 边：CF edges vs KG edges
-   - 双视图对比
+3. **Figure 3: 模型整体架构**
+   - 异构图 + 双视图编码器 + Mask机制
+   - 一张图说明整个模型（不要太复杂）
 
-4. **Figure 4: 模型架构**
-   - CF Encoder
-   - KG Encoder
-   - Mask Mechanism
-   - Fusion Layer
+### **数字和统计（重点在知识质量）**
 
-### **数字和统计**
+**必须出现的数字**（证明图谱质量）：
+- "180 standardized entities vs. 18 genres in traditional metadata"
+- "92% of entities appear in ≥5 movies, ensuring collaborative signal"
+- "Average 5.6 knowledge points per movie, capturing rich visual semantics"
+- "Three-stage extraction costs only $15-20, demonstrating efficiency"
 
-在Method中适当穿插实际数字，增强可信度：
+**对比数据**（批评baseline）：
+- "Traditional KG: 70% of actors appear in only 1 movie (no collaborative signal)"
+- "CNN features: 784-dim uninterpretable vectors"
+- "Our KG: interpretable entities like 'warm_colors', 'romantic_mood'"
 
-- "We extract knowledge from 3,706 movie posters, yielding 20,750 triplets."
-- "92% of entities appear in at least 5 movies, ensuring collaborative signal."
-- "The user knowledge graph contains 90,100 edges across 6,040 users."
-- "Our three-stage extraction costs $15-20 in total, demonstrating efficiency."
+### **写作重点调整**
 
-### **突出创新点**
+#### **3.1部分：大书特书**
+- 每个Stage都要说明**为什么这样设计**
+- Stage 2标准化：重点说明如何从1200→180，保证质量
+- 举实际例子：某个entity如何在多部电影中共享
+- 对比传统KG的缺陷
 
-在每个subsection开头用1-2句话说明motivation/innovation：
+#### **3.2部分：点到为止**
+- 不展开GAT的细节（"we use a 2-layer GAT"即可）
+- 不讨论超参数选择
+- 重点强调：模型利用了我们的高质量KG
+- 写作tone："Given the high-quality knowledge graph, we design a simple yet effective model..."
 
-- **3.1.1**: "Unlike prior work that extracts unstructured features, we propose a three-stage pipeline that balances exploration and standardization."
-- **3.1.2**: "We introduce temporal bucketing to capture dynamic interest evolution, leveraging LLM's reasoning ability."
-- **3.2.2**: "We employ multi-view contrastive learning to combine collaborative filtering with knowledge-enhanced semantic matching."
-- **3.2.3**: "To address LLM hallucinations, we propose a learnable mask mechanism that automatically identifies unreliable knowledge."
+### **突出"图谱质量"的Narrative**
+
+在每个合适位置插入这样的话术：
+
+- **3.1开场**: "Unlike coarse-grained metadata or uninterpretable CNN features, our knowledge graph provides..."
+- **Stage 2标准化**: "This standardization is crucial for collaborative filtering, ensuring entities are shared across items..."
+- **Stage 3效果**: "The resulting knowledge graph achieves 92% entity coverage, far surpassing traditional metadata..."
+- **3.2开场**: "Leveraging this high-quality knowledge graph, we design a model that..."
+- **实验部分**: "Our superior performance validates the importance of knowledge graph quality over model complexity..."
 
 ---
 
@@ -683,4 +609,104 @@ with α=0.1, β=0.05, γ=0.01.
 
 ---
 
+## 📊 关键数字速查表（写作时快速参考）
+
+### **我们的KG vs. 传统KG对比**
+
+| 维度 | 传统KG (Metadata) | 多模态Baseline | 我们的视觉KG |
+|------|------------------|---------------|------------|
+| **表达方式** | 预定义属性 | Dense vectors | Structured triplets |
+| **粒度** | 18 genres | 784-dim | 180 entities |
+| **可解释性** | 部分 | ❌ 不可解释 | ✅ 完全可解释 |
+| **协同过滤** | ⚠️ 稀疏 | ❌ 无法CF | ✅ 92%高频共享 |
+| **覆盖率** | 2.8 attrs/item | N/A | 5.6 KPs/item |
+| **示例** | "Drama" | [0.23, -0.15, ...] | "warm_colors", "romantic" |
+
+### **三阶段提取统计**
+
+| Stage | 数据规模 | 输出 | 关键数字 |
+|-------|---------|-----|---------|
+| **Stage 1** | 170 movies (5%) | 探索知识空间 | 147 relations, 1200+ entities |
+| **Stage 2** | 标准化 | 紧凑词表 | 15 relations, 180 entities |
+| **Stage 3** | 3,706 movies (100%) | 全量提取 | 20,750 triplets, 92% coverage |
+
+### **用户兴趣提取统计**
+
+```
+总用户：6,040
+长期兴趣：30,179 (5/用户)
+短期兴趣：59,921 (10/用户)
+总triplets：90,100
+
+与Item KG对齐：使用相同的180 entities
+```
+
+### **成本统计**
+
+```
+Phase 1 (探索): $0.50
+Phase 4 (Item KG): $3.50
+Phase 5 (User KG): $6-12
+------------------------
+Total: $15-20
+```
+
+### **写作时的批评话术模板**
+
+**批评传统KG**：
+```
+"Traditional knowledge graphs rely on predefined metadata (e.g., genres, actors),
+which suffer from limited coverage and coarse granularity. For instance,
+MovieLens provides only 18 genres, with an average of 2.8 genres per movie.
+Moreover, 70% of actors appear in only one movie, providing no collaborative
+signal."
+```
+
+**批评多模态方法**：
+```
+"Multimodal approaches extract dense visual features using CNNs, but these
+784-dimensional vectors are uninterpretable black boxes. Two movies with similar
+CNN embeddings may not share user preferences, as the features capture low-level
+visual patterns rather than high-level semantic concepts relevant to recommendation."
+```
+
+**强调我们的优势**：
+```
+"Our LLM-extracted knowledge graph achieves 180 standardized entities with
+92% appearing in at least 5 movies, ensuring strong collaborative signal.
+Each movie averages 5.6 interpretable knowledge points (e.g., 'warm_colors',
+'romantic_mood'), capturing fine-grained visual semantics that directly
+correlate with user preferences."
+```
+
+---
+
+## ✅ 最后的Checklist
+
+写完Method后，检查这些要点：
+
+### **3.1 Knowledge Extraction (70%篇幅)**
+- [ ] 开场2段批评了传统KG和多模态方法
+- [ ] Stage 1: 说明了探索性提取的目的
+- [ ] Stage 2: 重点强调标准化如何保证协同过滤
+- [ ] Stage 3: 展示了最终KG的质量数字（92% coverage）
+- [ ] User Interest: 说明了时序建模和LLM推理
+- [ ] 至少有2-3个实际数字对比（传统KG vs. 我们）
+
+### **3.2 Recommendation Model (30%篇幅)**
+- [ ] 整个section不超过1.5页
+- [ ] 没有过多技术细节（GAT层数、超参数等）
+- [ ] 强调了"利用高质量KG"的narrative
+- [ ] 4段：图构建 + 双视图 + Mask + 损失
+
+### **整体Narrative**
+- [ ] "别的图谱不行，我们的图谱好"贯穿全文
+- [ ] 知识提取部分详细，模型部分简洁
+- [ ] 多次出现对比数字（18 genres vs. 180 entities）
+- [ ] 强调可解释性和协同过滤能力
+
+---
+
 **Good luck with your paper writing!** 📝🎓
+
+记住：**重点是知识提取，模型只是利用好的图谱！**
