@@ -306,58 +306,83 @@ def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni
     for u, i in pos_interactions:
         user_pos_items[u].add(i)
 
-    # Evaluate each positive interaction with 99 negatives
+    # Evaluate with batching for speed
     recalls = []
     ndcgs = []
     precisions = []
 
+    # Batch evaluation: process multiple pos interactions at once
+    eval_batch_size = 256  # Each generates 100 items (1+99)
+    num_batches = (len(pos_interactions) + eval_batch_size - 1) // eval_batch_size
+
     with torch.no_grad():
-        for user, pos_item in pos_interactions:
-            # Sample 99 negative items (uni100 mode)
-            neg_items = []
-            while len(neg_items) < 99:
-                neg_item = random.randint(1, n_items)
-                if neg_item not in user_pos_items[user] and neg_item not in neg_items:
-                    neg_items.append(neg_item)
+        for batch_idx in tqdm(range(num_batches), desc="Evaluating", disable=False):
+            start_idx = batch_idx * eval_batch_size
+            end_idx = min(start_idx + eval_batch_size, len(pos_interactions))
+            batch_pos = pos_interactions[start_idx:end_idx]
 
-            # Create candidate set: 1 positive + 99 negatives
-            candidate_items = [pos_item] + neg_items
-            users_batch = [user] * 100
+            batch_users = []
+            batch_items = []
+            batch_pos_items = []
 
-            # Sample KG neighbors
-            adj_entity, adj_relation = kg_loader.sample_neighbors(candidate_items)
+            # Sample negatives for this batch
+            for user, pos_item in batch_pos:
+                # Sample 99 negative items
+                neg_items = []
+                while len(neg_items) < 99:
+                    neg_item = random.randint(1, n_items)
+                    if neg_item not in user_pos_items[user] and neg_item not in neg_items:
+                        neg_items.append(neg_item)
+
+                # Add to batch: 1 pos + 99 neg = 100 items per user
+                candidate_items = [pos_item] + neg_items
+                batch_users.extend([user] * 100)
+                batch_items.extend(candidate_items)
+                batch_pos_items.append(pos_item)
+
+            # Convert to tensors
+            batch_users_t = torch.LongTensor(batch_users).to(device)
+            batch_items_t = torch.LongTensor(batch_items).to(device)
+
+            # Sample KG neighbors for all items in batch
+            adj_entity, adj_relation = kg_loader.sample_neighbors(batch_items)
             adj_entity = torch.LongTensor(adj_entity).to(device)
             adj_relation = torch.LongTensor(adj_relation).to(device)
 
-            users_tensor = torch.LongTensor(users_batch).to(device)
-            items_tensor = torch.LongTensor(candidate_items).to(device)
-
-            # Predict scores
-            scores = model.predict(users_tensor, items_tensor, adj_entity, adj_relation)
+            # Predict scores for entire batch
+            scores = model.predict(batch_users_t, batch_items_t, adj_entity, adj_relation)
             scores = scores.cpu().numpy()
 
-            # Rank items by score
-            item_scores = list(zip(candidate_items, scores))
-            item_scores.sort(key=lambda x: x[1], reverse=True)
-            ranked_items = [item for item, _ in item_scores]
+            # Compute metrics for each user-item pair
+            for i, (user, pos_item) in enumerate(batch_pos):
+                # Get scores for this user's 100 candidates
+                start = i * 100
+                end = start + 100
+                user_scores = scores[start:end]
+                user_items = batch_items[start:end]
 
-            # Find position of positive item
-            pos_rank = ranked_items.index(pos_item)
+                # Rank items
+                item_scores = list(zip(user_items, user_scores))
+                item_scores.sort(key=lambda x: x[1], reverse=True)
+                ranked_items = [item for item, _ in item_scores]
 
-            # Recall@K: is positive item in top-K?
-            recall = 1.0 if pos_rank < k else 0.0
-            recalls.append(recall)
+                # Find position of positive item
+                pos_rank = ranked_items.index(pos_item)
 
-            # Precision@K
-            precision = 1.0 / k if pos_rank < k else 0.0
-            precisions.append(precision)
+                # Recall@K
+                recall = 1.0 if pos_rank < k else 0.0
+                recalls.append(recall)
 
-            # NDCG@K
-            if pos_rank < k:
-                ndcg = 1.0 / np.log2(pos_rank + 2)
-            else:
-                ndcg = 0.0
-            ndcgs.append(ndcg)
+                # Precision@K
+                precision = 1.0 / k if pos_rank < k else 0.0
+                precisions.append(precision)
+
+                # NDCG@K
+                if pos_rank < k:
+                    ndcg = 1.0 / np.log2(pos_rank + 2)
+                else:
+                    ndcg = 0.0
+                ndcgs.append(ndcg)
 
     return {
         f'recall@{k}': np.mean(recalls) if recalls else 0,
