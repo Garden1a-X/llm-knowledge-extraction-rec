@@ -203,6 +203,7 @@ def evaluate_ranking(
     k_list: List[int] = [5, 10, 20],
     exclude_train: bool = True,
     train_user_items: Dict[int, List[int]] = None,
+    val_user_items: Dict[int, List[int]] = None,
     mode: str = 'full',
     num_neg: int = 99,
     seed: int = 0
@@ -217,6 +218,7 @@ def evaluate_ranking(
         k_list: K值列表
         exclude_train: 是否排除训练集物品
         train_user_items: 训练集中每个用户的物品（用于排除）
+        val_user_items: 验证集中每个用户的物品（用于排除，评估测试集时必须提供）
         mode: 'full' 或 'uni100' - 评估模式
         num_neg: 负采样数量（mode='uni100'时使用，默认99）
         seed: 随机种子（用于uni100负采样的可复现性，默认0）
@@ -246,10 +248,13 @@ def evaluate_ranking(
                 continue
             pos_item = test_items[0]  # 取第一个正样本
 
-            # 负采样：排除训练集和测试集物品
+            # 负采样：排除训练集、验证集和测试集物品
             excluded_items = set(test_items)
             if exclude_train and train_user_items is not None:
                 excluded_items.update(train_user_items.get(user_id, []))
+            # CRITICAL: 评估测试集时，也要排除验证集物品
+            if val_user_items is not None:
+                excluded_items.update(val_user_items.get(user_id, []))
 
             # 候选负样本池
             candidate_items = [i for i in range(num_items) if i not in excluded_items]

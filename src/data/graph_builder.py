@@ -128,9 +128,13 @@ class KnowledgeGraphBuilder:
 
         return entity_freq
 
-    def build_hetero_graph(self) -> Tuple[HeteroData, Dict]:
+    def build_hetero_graph(self, train_inter_df: Optional[pd.DataFrame] = None) -> Tuple[HeteroData, Dict]:
         """
         构建异构图
+
+        Args:
+            train_inter_df: 训练集交互数据（仅用于构建user-item边和CF图）
+                           如果为None，则使用完整的inter文件（会导致数据泄露！）
 
         Returns:
             hetero_graph: PyG HeteroData对象
@@ -139,7 +143,7 @@ class KnowledgeGraphBuilder:
         # 1. 加载数据
         item_kg, user_kg, inter = self.load_data()
 
-        # 2. 构建ID映射
+        # 2. 构建ID映射（需要用完整的inter来确保覆盖所有用户和物品）
         self.build_id_mappings(item_kg, user_kg, inter)
 
         # 3. 统计Entity频率
@@ -162,10 +166,16 @@ class KnowledgeGraphBuilder:
         self._add_entity_item_edges(graph, item_kg)
 
         # === 7. 添加User-Item边（评分）===
-        self._add_user_item_edges(graph, inter)
+        # 使用训练集数据（如果提供），否则使用完整数据（会泄露！）
+        inter_for_edges = train_inter_df if train_inter_df is not None else inter
+        if train_inter_df is not None:
+            logger.info("  Using TRAIN-ONLY interactions for graph edges (no data leakage)")
+        else:
+            logger.warning("  WARNING: Using ALL interactions for graph edges (DATA LEAKAGE!)")
+        self._add_user_item_edges(graph, inter_for_edges)
 
         # === 8. 构建CF图（User-Item二部图）===
-        cf_graph = self._build_cf_graph(inter)
+        cf_graph = self._build_cf_graph(inter_for_edges)
 
         # === 9. 统计信息 ===
         stats = {

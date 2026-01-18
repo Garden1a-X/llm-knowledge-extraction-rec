@@ -229,8 +229,12 @@ class AcceleratedTrainer:
         return avg_loss, avg_components
 
     @torch.no_grad()
-    def evaluate(self, val_loader, hetero_graph, cf_edge_index, test_user_items, train_user_items):
-        """评估模型（混合精度）"""
+    def evaluate(self, val_loader, hetero_graph, cf_edge_index, test_user_items, train_user_items, val_user_items=None):
+        """评估模型（混合精度）
+
+        Args:
+            val_user_items: 验证集用户物品（评估测试集时必须提供，用于排除）
+        """
         self.model.eval()
 
         # Forward获取所有embeddings（混合精度）
@@ -254,6 +258,7 @@ class AcceleratedTrainer:
             item_emb=item_emb,
             test_user_items=test_user_items,
             train_user_items=train_user_items,
+            val_user_items=val_user_items,  # 添加val排除
             k_list=[5, 10, 20],
             exclude_train=True,
             mode=eval_mode,
@@ -346,11 +351,11 @@ class AcceleratedTrainer:
             if epoch % self.config.train.save_every == 0:
                 self.save_checkpoint(epoch, {}, is_best=False)
 
-        # 最终测试
+        # 最终测试（必须排除train和val）
         logger.info("\nFinal Test Evaluation:")
         test_metrics = self.evaluate(
             test_loader, hetero_graph, cf_edge_index,
-            test_user_items, train_user_items
+            test_user_items, train_user_items, val_user_items  # 添加val排除
         )
 
         for key, value in test_metrics.items():
@@ -421,33 +426,7 @@ def main(args):
     device = torch.device(config.train.device if torch.cuda.is_available() else 'cpu')
     logger.info(f"Using device: {device}")
 
-    # === 1. 构建图 ===
-    logger.info("\n=== Building Knowledge Graph ===")
-    graph_builder = KnowledgeGraphBuilder(
-        item_kg_path=config.data.item_kg_path,
-        user_kg_path=config.data.user_kg_path,
-        inter_path=config.data.inter_path,
-        min_rating=config.data.min_rating
-    )
-
-    hetero_graph, cf_edge_index, stats = graph_builder.build_hetero_graph()
-
-    # 移动图到设备
-    hetero_graph = hetero_graph.to(device)
-    cf_edge_index = cf_edge_index.to(device)
-
-    # === 2. 计算Mask初始值 ===
-    if config.model.use_mask:
-        mask_init = compute_frequency_mask(
-            stats['entity_frequency'],
-            stats['entity_id_map'],
-            min_freq=config.model.mask_min_freq,
-            max_freq=config.model.mask_max_freq
-        ).to(device)
-    else:
-        mask_init = None
-
-    # === 3. 分割数据 ===
+    # === 1. 分割数据（必须先分割，再构建图！）===
     logger.info("\n=== Splitting Data ===")
     train_df, val_df, test_df = split_data(
         config.data.inter_path,
@@ -458,6 +437,33 @@ def main(args):
         random_seed=config.train.random_seed,
         per_user_split=config.data.per_user_split
     )
+
+    # === 2. 构建图（只用训练集，避免数据泄露！）===
+    logger.info("\n=== Building Knowledge Graph ===")
+    graph_builder = KnowledgeGraphBuilder(
+        item_kg_path=config.data.item_kg_path,
+        user_kg_path=config.data.user_kg_path,
+        inter_path=config.data.inter_path,
+        min_rating=config.data.min_rating
+    )
+
+    # CRITICAL: 只用训练集构建图（避免test/val数据泄露）
+    hetero_graph, cf_edge_index, stats = graph_builder.build_hetero_graph(train_inter_df=train_df)
+
+    # 移动图到设备
+    hetero_graph = hetero_graph.to(device)
+    cf_edge_index = cf_edge_index.to(device)
+
+    # === 3. 计算Mask初始值 ===
+    if config.model.use_mask:
+        mask_init = compute_frequency_mask(
+            stats['entity_frequency'],
+            stats['entity_id_map'],
+            min_freq=config.model.mask_min_freq,
+            max_freq=config.model.mask_max_freq
+        ).to(device)
+    else:
+        mask_init = None
 
     # === 4. 创建DataLoaders ===
     logger.info("\n=== Creating DataLoaders ===")
