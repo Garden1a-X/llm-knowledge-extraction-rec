@@ -182,10 +182,10 @@ class InteractionDataset(Dataset):
 
         if neg_sampling:
             # Build user -> positive items mapping for negative sampling
+            # RecBole treats ALL interactions as positive (implicit feedback)
             self.user_pos_items = defaultdict(set)
             for user, item, rating in interactions:
-                if rating >= 4:  # Positive threshold
-                    self.user_pos_items[user].add(item)
+                self.user_pos_items[user].add(item)
 
     def __len__(self):
         return len(self.interactions)
@@ -193,10 +193,11 @@ class InteractionDataset(Dataset):
     def __getitem__(self, idx):
         user, item, rating = self.interactions[idx]
 
-        # Binarize rating (>= 4 is positive)
-        label = 1.0 if rating >= 4 else 0.0
+        # RecBole treats ALL interactions as positive (implicit feedback)
+        # No rating threshold filtering
+        label = 1.0
 
-        if self.neg_sampling and label > 0:
+        if self.neg_sampling:
             # Sample negative item
             while True:
                 neg_item = random.randint(1, self.n_items)
@@ -276,14 +277,13 @@ def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni
     """
     model.eval()
 
-    # Collect all positive interactions first
+    # Collect all interactions (RecBole treats all as positive)
     pos_interactions = []
     with torch.no_grad():
         for batch in dataloader:
             users, items, _, labels = batch
-            for u, i, l in zip(users.numpy(), items.numpy(), labels.numpy()):
-                if l > 0:
-                    pos_interactions.append((u, i))
+            for u, i in zip(users.numpy(), items.numpy()):
+                pos_interactions.append((u, i))
 
     # Build user positive items for negative sampling
     user_pos_items = defaultdict(set)
