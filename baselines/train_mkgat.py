@@ -259,7 +259,8 @@ def split_data_temporal(interactions, train_ratio=0.7, val_ratio=0.1):
     return train, val, test
 
 
-def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni100'):
+def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni100',
+             train_data=None, val_data=None):
     """
     Evaluate model with Recall@K, NDCG@K, Precision@K using uni100 mode.
 
@@ -271,13 +272,15 @@ def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni
         k: Top-K
         n_items: Total number of items (for negative sampling)
         mode: 'uni100' (1 pos + 99 neg) or 'full' (all items)
+        train_data: Training data (list of (user, item, rating)) for negative sampling
+        val_data: Validation data (optional, for test evaluation)
 
     Returns:
         Dictionary of metrics
     """
     model.eval()
 
-    # Collect all interactions (RecBole treats all as positive)
+    # Collect all interactions to evaluate (RecBole treats all as positive)
     pos_interactions = []
     with torch.no_grad():
         for batch in dataloader:
@@ -286,7 +289,20 @@ def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni
                 pos_interactions.append((u, i))
 
     # Build user positive items for negative sampling
+    # Must exclude ALL historical interactions (train + val for test eval)
     user_pos_items = defaultdict(set)
+
+    # Add training interactions
+    if train_data:
+        for u, i, r in train_data:
+            user_pos_items[u].add(i)
+
+    # Add validation interactions (only when evaluating test set)
+    if val_data:
+        for u, i, r in val_data:
+            user_pos_items[u].add(i)
+
+    # Add current evaluation interactions
     for u, i in pos_interactions:
         user_pos_items[u].add(i)
 
@@ -562,7 +578,9 @@ def main():
 
         if should_eval:
             # Evaluate on validation (uni100 mode)
-            val_metrics = evaluate(model, val_loader, kg_loader, device, k=10, n_items=n_items)
+            # Only exclude train data when evaluating val
+            val_metrics = evaluate(model, val_loader, kg_loader, device, k=10, n_items=n_items,
+                                 train_data=train_data)
 
             print(f"Epoch {epoch}/{args.epochs}:")
             print(f"  Train Loss: {train_loss:.4f}")
@@ -594,7 +612,9 @@ def main():
     # Load best model and evaluate on test
     print("Evaluating best model on test set (uni100 mode)...")
     model.load_state_dict(torch.load(output_dir / 'best_model.pth'))
-    test_metrics = evaluate(model, test_loader, kg_loader, device, k=10, n_items=n_items)
+    # Exclude both train and val data when evaluating test
+    test_metrics = evaluate(model, test_loader, kg_loader, device, k=10, n_items=n_items,
+                          train_data=train_data, val_data=val_data)
 
     print()
     print("="*80)
