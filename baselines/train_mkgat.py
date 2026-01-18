@@ -474,8 +474,8 @@ def main():
                         help='Learning rate')
     parser.add_argument('--early_stop', type=int, default=10,
                         help='Early stopping patience')
-    parser.add_argument('--eval_interval', type=int, default=5,
-                        help='Evaluate every N epochs (default: 5 for speed)')
+    parser.add_argument('--eval_interval', type=int, default=1,
+                        help='Evaluate every N epochs (default: 1 to match RecBole)')
 
     # Other args
     parser.add_argument('--device', type=str, default='cuda',
