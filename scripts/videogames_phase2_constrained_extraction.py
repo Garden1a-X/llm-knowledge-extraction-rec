@@ -11,6 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import json
+import gzip
 import random
 import argparse
 import re
@@ -21,6 +22,28 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
 from src.extraction.mllm_interface import create_mllm
+
+
+def load_jsonl(filepath):
+    """Load JSON lines file (supports .gz)"""
+    data = []
+
+    if str(filepath).endswith('.gz'):
+        with gzip.open(filepath, 'rt', encoding='utf-8') as f:
+            for line in f:
+                try:
+                    data.append(json.loads(line.strip()))
+                except json.JSONDecodeError:
+                    continue
+    else:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            for line in f:
+                try:
+                    data.append(json.loads(line.strip()))
+                except json.JSONDecodeError:
+                    continue
+
+    return data
 
 
 def parse_json_response(response: str) -> List[Dict]:
@@ -67,14 +90,35 @@ def load_relation_vocabulary(vocab_file: Path) -> Dict:
 
 
 def load_video_games_metadata(metadata_file: Path) -> Dict:
-    """Load Video Games raw metadata (ASIN -> metadata)."""
+    """Load Video Games metadata (ASIN -> metadata)."""
+    # First try as JSONL format (raw files)
+    try:
+        metadata = load_jsonl(metadata_file)
+        # Use parent_asin as key (for raw metadata)
+        meta_dict = {}
+        for item in metadata:
+            if 'parent_asin' in item:
+                meta_dict[item['parent_asin']] = item
+            elif 'asin' in item:
+                meta_dict[item['asin']] = item
+        return meta_dict
+    except:
+        pass
+
+    # Then try as regular JSON (filtered/processed files)
     with open(metadata_file, 'r') as f:
         data = json.load(f)
 
-    # Handle both raw format (list of dicts) and filtered format (dict)
+    # Handle both list and dict formats
     if isinstance(data, list):
-        # Raw format: convert to dict with ASIN as key
-        return {item['parent_asin']: item for item in data}
+        # List format: convert to dict with ASIN as key
+        meta_dict = {}
+        for item in data:
+            if 'parent_asin' in item:
+                meta_dict[item['parent_asin']] = item
+            elif 'asin' in item:
+                meta_dict[item['asin']] = item
+        return meta_dict
     else:
         # Already in dict format
         return data
