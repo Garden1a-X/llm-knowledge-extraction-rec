@@ -11,7 +11,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import json
-import gzip
 import random
 import argparse
 import re
@@ -22,28 +21,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
 from src.extraction.mllm_interface import create_mllm
-
-
-def load_jsonl(filepath):
-    """Load JSON lines file (supports .gz)"""
-    data = []
-
-    if str(filepath).endswith('.gz'):
-        with gzip.open(filepath, 'rt', encoding='utf-8') as f:
-            for line in f:
-                try:
-                    data.append(json.loads(line.strip()))
-                except json.JSONDecodeError:
-                    continue
-    else:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            for line in f:
-                try:
-                    data.append(json.loads(line.strip()))
-                except json.JSONDecodeError:
-                    continue
-
-    return data
 
 
 def parse_json_response(response: str) -> List[Dict]:
@@ -90,38 +67,9 @@ def load_relation_vocabulary(vocab_file: Path) -> Dict:
 
 
 def load_video_games_metadata(metadata_file: Path) -> Dict:
-    """Load Video Games metadata (ASIN -> metadata)."""
-    # First try as JSONL format (raw files)
-    try:
-        metadata = load_jsonl(metadata_file)
-        # Use parent_asin as key (for raw metadata)
-        meta_dict = {}
-        for item in metadata:
-            if 'parent_asin' in item:
-                meta_dict[item['parent_asin']] = item
-            elif 'asin' in item:
-                meta_dict[item['asin']] = item
-        return meta_dict
-    except:
-        pass
-
-    # Then try as regular JSON (filtered/processed files)
+    """Load Video Games filtered metadata."""
     with open(metadata_file, 'r') as f:
-        data = json.load(f)
-
-    # Handle both list and dict formats
-    if isinstance(data, list):
-        # List format: convert to dict with ASIN as key
-        meta_dict = {}
-        for item in data:
-            if 'parent_asin' in item:
-                meta_dict[item['parent_asin']] = item
-            elif 'asin' in item:
-                meta_dict[item['asin']] = item
-        return meta_dict
-    else:
-        # Already in dict format
-        return data
+        return json.load(f)
 
 
 def load_item_mapping(mapping_file: Path) -> Dict:
@@ -135,8 +83,7 @@ def load_phase1_ids(phase1_file: Path) -> Set[int]:
     """Load RecBole IDs from Phase 1 results."""
     with open(phase1_file, 'r') as f:
         data = json.load(f)
-
-    # Get all IDs from Phase 1 (both success and error, we want to re-extract all)
+    # Get all IDs from Phase 1
     phase1_ids = {r['recbole_id'] for r in data.get('results', [])}
     return phase1_ids
 
@@ -163,7 +110,6 @@ def save_results(output_file: Path, config: Dict, results: List[Dict]):
     output_data = {
         'phase': 'phase2_constrained',
         'dataset': 'amazon-videogames',
-        'percentage': config.get('percentage', 100.0),
         'config': config,
         'results': results,
         'timestamp': datetime.now().isoformat()
@@ -184,11 +130,6 @@ def create_constrained_extraction_prompt(
 ) -> str:
     """
     Create extraction prompt with predefined relation vocabulary.
-
-    Args:
-        title: Game title
-        categories: Game categories
-        relations: List of predefined relations from vocabulary
     """
     # Format relation list for prompt
     relation_list = []
@@ -302,7 +243,7 @@ def main():
         description='Phase 2: Video Games Constrained Knowledge Extraction'
     )
     parser.add_argument('--metadata', type=str, required=True,
-                       help='Path to raw metadata JSON (e.g., meta_Video_Games.json)')
+                       help='Path to filtered metadata JSON')
     parser.add_argument('--mapping', type=str, required=True,
                        help='Path to item mapping JSON')
     parser.add_argument('--images_dir', type=str, required=True,
@@ -313,8 +254,6 @@ def main():
                        help='Output JSON file')
     parser.add_argument('--phase1_results', type=str, default=None,
                        help='Phase 1 results JSON (if provided, extract only Phase 1 items)')
-    parser.add_argument('--percentage', type=float, default=100.0,
-                       help='Percentage of items to extract (ignored if --phase1_results is set)')
     parser.add_argument('--api_key', type=str, required=True,
                        help='OpenAI API key')
     parser.add_argument('--base_url', type=str, default=None,
@@ -323,8 +262,6 @@ def main():
                        help='MLLM model to use (default: gpt-4o-mini)')
     parser.add_argument('--workers', type=int, default=15,
                        help='Number of concurrent workers (default: 15)')
-    parser.add_argument('--seed', type=int, default=42,
-                       help='Random seed for sampling (default: 42, ignored if --phase1_results is set)')
 
     args = parser.parse_args()
 
@@ -347,9 +284,6 @@ def main():
     print(f"  Output: {output_file}")
     if args.phase1_results:
         print(f"  Phase 1 Results: {args.phase1_results}")
-    else:
-        print(f"  Percentage: {args.percentage}%")
-        print(f"  Random seed: {args.seed}")
     print(f"  Model: {args.model}")
     if args.base_url:
         print(f"  Base URL: {args.base_url}")
@@ -372,7 +306,6 @@ def main():
 
     # Determine which items to extract
     if args.phase1_results:
-        # Load Phase 1 IDs
         phase1_file = Path(args.phase1_results)
         phase1_ids = load_phase1_ids(phase1_file)
         sampled_ids = sorted(list(phase1_ids))
@@ -380,21 +313,8 @@ def main():
         print(f"  Phase 1 items: {len(sampled_ids):,}")
         print(f"✓ Re-extracting Phase 1 items with constrained relations")
     else:
-        # Sample by percentage
-        num_samples = int(total_items * args.percentage / 100)
-        print(f"  Total items: {total_items:,}")
-        print(f"  Sample size: {num_samples:,} ({args.percentage}%)")
-        print()
-
-        random.seed(args.seed)
-        all_ids = list(range(1, total_items + 1))
-
-        if args.percentage >= 100.0:
-            sampled_ids = all_ids
-            print(f"✓ Processing all {len(sampled_ids)} items")
-        else:
-            sampled_ids = sorted(random.sample(all_ids, num_samples))
-            print(f"✓ Sampled {len(sampled_ids)} IDs")
+        print(f"Error: --phase1_results is required")
+        return
 
     print()
 
@@ -438,16 +358,10 @@ def main():
         'sample_size': len(sampled_ids),
         'workers': args.workers,
         'vocabulary_version': vocabulary.get('version', '1.0'),
-        'num_relations': len(relations)
+        'num_relations': len(relations),
+        'source': 'phase1',
+        'phase1_results_file': args.phase1_results
     }
-
-    if args.phase1_results:
-        config['source'] = 'phase1'
-        config['phase1_results_file'] = args.phase1_results
-    else:
-        config['source'] = 'sampling'
-        config['percentage'] = args.percentage
-        config['random_seed'] = args.seed
 
     success_count = 0
     error_count = 0
