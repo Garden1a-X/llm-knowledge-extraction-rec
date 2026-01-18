@@ -202,6 +202,8 @@ def main():
                        help='Percentage of items to extract (default: 5.0)')
     parser.add_argument('--api_key', type=str, required=True,
                        help='OpenAI API key')
+    parser.add_argument('--base_url', type=str, default=None,
+                       help='OpenAI API base URL (optional, for custom endpoints)')
     parser.add_argument('--model', type=str, default='gpt-4o-mini',
                        help='MLLM model to use (default: gpt-4o-mini)')
     parser.add_argument('--seed', type=int, default=42,
@@ -226,6 +228,8 @@ def main():
     print(f"  Output: {output_file}")
     print(f"  Percentage: {args.percentage}%")
     print(f"  Model: {args.model}")
+    if args.base_url:
+        print(f"  Base URL: {args.base_url}")
     print(f"  Random seed: {args.seed}")
     print()
 
@@ -275,7 +279,11 @@ def main():
 
     # Initialize MLLM
     print(f"Initializing {args.model}...")
-    mllm = create_mllm(args.model, args.api_key)
+    mllm_kwargs = {'api_key': args.api_key}
+    if args.base_url:
+        mllm_kwargs['base_url'] = args.base_url
+        print(f"  Using custom base URL: {args.base_url}")
+    mllm = create_mllm('openai', args.model, **mllm_kwargs)
     print("✓ MLLM ready")
     print()
 
