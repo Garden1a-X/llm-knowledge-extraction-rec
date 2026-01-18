@@ -154,10 +154,13 @@ def extract_game_knowledge(
         # Create prompt
         prompt = create_game_extraction_prompt(title, categories)
 
-        # Call MLLM
-        response = mllm.extract_knowledge(
-            image_path=str(image_path),
-            prompt=prompt
+        # Call MLLM (using correct interface)
+        response = mllm.extract_from_image(
+            image=str(image_path),
+            system_prompt="You are a video game expert analyzing game product images.",
+            user_prompt=prompt,
+            temperature=0.7,
+            max_tokens=1000
         )
 
         # Parse response
