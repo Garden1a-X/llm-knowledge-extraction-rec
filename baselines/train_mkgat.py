@@ -226,17 +226,34 @@ def load_interactions(inter_file):
 
 
 def split_data_temporal(interactions, train_ratio=0.7, val_ratio=0.1):
-    """Split data temporally (70/10/20)."""
-    # Sort by timestamp
-    interactions.sort(key=lambda x: x[3])
+    """
+    Split data temporally per user (70/10/20).
 
-    n = len(interactions)
-    train_end = int(n * train_ratio)
-    val_end = int(n * (train_ratio + val_ratio))
+    Each user's interactions are split independently by timestamp.
+    This matches RecBole's RS (Ratio Split) + TO (Time Ordering) mode.
+    """
+    # Group interactions by user
+    user_interactions = defaultdict(list)
+    for u, i, r, t in interactions:
+        user_interactions[u].append((u, i, r, t))
 
-    train = [(u, i, r) for u, i, r, t in interactions[:train_end]]
-    val = [(u, i, r) for u, i, r, t in interactions[train_end:val_end]]
-    test = [(u, i, r) for u, i, r, t in interactions[val_end:]]
+    # Split each user's interactions temporally
+    train = []
+    val = []
+    test = []
+
+    for user, user_inters in user_interactions.items():
+        # Sort by timestamp for this user
+        user_inters.sort(key=lambda x: x[3])
+
+        n = len(user_inters)
+        train_end = int(n * train_ratio)
+        val_end = int(n * (train_ratio + val_ratio))
+
+        # Split for this user
+        train.extend([(u, i, r) for u, i, r, t in user_inters[:train_end]])
+        val.extend([(u, i, r) for u, i, r, t in user_inters[train_end:val_end]])
+        test.extend([(u, i, r) for u, i, r, t in user_inters[val_end:]])
 
     return train, val, test
 
