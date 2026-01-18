@@ -280,6 +280,40 @@ def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni
     """
     model.eval()
 
+    # Pre-compute ALL item embeddings to avoid repeated KG sampling
+    print("  Pre-computing item embeddings...")
+    all_item_embeddings = []
+    all_user_embeddings = []
+
+    with torch.no_grad():
+        # Compute item embeddings for all items (1 to n_items)
+        batch_size_precompute = 512
+        for i in tqdm(range(0, n_items, batch_size_precompute), desc="  Items", leave=False):
+            batch_items = list(range(i+1, min(i+batch_size_precompute+1, n_items+1)))
+            if not batch_items:
+                continue
+
+            # Sample KG for this batch of items
+            adj_entity, adj_relation = kg_loader.sample_neighbors(batch_items)
+            adj_entity = torch.LongTensor(adj_entity).to(device)
+            adj_relation = torch.LongTensor(adj_relation).to(device)
+
+            batch_items_t = torch.LongTensor(batch_items).to(device)
+
+            # Get item embeddings (without user)
+            item_emb = model.get_item_embeddings(batch_items_t, device)
+            all_item_embeddings.append(item_emb.cpu())
+
+        # Stack all item embeddings (n_items, embedding_dim)
+        all_item_embeddings = torch.cat(all_item_embeddings, dim=0)
+
+        # Compute user embeddings
+        for user_id in range(1, model.n_users + 1):
+            user_emb = model.user_embed(torch.LongTensor([user_id]).to(device))
+            all_user_embeddings.append(user_emb.cpu())
+
+        all_user_embeddings = torch.cat(all_user_embeddings, dim=0)
+
     # Collect all interactions to evaluate (RecBole treats all as positive)
     pos_interactions = []
     with torch.no_grad():
@@ -306,83 +340,50 @@ def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni
     for u, i in pos_interactions:
         user_pos_items[u].add(i)
 
-    # Evaluate with batching for speed
+    # Evaluate using pre-computed embeddings (super fast!)
     recalls = []
     ndcgs = []
     precisions = []
 
-    # Batch evaluation: process multiple pos interactions at once
-    eval_batch_size = 256  # Each generates 100 items (1+99)
-    num_batches = (len(pos_interactions) + eval_batch_size - 1) // eval_batch_size
+    print("  Evaluating...")
+    for user, pos_item in tqdm(pos_interactions, desc="  Scoring", leave=False):
+        # Sample 99 negative items
+        neg_items = []
+        while len(neg_items) < 99:
+            neg_item = random.randint(1, n_items)
+            if neg_item not in user_pos_items[user] and neg_item not in neg_items:
+                neg_items.append(neg_item)
 
-    with torch.no_grad():
-        for batch_idx in tqdm(range(num_batches), desc="Evaluating", disable=False):
-            start_idx = batch_idx * eval_batch_size
-            end_idx = min(start_idx + eval_batch_size, len(pos_interactions))
-            batch_pos = pos_interactions[start_idx:end_idx]
+        # Candidate items: 1 pos + 99 neg
+        candidate_items = [pos_item] + neg_items
 
-            batch_users = []
-            batch_items = []
-            batch_pos_items = []
+        # Get user embedding
+        user_emb = all_user_embeddings[user - 1]  # 0-indexed
 
-            # Sample negatives for this batch
-            for user, pos_item in batch_pos:
-                # Sample 99 negative items
-                neg_items = []
-                while len(neg_items) < 99:
-                    neg_item = random.randint(1, n_items)
-                    if neg_item not in user_pos_items[user] and neg_item not in neg_items:
-                        neg_items.append(neg_item)
+        # Get item embeddings (0-indexed)
+        item_embs = all_item_embeddings[[i - 1 for i in candidate_items]]
 
-                # Add to batch: 1 pos + 99 neg = 100 items per user
-                candidate_items = [pos_item] + neg_items
-                batch_users.extend([user] * 100)
-                batch_items.extend(candidate_items)
-                batch_pos_items.append(pos_item)
+        # Compute scores via dot product (NO KG sampling needed!)
+        scores = (user_emb @ item_embs.T).numpy()
 
-            # Convert to tensors
-            batch_users_t = torch.LongTensor(batch_users).to(device)
-            batch_items_t = torch.LongTensor(batch_items).to(device)
+        # Rank by scores
+        ranked_indices = np.argsort(-scores)  # Descending
+        pos_rank = np.where(ranked_indices == 0)[0][0]  # Position of pos item (index 0)
 
-            # Sample KG neighbors for all items in batch
-            adj_entity, adj_relation = kg_loader.sample_neighbors(batch_items)
-            adj_entity = torch.LongTensor(adj_entity).to(device)
-            adj_relation = torch.LongTensor(adj_relation).to(device)
+        # Recall@K
+        recall = 1.0 if pos_rank < k else 0.0
+        recalls.append(recall)
 
-            # Predict scores for entire batch
-            scores = model.predict(batch_users_t, batch_items_t, adj_entity, adj_relation)
-            scores = scores.cpu().numpy()
+        # Precision@K
+        precision = 1.0 / k if pos_rank < k else 0.0
+        precisions.append(precision)
 
-            # Compute metrics for each user-item pair
-            for i, (user, pos_item) in enumerate(batch_pos):
-                # Get scores for this user's 100 candidates
-                start = i * 100
-                end = start + 100
-                user_scores = scores[start:end]
-                user_items = batch_items[start:end]
-
-                # Rank items
-                item_scores = list(zip(user_items, user_scores))
-                item_scores.sort(key=lambda x: x[1], reverse=True)
-                ranked_items = [item for item, _ in item_scores]
-
-                # Find position of positive item
-                pos_rank = ranked_items.index(pos_item)
-
-                # Recall@K
-                recall = 1.0 if pos_rank < k else 0.0
-                recalls.append(recall)
-
-                # Precision@K
-                precision = 1.0 / k if pos_rank < k else 0.0
-                precisions.append(precision)
-
-                # NDCG@K
-                if pos_rank < k:
-                    ndcg = 1.0 / np.log2(pos_rank + 2)
-                else:
-                    ndcg = 0.0
-                ndcgs.append(ndcg)
+        # NDCG@K
+        if pos_rank < k:
+            ndcg = 1.0 / np.log2(pos_rank + 2)
+        else:
+            ndcg = 0.0
+        ndcgs.append(ndcg)
 
     return {
         f'recall@{k}': np.mean(recalls) if recalls else 0,
