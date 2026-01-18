@@ -67,9 +67,17 @@ def load_relation_vocabulary(vocab_file: Path) -> Dict:
 
 
 def load_video_games_metadata(metadata_file: Path) -> Dict:
-    """Load Video Games filtered metadata."""
+    """Load Video Games raw metadata (ASIN -> metadata)."""
     with open(metadata_file, 'r') as f:
-        return json.load(f)
+        data = json.load(f)
+
+    # Handle both raw format (list of dicts) and filtered format (dict)
+    if isinstance(data, list):
+        # Raw format: convert to dict with ASIN as key
+        return {item['parent_asin']: item for item in data}
+    else:
+        # Already in dict format
+        return data
 
 
 def load_item_mapping(mapping_file: Path) -> Dict:
@@ -77,6 +85,16 @@ def load_item_mapping(mapping_file: Path) -> Dict:
     with open(mapping_file, 'r') as f:
         data = json.load(f)
     return data['recbole_to_original'], data['original_to_recbole']
+
+
+def load_phase1_ids(phase1_file: Path) -> Set[int]:
+    """Load RecBole IDs from Phase 1 results."""
+    with open(phase1_file, 'r') as f:
+        data = json.load(f)
+
+    # Get all IDs from Phase 1 (both success and error, we want to re-extract all)
+    phase1_ids = {r['recbole_id'] for r in data.get('results', [])}
+    return phase1_ids
 
 
 def load_existing_results(result_file: Path) -> tuple[Dict, Set[int]]:
@@ -240,7 +258,7 @@ def main():
         description='Phase 2: Video Games Constrained Knowledge Extraction'
     )
     parser.add_argument('--metadata', type=str, required=True,
-                       help='Path to filtered metadata JSON')
+                       help='Path to raw metadata JSON (e.g., meta_Video_Games.json)')
     parser.add_argument('--mapping', type=str, required=True,
                        help='Path to item mapping JSON')
     parser.add_argument('--images_dir', type=str, required=True,
@@ -249,8 +267,10 @@ def main():
                        help='Path to relation vocabulary JSON')
     parser.add_argument('--output', type=str, required=True,
                        help='Output JSON file')
+    parser.add_argument('--phase1_results', type=str, default=None,
+                       help='Phase 1 results JSON (if provided, extract only Phase 1 items)')
     parser.add_argument('--percentage', type=float, default=100.0,
-                       help='Percentage of items to extract (default: 100.0)')
+                       help='Percentage of items to extract (ignored if --phase1_results is set)')
     parser.add_argument('--api_key', type=str, required=True,
                        help='OpenAI API key')
     parser.add_argument('--base_url', type=str, default=None,
@@ -260,7 +280,7 @@ def main():
     parser.add_argument('--workers', type=int, default=15,
                        help='Number of concurrent workers (default: 15)')
     parser.add_argument('--seed', type=int, default=42,
-                       help='Random seed for sampling (default: 42)')
+                       help='Random seed for sampling (default: 42, ignored if --phase1_results is set)')
 
     args = parser.parse_args()
 
@@ -281,12 +301,15 @@ def main():
     print(f"  Images: {images_dir}")
     print(f"  Vocabulary: {vocabulary_file}")
     print(f"  Output: {output_file}")
-    print(f"  Percentage: {args.percentage}%")
+    if args.phase1_results:
+        print(f"  Phase 1 Results: {args.phase1_results}")
+    else:
+        print(f"  Percentage: {args.percentage}%")
+        print(f"  Random seed: {args.seed}")
     print(f"  Model: {args.model}")
     if args.base_url:
         print(f"  Base URL: {args.base_url}")
     print(f"  Workers: {args.workers}")
-    print(f"  Random seed: {args.seed}")
     print()
 
     # Load vocabulary
@@ -302,22 +325,34 @@ def main():
     recbole_to_asin, asin_to_recbole = load_item_mapping(mapping_file)
 
     total_items = len(recbole_to_asin)
-    num_samples = int(total_items * args.percentage / 100)
 
-    print(f"  Total items: {total_items:,}")
-    print(f"  Sample size: {num_samples:,} ({args.percentage}%)")
-    print()
-
-    # Sample items
-    random.seed(args.seed)
-    all_ids = list(range(1, total_items + 1))
-
-    if args.percentage >= 100.0:
-        sampled_ids = all_ids
-        print(f"✓ Processing all {len(sampled_ids)} items")
+    # Determine which items to extract
+    if args.phase1_results:
+        # Load Phase 1 IDs
+        phase1_file = Path(args.phase1_results)
+        phase1_ids = load_phase1_ids(phase1_file)
+        sampled_ids = sorted(list(phase1_ids))
+        print(f"  Total items: {total_items:,}")
+        print(f"  Phase 1 items: {len(sampled_ids):,}")
+        print(f"✓ Re-extracting Phase 1 items with constrained relations")
     else:
-        sampled_ids = sorted(random.sample(all_ids, num_samples))
-        print(f"✓ Sampled {len(sampled_ids)} IDs")
+        # Sample by percentage
+        num_samples = int(total_items * args.percentage / 100)
+        print(f"  Total items: {total_items:,}")
+        print(f"  Sample size: {num_samples:,} ({args.percentage}%)")
+        print()
+
+        random.seed(args.seed)
+        all_ids = list(range(1, total_items + 1))
+
+        if args.percentage >= 100.0:
+            sampled_ids = all_ids
+            print(f"✓ Processing all {len(sampled_ids)} items")
+        else:
+            sampled_ids = sorted(random.sample(all_ids, num_samples))
+            print(f"✓ Sampled {len(sampled_ids)} IDs")
+
+    print()
 
     # Load existing results
     existing_data, processed_ids = load_existing_results(output_file)
@@ -355,14 +390,20 @@ def main():
 
     config = {
         'model': args.model,
-        'percentage': args.percentage,
         'total_items': total_items,
-        'sample_size': num_samples,
-        'random_seed': args.seed,
+        'sample_size': len(sampled_ids),
         'workers': args.workers,
         'vocabulary_version': vocabulary.get('version', '1.0'),
         'num_relations': len(relations)
     }
+
+    if args.phase1_results:
+        config['source'] = 'phase1'
+        config['phase1_results_file'] = args.phase1_results
+    else:
+        config['source'] = 'sampling'
+        config['percentage'] = args.percentage
+        config['random_seed'] = args.seed
 
     success_count = 0
     error_count = 0
