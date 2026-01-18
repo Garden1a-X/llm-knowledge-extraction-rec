@@ -16,6 +16,8 @@ import argparse
 from datetime import datetime
 from typing import List, Dict, Set
 from tqdm import tqdm
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 from src.extraction.mllm_interface import create_mllm
 
@@ -209,6 +211,8 @@ def main():
                        help='OpenAI API base URL (optional, for custom endpoints)')
     parser.add_argument('--model', type=str, default='gpt-4o-mini',
                        help='MLLM model to use (default: gpt-4o-mini)')
+    parser.add_argument('--workers', type=int, default=15,
+                       help='Number of concurrent workers (default: 15)')
     parser.add_argument('--seed', type=int, default=42,
                        help='Random seed for sampling (default: 42)')
 
@@ -233,6 +237,7 @@ def main():
     print(f"  Model: {args.model}")
     if args.base_url:
         print(f"  Base URL: {args.base_url}")
+    print(f"  Workers: {args.workers}")
     print(f"  Random seed: {args.seed}")
     print()
 
@@ -290,8 +295,9 @@ def main():
     print("✓ MLLM ready")
     print()
 
-    # Extract knowledge
+    # Extract knowledge (parallel)
     print(f"Extracting knowledge from {len(items_to_extract)} game products...")
+    print(f"Using {args.workers} concurrent workers...")
     print()
 
     config = {
@@ -299,37 +305,33 @@ def main():
         'percentage': args.percentage,
         'total_items': total_items,
         'sample_size': num_samples,
-        'random_seed': args.seed
+        'random_seed': args.seed,
+        'workers': args.workers
     }
 
     success_count = 0
     error_count = 0
+    results_lock = threading.Lock()
 
-    for recbole_id in tqdm(items_to_extract, desc="Extracting"):
+    def extract_single_item(recbole_id):
+        """Extract knowledge from a single item (thread-safe)."""
         asin = recbole_to_asin[str(recbole_id)]
-
-        # Get metadata
         meta = metadata.get(asin, {})
         title = meta.get('title', f'Game_{asin}')
         categories = '|'.join(meta.get('category', ['Unknown']))
-
-        # Image path
         image_path = images_dir / f"{asin}.jpg"
 
         if not image_path.exists():
-            results.append({
+            return {
                 'asin': asin,
                 'recbole_id': recbole_id,
                 'title': title,
                 'error': 'Image not found',
                 'status': 'error',
                 'timestamp': datetime.now().isoformat()
-            })
-            error_count += 1
-            continue
+            }
 
-        # Extract knowledge
-        result = extract_game_knowledge(
+        return extract_game_knowledge(
             asin=asin,
             recbole_id=recbole_id,
             title=title,
@@ -338,15 +340,39 @@ def main():
             mllm=mllm
         )
 
-        results.append(result)
+    # Execute in parallel
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        futures = {
+            executor.submit(extract_single_item, recbole_id): recbole_id
+            for recbole_id in items_to_extract
+        }
 
-        if result['status'] == 'success':
-            success_count += 1
-        else:
-            error_count += 1
+        with tqdm(total=len(items_to_extract), desc="Extracting") as pbar:
+            for future in as_completed(futures):
+                try:
+                    result = future.result()
 
-        # Save after each extraction
-        save_results(output_file, config, results)
+                    with results_lock:
+                        results.append(result)
+
+                        if result['status'] == 'success':
+                            success_count += 1
+                        else:
+                            error_count += 1
+
+                        # Save every 10 items
+                        if len(results) % 10 == 0:
+                            save_results(output_file, config, results)
+
+                    pbar.update(1)
+
+                except Exception as e:
+                    recbole_id = futures[future]
+                    pbar.write(f"Error processing ID {recbole_id}: {e}")
+                    error_count += 1
+
+    # Final save
+    save_results(output_file, config, results)
 
     # Summary
     print()
