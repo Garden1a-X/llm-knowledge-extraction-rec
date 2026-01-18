@@ -241,76 +241,90 @@ def split_data_temporal(interactions, train_ratio=0.7, val_ratio=0.1):
     return train, val, test
 
 
-def evaluate(model, dataloader, kg_loader, device, k=10):
+def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni100'):
     """
-    Evaluate model with Recall@K, NDCG@K, Precision@K.
+    Evaluate model with Recall@K, NDCG@K, Precision@K using uni100 mode.
 
     Args:
         model: MKGAT model
-        dataloader: Evaluation dataloader
+        dataloader: Evaluation dataloader (contains positive items only)
         kg_loader: KG data loader for neighbor sampling
         device: torch device
         k: Top-K
+        n_items: Total number of items (for negative sampling)
+        mode: 'uni100' (1 pos + 99 neg) or 'full' (all items)
 
     Returns:
         Dictionary of metrics
     """
     model.eval()
 
-    user_pos_items = defaultdict(set)
-    user_scores = defaultdict(list)
-
+    # Collect all positive interactions first
+    pos_interactions = []
     with torch.no_grad():
         for batch in dataloader:
             users, items, _, labels = batch
-
-            # Sample KG neighbors
-            adj_entity, adj_relation = kg_loader.sample_neighbors(items.numpy().tolist())
-            adj_entity = torch.LongTensor(adj_entity).to(device)
-            adj_relation = torch.LongTensor(adj_relation).to(device)
-
-            users = users.to(device)
-            items = items.to(device)
-            labels = labels.to(device)
-
-            # Predict scores
-            scores = model.predict(users, items, adj_entity, adj_relation)
-
-            # Record positive items and scores
-            for u, i, s, l in zip(users.cpu().numpy(), items.cpu().numpy(),
-                                   scores.cpu().numpy(), labels.cpu().numpy()):
+            for u, i, l in zip(users.numpy(), items.numpy(), labels.numpy()):
                 if l > 0:
-                    user_pos_items[u].add(i)
-                user_scores[u].append((i, s))
+                    pos_interactions.append((u, i))
 
-    # Compute metrics
+    # Build user positive items for negative sampling
+    user_pos_items = defaultdict(set)
+    for u, i in pos_interactions:
+        user_pos_items[u].add(i)
+
+    # Evaluate each positive interaction with 99 negatives
     recalls = []
     ndcgs = []
     precisions = []
 
-    for user, pos_items in user_pos_items.items():
-        if user not in user_scores:
-            continue
+    with torch.no_grad():
+        for user, pos_item in pos_interactions:
+            # Sample 99 negative items (uni100 mode)
+            neg_items = []
+            while len(neg_items) < 99:
+                neg_item = random.randint(1, n_items)
+                if neg_item not in user_pos_items[user] and neg_item not in neg_items:
+                    neg_items.append(neg_item)
 
-        # Get top-K items
-        scores = user_scores[user]
-        scores.sort(key=lambda x: x[1], reverse=True)
-        top_k_items = [item for item, _ in scores[:k]]
+            # Create candidate set: 1 positive + 99 negatives
+            candidate_items = [pos_item] + neg_items
+            users_batch = [user] * 100
 
-        # Recall@K
-        hits = len(set(top_k_items) & pos_items)
-        recall = hits / len(pos_items) if pos_items else 0
-        recalls.append(recall)
+            # Sample KG neighbors
+            adj_entity, adj_relation = kg_loader.sample_neighbors(candidate_items)
+            adj_entity = torch.LongTensor(adj_entity).to(device)
+            adj_relation = torch.LongTensor(adj_relation).to(device)
 
-        # Precision@K
-        precision = hits / k
-        precisions.append(precision)
+            users_tensor = torch.LongTensor(users_batch).to(device)
+            items_tensor = torch.LongTensor(candidate_items).to(device)
 
-        # NDCG@K
-        dcg = sum([1 / np.log2(i + 2) for i, item in enumerate(top_k_items) if item in pos_items])
-        idcg = sum([1 / np.log2(i + 2) for i in range(min(k, len(pos_items)))])
-        ndcg = dcg / idcg if idcg > 0 else 0
-        ndcgs.append(ndcg)
+            # Predict scores
+            scores = model.predict(users_tensor, items_tensor, adj_entity, adj_relation)
+            scores = scores.cpu().numpy()
+
+            # Rank items by score
+            item_scores = list(zip(candidate_items, scores))
+            item_scores.sort(key=lambda x: x[1], reverse=True)
+            ranked_items = [item for item, _ in item_scores]
+
+            # Find position of positive item
+            pos_rank = ranked_items.index(pos_item)
+
+            # Recall@K: is positive item in top-K?
+            recall = 1.0 if pos_rank < k else 0.0
+            recalls.append(recall)
+
+            # Precision@K
+            precision = 1.0 / k if pos_rank < k else 0.0
+            precisions.append(precision)
+
+            # NDCG@K
+            if pos_rank < k:
+                ndcg = 1.0 / np.log2(pos_rank + 2)
+            else:
+                ndcg = 0.0
+            ndcgs.append(ndcg)
 
     return {
         f'recall@{k}': np.mean(recalls) if recalls else 0,
@@ -530,8 +544,8 @@ def main():
         should_eval = (epoch % args.eval_interval == 0) or (epoch == args.epochs)
 
         if should_eval:
-            # Evaluate on validation
-            val_metrics = evaluate(model, val_loader, kg_loader, device, k=10)
+            # Evaluate on validation (uni100 mode)
+            val_metrics = evaluate(model, val_loader, kg_loader, device, k=10, n_items=n_items)
 
             print(f"Epoch {epoch}/{args.epochs}:")
             print(f"  Train Loss: {train_loss:.4f}")
@@ -561,9 +575,9 @@ def main():
             print(f"Epoch {epoch}/{args.epochs}: Train Loss = {train_loss:.4f}")
 
     # Load best model and evaluate on test
-    print("Evaluating best model on test set...")
+    print("Evaluating best model on test set (uni100 mode)...")
     model.load_state_dict(torch.load(output_dir / 'best_model.pth'))
-    test_metrics = evaluate(model, test_loader, kg_loader, device, k=10)
+    test_metrics = evaluate(model, test_loader, kg_loader, device, k=10, n_items=n_items)
 
     print()
     print("="*80)
