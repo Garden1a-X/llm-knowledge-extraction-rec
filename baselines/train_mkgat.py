@@ -396,12 +396,14 @@ def main():
     # Training args
     parser.add_argument('--epochs', type=int, default=300,
                         help='Number of epochs')
-    parser.add_argument('--batch_size', type=int, default=1024,
-                        help='Batch size')
+    parser.add_argument('--batch_size', type=int, default=2048,
+                        help='Batch size (default: 2048 for speed)')
     parser.add_argument('--lr', type=float, default=0.001,
                         help='Learning rate')
     parser.add_argument('--early_stop', type=int, default=10,
                         help='Early stopping patience')
+    parser.add_argument('--eval_interval', type=int, default=5,
+                        help='Evaluate every N epochs (default: 5 for speed)')
 
     # Other args
     parser.add_argument('--device', type=str, default='cuda',
@@ -470,9 +472,13 @@ def main():
     val_dataset = InteractionDataset(val_data, neg_sampling=False)
     test_dataset = InteractionDataset(test_data, neg_sampling=False)
 
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=args.batch_size * 2, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=args.batch_size * 2, shuffle=False)
+    # Use multiple workers for parallel data loading
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True,
+                             num_workers=4, pin_memory=True)
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size * 2, shuffle=False,
+                           num_workers=2, pin_memory=True)
+    test_loader = DataLoader(test_dataset, batch_size=args.batch_size * 2, shuffle=False,
+                            num_workers=2, pin_memory=True)
 
     # Load visual features
     print(f"Loading visual features from {args.visual_features}...")
@@ -520,32 +526,39 @@ def main():
         train_loss = train_epoch(model, train_loader, kg_loader, optimizer, device)
         train_losses.append(train_loss)
 
-        # Evaluate on validation
-        val_metrics = evaluate(model, val_loader, kg_loader, device, k=10)
+        # Evaluate only every N epochs (for speed)
+        should_eval = (epoch % args.eval_interval == 0) or (epoch == args.epochs)
 
-        print(f"Epoch {epoch}/{args.epochs}:")
-        print(f"  Train Loss: {train_loss:.4f}")
-        print(f"  Val NDCG@10: {val_metrics['ndcg@10']:.4f}")
-        print(f"  Val Recall@10: {val_metrics['recall@10']:.4f}")
+        if should_eval:
+            # Evaluate on validation
+            val_metrics = evaluate(model, val_loader, kg_loader, device, k=10)
 
-        val_metrics_history.append(val_metrics)
+            print(f"Epoch {epoch}/{args.epochs}:")
+            print(f"  Train Loss: {train_loss:.4f}")
+            print(f"  Val NDCG@10: {val_metrics['ndcg@10']:.4f}")
+            print(f"  Val Recall@10: {val_metrics['recall@10']:.4f}")
 
-        # Early stopping
-        if val_metrics['ndcg@10'] > best_val_ndcg:
-            best_val_ndcg = val_metrics['ndcg@10']
-            patience_counter = 0
+            val_metrics_history.append(val_metrics)
 
-            # Save best model
-            torch.save(model.state_dict(), output_dir / 'best_model.pth')
-            print(f"  ✓ New best model saved!")
+            # Early stopping
+            if val_metrics['ndcg@10'] > best_val_ndcg:
+                best_val_ndcg = val_metrics['ndcg@10']
+                patience_counter = 0
+
+                # Save best model
+                torch.save(model.state_dict(), output_dir / 'best_model.pth')
+                print(f"  ✓ New best model saved!")
+            else:
+                patience_counter += 1
+
+            if patience_counter >= args.early_stop:
+                print(f"\nEarly stopping at epoch {epoch}")
+                break
+
+            print()
         else:
-            patience_counter += 1
-
-        if patience_counter >= args.early_stop:
-            print(f"\nEarly stopping at epoch {epoch}")
-            break
-
-        print()
+            # Just print training loss
+            print(f"Epoch {epoch}/{args.epochs}: Train Loss = {train_loss:.4f}")
 
     # Load best model and evaluate on test
     print("Evaluating best model on test set...")
