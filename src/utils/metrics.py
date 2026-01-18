@@ -242,13 +242,11 @@ def evaluate_ranking(
             continue
 
         if mode == 'uni100':
-            # uni100 模式：1 positive + num_neg random negatives
-            # 选择一个正样本
+            # uni100 模式：对每个正样本分别评估（1 pos + num_neg negatives）
             if len(test_items) == 0:
                 continue
-            pos_item = test_items[0]  # 取第一个正样本
 
-            # 负采样：排除训练集、验证集和测试集物品
+            # 负采样池：排除训练集、验证集和测试集物品
             excluded_items = set(test_items)
             if exclude_train and train_user_items is not None:
                 excluded_items.update(train_user_items.get(user_id, []))
@@ -261,19 +259,39 @@ def evaluate_ranking(
             if len(candidate_items) < num_neg:
                 continue  # 候选池不够，跳过这个用户
 
-            # 随机采样 num_neg 个负样本
-            neg_items = random.sample(candidate_items, num_neg)
+            # 对每个测试集物品分别评估
+            for pos_item in test_items:
+                # 随机采样 num_neg 个负样本
+                neg_items = random.sample(candidate_items, num_neg)
 
-            # 构建候选集：1 pos + num_neg neg
-            eval_items = [pos_item] + neg_items
+                # 构建候选集：1 pos + num_neg neg
+                eval_items = [pos_item] + neg_items
 
-            # 计算分数
-            eval_item_emb = item_emb[eval_items]  # [num_neg+1, dim]
-            scores = (user_emb[user_id] @ eval_item_emb.T).cpu()  # [num_neg+1]
+                # 计算分数
+                eval_item_emb = item_emb[eval_items]  # [num_neg+1, dim]
+                scores = (user_emb[user_id] @ eval_item_emb.T).cpu()  # [num_neg+1]
 
-            # 构建标签（第一个是正样本）
-            labels = torch.zeros(len(eval_items))
-            labels[0] = 1
+                # 构建标签（第一个是正样本）
+                labels = torch.zeros(len(eval_items))
+                labels[0] = 1
+
+                # 计算指标（注意：要在循环内计算每个正样本的指标）
+                for k in k_list:
+                    all_metrics[f'NDCG@{k}'].append(
+                        ndcg_at_k(scores.unsqueeze(0), labels.unsqueeze(0), k)
+                    )
+                    all_metrics[f'Recall@{k}'].append(
+                        recall_at_k(scores.unsqueeze(0), labels.unsqueeze(0), k)
+                    )
+                    all_metrics[f'Precision@{k}'].append(
+                        precision_at_k(scores.unsqueeze(0), labels.unsqueeze(0), k)
+                    )
+                    all_metrics[f'Hit@{k}'].append(
+                        hit_at_k(scores.unsqueeze(0), labels.unsqueeze(0), k)
+                    )
+
+            # uni100模式下已经在上面计算过指标了，跳过后面的计算
+            continue
 
         else:
             # full ranking 模式（原逻辑）
