@@ -206,7 +206,8 @@ class MKGAT(nn.Module):
 
         # Get visual features
         # Move item_ids to CPU for indexing, then move result to device
-        visual_feat = self.visual_features[item_ids.cpu()].to(device)
+        # RecBole IDs are 1-indexed, but numpy arrays are 0-indexed
+        visual_feat = self.visual_features[item_ids.cpu() - 1].to(device)
         visual_emb = self.visual_proj(visual_feat)
 
         # Fuse visual and entity embeddings
