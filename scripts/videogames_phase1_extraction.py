@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import json
 import random
 import argparse
+import re
 from datetime import datetime
 from typing import List, Dict, Set
 from tqdm import tqdm
@@ -20,6 +21,43 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
 from src.extraction.mllm_interface import create_mllm
+
+
+def parse_json_response(response: str) -> List[Dict]:
+    """
+    Parse JSON from MLLM response, handling various formats.
+
+    Tries multiple strategies:
+    1. Direct JSON parse
+    2. Extract JSON array from markdown code blocks
+    3. Extract first JSON array found in text
+    """
+    # Try direct parse first
+    try:
+        return json.loads(response)
+    except json.JSONDecodeError:
+        pass
+
+    # Try extracting from markdown code block
+    code_block_pattern = r'```(?:json)?\s*(\[.*?\])\s*```'
+    match = re.search(code_block_pattern, response, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group(1))
+        except json.JSONDecodeError:
+            pass
+
+    # Try finding JSON array in text
+    array_pattern = r'\[\s*\{.*?\}\s*\]'
+    match = re.search(array_pattern, response, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group(0))
+        except json.JSONDecodeError:
+            pass
+
+    # If all fails, raise original error
+    raise json.JSONDecodeError("Could not parse JSON from response", response, 0)
 
 
 def load_video_games_metadata(metadata_file: Path) -> Dict:
@@ -165,8 +203,8 @@ def extract_game_knowledge(
             max_tokens=1000
         )
 
-        # Parse response
-        knowledge_points = json.loads(response)
+        # Parse response with robust JSON extraction
+        knowledge_points = parse_json_response(response)
 
         return {
             'asin': asin,
@@ -179,6 +217,17 @@ def extract_game_knowledge(
             'timestamp': datetime.now().isoformat()
         }
 
+    except json.JSONDecodeError as e:
+        return {
+            'asin': asin,
+            'recbole_id': recbole_id,
+            'title': title,
+            'categories': categories,
+            'error': f'JSON parse error: {str(e)}',
+            'raw_response': response[:500] if 'response' in locals() else None,  # First 500 chars for debugging
+            'status': 'error',
+            'timestamp': datetime.now().isoformat()
+        }
     except Exception as e:
         return {
             'asin': asin,
