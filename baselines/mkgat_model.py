@@ -205,7 +205,8 @@ class MKGAT(nn.Module):
         entity_emb = self.entity_embed(entity_ids)
 
         # Get visual features
-        visual_feat = self.visual_features[item_ids].to(device)
+        # Move item_ids to CPU for indexing, then move result to device
+        visual_feat = self.visual_features[item_ids.cpu()].to(device)
         visual_emb = self.visual_proj(visual_feat)
 
         # Fuse visual and entity embeddings
