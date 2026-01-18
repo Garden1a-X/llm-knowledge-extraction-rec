@@ -263,29 +263,32 @@ python scripts/06_build_graph.py
 - ✅ Phase 6: RecBole格式转换
 - ✅ Phase 7: 模型实现与训练
 
-**Baseline对比实验**
-- ✅ BPR: NDCG@10 = 0.1219 ± 0.0021
-- ✅ LightGCN: NDCG@10 = 0.1267 ± 0.0013 (+3.9%)
-- ✅ KGAT: NDCG@10 = 0.1209 (-0.8% vs BPR)
-- ✅ **Ours-Full: NDCG@10 = 0.1549 (+27.1% vs BPR)** ⭐⭐⭐
+**Baseline对比实验**（uni100评估）
+- ✅ BPR: NDCG@10 = 0.2196 ± 0.0018
+- ✅ LightGCN: NDCG@10 = 0.2255 ± 0.0012 (+2.7% vs BPR)
+- ✅ KGAT: NDCG@10 = 0.2222 ± 0.0019 (+1.2% vs BPR)
+- ⏸️ **Ours-Full: 需重跑**（2026-01-18数据泄露修复后）
 
-**关键发现**：
-- 我们的方法显著超越所有baseline（+22-28%）
-- KGAT验证了传统KG推荐的局限性（比BPR还低）
-- 可引用KG4RecEval论文：KGAT的KGER=-0.026
+**重要更新（2026-01-18）**：
+- 发现并修复3个严重数据泄露bug
+- 所有Ours方法需重新训练
+- 预期分数会显著降低到合理水平
 
 ### 📋 待完成
 
-**Baseline方法**（下周）：
-- [ ] MMGCN, MGAT, LATTICE（多模态图谱方法）⭐ 最重要
+**最高优先级**（需立即完成）：
+- [ ] ⚠️ 重跑所有Ours方法（数据泄露修复后）
+  - [ ] Ours-Full
+  - [ ] Ours w/o Contrast
+  - [ ] Ours w/o Mask
+  - [ ] Ours KG-only
+  - [ ] Ours CF-only
+
+**Baseline方法**：
+- [ ] MKGAT（多模态KG方法）⭐ 最重要
+- [ ] MMGCN, MGAT, LATTICE（多模态图谱方法）⭐ 重要
 - [ ] LLM4Rec, TALLRec（LLM推荐）→ 学弟负责
 - [ ] VIP5, LlamaRec（MLLM推荐）→ 学弟负责
-
-**消融实验**（下周）：
-- [ ] Ours w/o Contrast（验证对比学习）
-- [ ] Ours w/o Mask（验证Mask机制）
-- [ ] Ours KG-only vs CF-only（验证双视图）
-- [ ] **KGAT/MMGCN：外部KG vs 我们的LLM-KG** ⭐ 重要
 
 **论文撰写**（本周）：
 - [ ] Method章节
@@ -309,21 +312,26 @@ python scripts/06_build_graph.py
 
 ## 📈 实验结果（持续更新）
 
+**评估模式**: uni100 (1 positive + 99 random negatives)
+
 | 方法 | NDCG@10 | Recall@10 | 提升 vs BPR |
 |------|---------|-----------|-------------|
 | **传统方法** |
-| BPR | 0.1219 ± 0.0021 | 0.0598 ± 0.0004 | - |
+| BPR | 0.2196 ± 0.0018 | 0.1518 ± 0.0013 | - |
 | **图谱方法** |
-| LightGCN | 0.1267 ± 0.0013 | 0.0581 ± 0.0009 | +3.9% |
-| KGAT | 0.1209 | 0.0610 | -0.8% ⚠️ |
+| LightGCN | 0.2255 ± 0.0012 | 0.1536 ± 0.0020 | +2.7% |
+| KGAT | 0.2222 ± 0.0019 | 0.1518 ± 0.0014 | +1.2% |
 | **多模态图谱** |
+| MKGAT | 待运行 | - | - |
 | MMGCN | 待运行 | - | - |
 | MGAT | 待运行 | - | - |
 | **LLM/MLLM推荐** |
 | LLM4Rec | 待运行 | - | - |
 | VIP5 | 待运行 | - | - |
 | **Ours方法** 💡 |
-| **Ours-Full** | **0.1549** | **0.0722** | **+27.1%** ⭐ |
+| **Ours-Full** | **待更新** | **待更新** | **待更新** |
+
+⚠️ **重要**: Ours-Full需重跑（2026-01-18数据泄露修复后）
 
 详见 [EXPERIMENT_TRACKING.md](docs/EXPERIMENT_TRACKING.md)
 
