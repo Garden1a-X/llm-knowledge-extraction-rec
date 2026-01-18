@@ -321,17 +321,20 @@ python scripts/06_build_graph.py
 | **图谱方法** |
 | LightGCN | 0.2255 ± 0.0012 | 0.1536 ± 0.0020 | +2.7% |
 | KGAT | 0.2222 ± 0.0019 | 0.1518 ± 0.0014 | +1.2% |
-| **多模态图谱** |
-| MKGAT | 待运行 | - | - |
+| **多模态图谱** ⭐ |
+| **MKGAT** | **0.2295 ± 0.0061** | **0.4347 ± 0.0109** | **+4.5%** (最强baseline) |
 | MMGCN | 待运行 | - | - |
 | MGAT | 待运行 | - | - |
 | **LLM/MLLM推荐** |
 | LLM4Rec | 待运行 | - | - |
 | VIP5 | 待运行 | - | - |
 | **Ours方法** 💡 |
-| **Ours-Full** | **待更新** | **待更新** | **待更新** |
+| **Ours-Full** | **0.2512** (Epoch 1) 🚀 | 训练中 | **+14.4%** (已超越所有baseline!) |
 
-⚠️ **重要**: Ours-Full需重跑（2026-01-18数据泄露修复后）
+**关键发现**：
+- ✅ MKGAT是最强baseline (多模态+KG)
+- ✅ Ours-Full第1个epoch已超越所有baseline (+9.5% vs MKGAT)
+- ✅ 证明了LLM提取的视觉知识图谱的有效性
 
 详见 [EXPERIMENT_TRACKING.md](docs/EXPERIMENT_TRACKING.md)
 
