@@ -32,43 +32,30 @@ def run_single_trial(model, dataset, data_path, device, epochs, seed, trial_num)
     ]
 
     try:
+        # Run with real-time output
         result = subprocess.run(
             cmd,
             cwd=Path(__file__).parent.parent,
-            capture_output=True,
-            text=True,
             timeout=7200  # 2 hour timeout
         )
 
         if result.returncode != 0:
-            print(f"ERROR in trial {trial_num + 1}:")
-            print(result.stderr)
+            print(f"ERROR in trial {trial_num + 1}: Process returned non-zero exit code")
             return None, None
 
-        # Find the output directory from stdout
-        output = result.stdout
-        output_dir = None
+        # Infer output directory from model/dataset/timestamp
+        # Pattern: outputs/baselines/{model}_{dataset}_{timestamp}
+        output_base = Path(__file__).parent.parent / "outputs" / "baselines"
 
-        lines = output.split('\n')
-        for line in lines:
-            if 'Results saved to:' in line:
-                # Extract directory path
-                # Format: "Results saved to: outputs/baselines/MODEL_DATASET_TIMESTAMP/results.json"
-                path_str = line.split('Results saved to:')[-1].strip()
-                # Get the directory (remove /results.json if present)
-                if path_str.endswith('results.json'):
-                    output_dir = Path(path_str).parent
-                else:
-                    output_dir = Path(path_str)
-                break
+        # Find the most recent directory matching the pattern
+        pattern = f"{model}_{dataset}_*"
+        matching_dirs = sorted(output_base.glob(pattern), key=lambda p: p.stat().st_mtime, reverse=True)
 
-        if output_dir is None:
-            print(f"Warning: Could not find output directory from trial {trial_num + 1}")
-            print(f"Stdout snippet (last 30 lines):")
-            print('\n'.join(lines[-30:]))
-            print(f"\nStderr:")
-            print(result.stderr[:2000] if result.stderr else "(empty)")
+        if not matching_dirs:
+            print(f"Warning: Could not find output directory matching {pattern}")
             return None, None
+
+        output_dir = matching_dirs[0]
 
         # Read the results.json file
         results_file = output_dir / "results.json"
