@@ -63,6 +63,10 @@ def build_metadata_kg(items):
 
     print("Building metadata KG...")
 
+    # Get max item_id
+    max_item_id = max(item['item_id'] for item in items)
+    print(f"  Max item_id: {max_item_id}")
+
     # Collect all entities
     all_categories = set()
     all_price_bins = set()
@@ -75,10 +79,9 @@ def build_metadata_kg(items):
         price_bin = discretize_price(item['price'])
         all_price_bins.add(price_bin)
 
-    # Assign entity IDs
-    # Format: entity_id starts from 1 (following RecBole convention)
+    # Assign entity IDs (start from max_item_id + 1 to avoid conflicts)
     entity_to_id = {}
-    current_id = 1
+    current_id = max_item_id + 1
 
     # Category entities
     for cat in sorted(all_categories):
@@ -90,9 +93,10 @@ def build_metadata_kg(items):
         entity_to_id[price_bin] = current_id
         current_id += 1
 
-    print(f"  Total entities: {len(entity_to_id)}")
+    print(f"  Total KG entities: {len(entity_to_id)}")
     print(f"    Categories: {len(all_categories)}")
     print(f"    Price bins: {len(all_price_bins)}")
+    print(f"  Entity IDs range: {max_item_id + 1} - {current_id - 1}")
 
     # Build KG triplets
     kg_triplets = []
