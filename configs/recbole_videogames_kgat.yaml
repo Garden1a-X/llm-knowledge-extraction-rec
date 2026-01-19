@@ -1,0 +1,43 @@
+# KGAT Baseline Configuration for Amazon Video Games
+# KGAT: Knowledge Graph Attention Network for Recommendation (KDD 2019)
+
+# Data
+dataset: amazon-videogames
+data_path: data/recbole
+
+# Model
+model: KGAT
+embedding_size: 64
+kg_embedding_size: 64
+n_layers: 3
+reg_weight: 0.00001
+aggregator_type: bi-interaction  # 'gcn', 'graphsage', 'bi-interaction'
+
+# Training
+epochs: 300
+train_batch_size: 2048
+eval_batch_size: 100000  # Large batch to process all users at once (80GB GPU)
+learning_rate: 0.001
+
+# Evaluation
+stopping_step: 10
+eval_step: 1
+metrics: ['Recall', 'NDCG', 'Precision', 'Hit']
+topk: [10, 20]
+valid_metric: NDCG@10
+
+# Data Split
+eval_args:
+  split:
+    RS: [0.7, 0.1, 0.2]
+  order: TO
+  mode: uni100  # 负采样模式：1 positive + 99 random negatives
+
+# Data loading - IMPORTANT: load KG for KGAT
+load_col:
+  inter: ['user_id', 'item_id', 'timestamp']
+  kg: ['head_id', 'relation_id', 'tail_id']
+  link: ['item_id', 'entity_id']
+
+seed: 42
+gpu_id: '0'
