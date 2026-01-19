@@ -19,16 +19,6 @@ from datetime import datetime
 try:
     from recbole.quick_start import run_recbole
     from recbole.config import Config
-
-    # Apply fast evaluation patch for uni100 mode
-    import sys
-    sys.path.insert(0, str(Path(__file__).parent))
-    try:
-        import fast_eval_patch  # This applies the monkey patch automatically
-    except Exception as e:
-        print(f"Warning: Could not apply fast evaluation patch: {e}")
-        print("Evaluation may be slower but will still work")
-
 except ImportError as e:
     print("ERROR: Failed to import RecBole!")
     print(f"Import error: {e}")
