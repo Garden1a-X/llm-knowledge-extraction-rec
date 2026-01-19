@@ -34,6 +34,51 @@ from src.extraction.user_interest_extractor import (
 )
 
 
+def load_existing_results(output_file: Path) -> Tuple[Dict, Set[int]]:
+    """
+    Load existing extraction results to resume from checkpoint.
+
+    Returns:
+        (existing_data, processed_user_ids)
+    """
+    if not output_file.exists():
+        return None, set()
+
+    try:
+        with open(output_file, 'r') as f:
+            data = json.load(f)
+
+        processed_ids = {
+            r['user_id'] for r in data.get('results', [])
+        }
+
+        return data, processed_ids
+    except Exception as e:
+        print(f"⚠️  Warning: Could not load existing results: {e}")
+        return None, set()
+
+
+def save_checkpoint(output_file: Path, results: List[Dict], config: Dict, extractor):
+    """Save intermediate results as checkpoint."""
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+
+    output_data = {
+        'dataset': 'amazon-videogames',
+        'config': config,
+        'stats': {
+            'total_users': len(results),
+            'total_llm_calls': sum(r['num_llm_calls'] for r in results),
+            'avg_llm_calls_per_user': sum(r['num_llm_calls'] for r in results) / len(results) if results else 0,
+            'avg_interactions_per_user': sum(r['num_interactions'] for r in results) / len(results) if results else 0,
+            'avg_active_days_per_user': sum(r['active_days'] for r in results) / len(results) if results else 0
+        },
+        'results': results
+    }
+
+    with open(output_file, 'w') as f:
+        json.dump(output_data, f, indent=2)
+
+
 def load_entity_vocabulary(vocab_file: Path) -> Set[str]:
     """
     Load standardized entity vocabulary from compact vocabulary JSON.
@@ -198,15 +243,28 @@ def main():
     # Initialize extractor
     extractor = UserInterestExtractor(movie_kg=product_kg, mllm=mllm)
 
+    # Load existing results for checkpoint/resume
+    output_file = Path(args.output)
+    existing_data, processed_user_ids = load_existing_results(output_file)
+
+    if processed_user_ids:
+        print(f"📂 Found existing checkpoint: {len(processed_user_ids)} users already processed")
+        user_ids = [uid for uid in user_ids if uid not in processed_user_ids]
+        print(f"  ✓ Resuming with {len(user_ids)} remaining users")
+        print()
+
+    # Start with existing results or empty list
+    results = existing_data.get('results', []) if existing_data else []
+
     # Extract interests
     print(f"Extracting interests for {len(user_ids)} users...")
     print(f"  Strategy: 21-day buckets → 84-day LLM summarization")
     print(f"  Short-term: Top 10 entities per bucket")
     print(f"  Long-term: Top 5 entities (LLM summarized)")
     print(f"  Workers: {args.workers}")
+    if len(results) > 0:
+        print(f"  Starting from: {len(results)} already completed")
     print()
-
-    results = []
 
     def extract_for_user(user_id):
         result = extractor.extract_user_interests(
@@ -216,6 +274,18 @@ def main():
         result['user_id'] = user_id
         return result
 
+    # Prepare config for checkpoints
+    checkpoint_config = {
+        'short_term_days': extractor.short_term_days,
+        'long_term_buckets': extractor.long_term_buckets,
+        'min_rating': extractor.min_rating,
+        'short_term_top_k': extractor.short_term_top_k,
+        'long_term_top_k': extractor.long_term_top_k,
+        'model': args.model,
+        'entity_vocab_file': args.entity_vocab,
+        'num_valid_entities': len(valid_entities) if valid_entities else None
+    }
+
     if args.workers == 1:
         # Sequential
         for i, user_id in enumerate(user_ids, 1):
@@ -224,6 +294,9 @@ def main():
 
             if i % 100 == 0:
                 print(f"  Processed {i}/{len(user_ids)} users...")
+                # Save checkpoint every 100 users
+                save_checkpoint(output_file, results, checkpoint_config, extractor)
+                print(f"  💾 Checkpoint saved ({len(results)} total users)")
     else:
         # Concurrent
         from tqdm import tqdm
@@ -233,45 +306,29 @@ def main():
                 for user_id in user_ids
             }
 
+            completed_count = 0
             with tqdm(total=len(user_ids), desc="  Extracting") as pbar:
                 for future in as_completed(futures):
                     result = future.result()
                     results.append(result)
+                    completed_count += 1
                     pbar.update(1)
+
+                    # Save checkpoint every 100 users
+                    if completed_count % 100 == 0:
+                        save_checkpoint(output_file, results, checkpoint_config, extractor)
+                        pbar.write(f"  💾 Checkpoint saved ({len(results)} total users)")
 
     print(f"  ✓ Completed: {len(results)} users")
     print()
 
-    # Save results
-    output_file = Path(args.output)
-    output_file.parent.mkdir(parents=True, exist_ok=True)
-
-    output_data = {
-        'dataset': 'amazon-videogames',
-        'config': {
-            'short_term_days': extractor.short_term_days,
-            'long_term_buckets': extractor.long_term_buckets,
-            'min_rating': extractor.min_rating,
-            'short_term_top_k': extractor.short_term_top_k,
-            'long_term_top_k': extractor.long_term_top_k,
-            'model': args.model,
-            'entity_vocab_file': args.entity_vocab,
-            'num_valid_entities': len(valid_entities) if valid_entities else None
-        },
-        'stats': {
-            'total_users': len(results),
-            'total_llm_calls': sum(r['num_llm_calls'] for r in results),
-            'avg_llm_calls_per_user': sum(r['num_llm_calls'] for r in results) / len(results) if results else 0,
-            'avg_interactions_per_user': sum(r['num_interactions'] for r in results) / len(results) if results else 0,
-            'avg_active_days_per_user': sum(r['active_days'] for r in results) / len(results) if results else 0
-        },
-        'results': results
-    }
-
-    with open(output_file, 'w') as f:
-        json.dump(output_data, f, indent=2)
-
-    print(f"Saved results: {output_file}")
+    # Save final results
+    if len(user_ids) > 0:
+        # Save one final time in case there were remaining users not caught by the 100-user checkpoint
+        save_checkpoint(output_file, results, checkpoint_config, extractor)
+        print(f"💾 Final checkpoint saved: {output_file}")
+    else:
+        print(f"✓ All users already processed, no new extraction needed")
     print()
 
     # Summary
@@ -279,10 +336,16 @@ def main():
     print("SUMMARY")
     print("="*70)
     print(f"Total users: {len(results)}")
-    print(f"Total LLM calls: {output_data['stats']['total_llm_calls']}")
-    print(f"Avg LLM calls/user: {output_data['stats']['avg_llm_calls_per_user']:.2f}")
-    print(f"Avg interactions/user: {output_data['stats']['avg_interactions_per_user']:.1f}")
-    print(f"Avg active days/user: {output_data['stats']['avg_active_days_per_user']:.1f}")
+    if results:
+        total_llm_calls = sum(r['num_llm_calls'] for r in results)
+        avg_llm_calls = total_llm_calls / len(results)
+        avg_interactions = sum(r['num_interactions'] for r in results) / len(results)
+        avg_active_days = sum(r['active_days'] for r in results) / len(results)
+
+        print(f"Total LLM calls: {total_llm_calls}")
+        print(f"Avg LLM calls/user: {avg_llm_calls:.2f}")
+        print(f"Avg interactions/user: {avg_interactions:.1f}")
+        print(f"Avg active days/user: {avg_active_days:.1f}")
     print(f"\nOutput: {output_file}")
     print("="*70)
 
