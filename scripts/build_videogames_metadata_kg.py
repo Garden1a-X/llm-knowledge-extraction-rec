@@ -135,6 +135,9 @@ def build_link_file(items, entity_to_id):
     for item in items:
         item_id = item['item_id']
 
+        # IMPORTANT: First, link item to itself as an entity (required by RecBole KGAT)
+        links.append((item_id, item_id))
+
         # Link to category entities
         for cat in item['categories']:
             if cat and cat.strip():
