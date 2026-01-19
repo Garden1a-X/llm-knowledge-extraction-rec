@@ -36,7 +36,7 @@ from src.extraction.user_interest_extractor import (
 
 def load_entity_vocabulary(vocab_file: Path) -> Set[str]:
     """
-    Load standardized entity vocabulary.
+    Load standardized entity vocabulary from compact vocabulary JSON.
 
     Args:
         vocab_file: Path to entity vocabulary JSON
@@ -47,26 +47,18 @@ def load_entity_vocabulary(vocab_file: Path) -> Set[str]:
     with open(vocab_file, 'r') as f:
         data = json.load(f)
 
-    # Extract all entities from the vocabulary
+    # Extract all entities from the compact vocabulary
+    # Format: {"relations": {"relation1": {"entities": [{"entity": "ent1", "count": 10}, ...]}, ...}}
     all_entities = set()
 
-    if 'entities' in data:
-        # Format: {"entities": ["entity1", "entity2", ...]}
-        all_entities.update(data['entities'])
-    elif 'vocabulary' in data:
-        # Format: {"vocabulary": {"relation1": ["entity1", ...], ...}}
-        vocab = data['vocabulary']
-        for relation, entities in vocab.items():
-            all_entities.update(entities)
-    else:
-        # Try to extract from any list structure
-        for key, value in data.items():
-            if isinstance(value, list):
-                all_entities.update(value)
-            elif isinstance(value, dict):
-                for subvalue in value.values():
-                    if isinstance(subvalue, list):
-                        all_entities.update(subvalue)
+    if 'relations' in data:
+        for relation, rel_data in data['relations'].items():
+            if 'entities' in rel_data:
+                for ent_info in rel_data['entities']:
+                    if isinstance(ent_info, dict) and 'entity' in ent_info:
+                        all_entities.add(ent_info['entity'])
+                    elif isinstance(ent_info, str):
+                        all_entities.add(ent_info)
 
     return all_entities
 
