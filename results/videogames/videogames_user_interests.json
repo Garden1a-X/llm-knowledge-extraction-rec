@@ -1,0 +1,563 @@
+{
+  "dataset": "amazon-videogames",
+  "config": {
+    "short_term_days": 21,
+    "long_term_buckets": 4,
+    "min_rating": 4.0,
+    "short_term_top_k": 10,
+    "long_term_top_k": 5,
+    "model": "gpt-4o-mini",
+    "entity_vocab_file": "results/videogames/entity_vocabulary_compact.json",
+    "num_valid_entities": 153
+  },
+  "stats": {
+    "total_users": 10,
+    "total_llm_calls": 10,
+    "avg_llm_calls_per_user": 1.0,
+    "avg_interactions_per_user": 7.3,
+    "avg_active_days_per_user": 4.9
+  },
+  "results": [
+    {
+      "num_interactions": 4,
+      "active_days": 3,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 31015
+    },
+    {
+      "num_interactions": 4,
+      "active_days": 4,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 50105
+    },
+    {
+      "num_interactions": 5,
+      "active_days": 2,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [
+        {
+          "relation": "has_text_element",
+          "entity": "branding",
+          "count": 5
+        },
+        {
+          "relation": "has_additional_property",
+          "entity": "property_other",
+          "count": 3
+        },
+        {
+          "relation": "has_ui_elements",
+          "entity": "ui_other",
+          "count": 3
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "dark_palette",
+          "count": 2
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "realistic_3d",
+          "count": 2
+        },
+        {
+          "relation": "features_character",
+          "entity": "military_soldier",
+          "count": 2
+        }
+      ],
+      "long_term_interests": [
+        {
+          "relation": "has_text_element",
+          "entity": "branding",
+          "age_days": 84
+        },
+        {
+          "relation": "has_additional_property",
+          "entity": "property_other",
+          "age_days": 84
+        },
+        {
+          "relation": "has_ui_elements",
+          "entity": "ui_other",
+          "age_days": 84
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "dark_palette",
+          "age_days": 84
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "realistic_3d",
+          "age_days": 84
+        }
+      ],
+      "user_id": 35120
+    },
+    {
+      "num_interactions": 5,
+      "active_days": 2,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [
+        {
+          "relation": "has_additional_property",
+          "entity": "property_other",
+          "count": 5
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "realistic_3d",
+          "count": 3
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "dark_palette",
+          "count": 2
+        },
+        {
+          "relation": "has_graphics_quality",
+          "entity": "high_fidelity",
+          "count": 2
+        },
+        {
+          "relation": "shows_perspective",
+          "entity": "third_person",
+          "count": 2
+        }
+      ],
+      "long_term_interests": [
+        {
+          "relation": "has_additional_property",
+          "entity": "property_other",
+          "age_days": 84
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "realistic_3d",
+          "age_days": 84
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "dark_palette",
+          "age_days": 84
+        },
+        {
+          "relation": "has_graphics_quality",
+          "entity": "high_fidelity",
+          "age_days": 84
+        },
+        {
+          "relation": "shows_perspective",
+          "entity": "third_person",
+          "age_days": 84
+        }
+      ],
+      "user_id": 50544
+    },
+    {
+      "num_interactions": 5,
+      "active_days": 4,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [
+        {
+          "relation": "has_color_palette",
+          "entity": "bright_vibrant",
+          "count": 4
+        },
+        {
+          "relation": "set_in_environment",
+          "entity": "scifi_space",
+          "count": 3
+        },
+        {
+          "relation": "shows_platform",
+          "entity": "game_boy",
+          "count": 3
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "cartoon",
+          "count": 2
+        },
+        {
+          "relation": "has_text_element",
+          "entity": "game_title",
+          "count": 2
+        },
+        {
+          "relation": "features_character",
+          "entity": "scifi_character",
+          "count": 2
+        },
+        {
+          "relation": "has_text_element",
+          "entity": "branding",
+          "count": 2
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "anime",
+          "count": 2
+        }
+      ],
+      "long_term_interests": [
+        {
+          "relation": "has_color_palette",
+          "entity": "bright_vibrant",
+          "age_days": 84
+        },
+        {
+          "relation": "set_in_environment",
+          "entity": "scifi_space",
+          "age_days": 84
+        },
+        {
+          "relation": "shows_platform",
+          "entity": "game_boy",
+          "age_days": 84
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "cartoon",
+          "age_days": 84
+        },
+        {
+          "relation": "has_text_element",
+          "entity": "game_title",
+          "age_days": 84
+        }
+      ],
+      "user_id": 1095
+    },
+    {
+      "num_interactions": 27,
+      "active_days": 25,
+      "num_short_buckets": 2,
+      "num_llm_calls": 1,
+      "short_term_interests": [
+        {
+          "relation": "features_character",
+          "entity": "character_other",
+          "count": 2
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "realistic_3d",
+          "count": 2
+        },
+        {
+          "relation": "shows_perspective",
+          "entity": "third_person",
+          "count": 2
+        }
+      ],
+      "long_term_interests": [
+        {
+          "relation": "has_visual_style",
+          "entity": "realistic_3d",
+          "age_days": 84
+        },
+        {
+          "relation": "has_graphics_quality",
+          "entity": "high_fidelity",
+          "age_days": 84
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "dark_palette",
+          "age_days": 84
+        },
+        {
+          "relation": "features_character",
+          "entity": "character_other",
+          "age_days": 84
+        },
+        {
+          "relation": "shows_perspective",
+          "entity": "third_person",
+          "age_days": 84
+        }
+      ],
+      "user_id": 50523
+    },
+    {
+      "num_interactions": 5,
+      "active_days": 2,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [
+        {
+          "relation": "has_visual_style",
+          "entity": "cartoon",
+          "count": 3
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "bright_vibrant",
+          "count": 3
+        },
+        {
+          "relation": "set_in_environment",
+          "entity": "urban",
+          "count": 2
+        },
+        {
+          "relation": "has_text_element",
+          "entity": "text_other",
+          "count": 2
+        }
+      ],
+      "long_term_interests": [
+        {
+          "relation": "has_visual_style",
+          "entity": "cartoon",
+          "age_days": 84
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "bright_vibrant",
+          "age_days": 84
+        },
+        {
+          "relation": "set_in_environment",
+          "entity": "urban",
+          "age_days": 84
+        },
+        {
+          "relation": "has_text_element",
+          "entity": "text_other",
+          "age_days": 84
+        },
+        {
+          "relation": "has_text_element",
+          "entity": "text_other",
+          "age_days": 84
+        }
+      ],
+      "user_id": 43575
+    },
+    {
+      "num_interactions": 6,
+      "active_days": 4,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [
+        {
+          "relation": "has_text_element",
+          "entity": "branding",
+          "count": 5
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "bright_vibrant",
+          "count": 4
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "cartoon",
+          "count": 3
+        },
+        {
+          "relation": "shows_platform",
+          "entity": "platform_other",
+          "count": 3
+        },
+        {
+          "relation": "features_character",
+          "entity": "character_other",
+          "count": 2
+        },
+        {
+          "relation": "has_additional_property",
+          "entity": "property_other",
+          "count": 2
+        }
+      ],
+      "long_term_interests": [
+        {
+          "relation": "has_text_element",
+          "entity": "branding",
+          "age_days": 84
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "bright_vibrant",
+          "age_days": 84
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "cartoon",
+          "age_days": 84
+        },
+        {
+          "relation": "shows_platform",
+          "entity": "platform_other",
+          "age_days": 84
+        },
+        {
+          "relation": "features_character",
+          "entity": "character_other",
+          "age_days": 84
+        }
+      ],
+      "user_id": 46444
+    },
+    {
+      "num_interactions": 7,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [
+        {
+          "relation": "has_ui_elements",
+          "entity": "ui_other",
+          "count": 4
+        },
+        {
+          "relation": "has_additional_property",
+          "entity": "property_other",
+          "count": 4
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "realistic_3d",
+          "count": 3
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "cool_colors",
+          "count": 3
+        },
+        {
+          "relation": "set_in_environment",
+          "entity": "urban",
+          "count": 2
+        },
+        {
+          "relation": "has_atmosphere",
+          "entity": "gritty",
+          "count": 2
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "dark_palette",
+          "count": 2
+        },
+        {
+          "relation": "has_text_element",
+          "entity": "text_other",
+          "count": 2
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "anime",
+          "count": 2
+        }
+      ],
+      "long_term_interests": [
+        {
+          "relation": "has_ui_elements",
+          "entity": "ui_other",
+          "age_days": 84
+        },
+        {
+          "relation": "has_additional_property",
+          "entity": "property_other",
+          "age_days": 84
+        },
+        {
+          "relation": "has_visual_style",
+          "entity": "realistic_3d",
+          "age_days": 84
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "cool_colors",
+          "age_days": 84
+        },
+        {
+          "relation": "set_in_environment",
+          "entity": "urban",
+          "age_days": 84
+        }
+      ],
+      "user_id": 28093
+    },
+    {
+      "num_interactions": 5,
+      "active_days": 2,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [
+        {
+          "relation": "has_visual_style",
+          "entity": "realistic_3d",
+          "count": 3
+        },
+        {
+          "relation": "set_in_environment",
+          "entity": "urban",
+          "count": 3
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "bright_vibrant",
+          "count": 3
+        },
+        {
+          "relation": "has_text_element",
+          "entity": "game_title",
+          "count": 3
+        },
+        {
+          "relation": "shows_platform",
+          "entity": "pc",
+          "count": 2
+        },
+        {
+          "relation": "has_genre_indicator",
+          "entity": "strategy",
+          "count": 2
+        }
+      ],
+      "long_term_interests": [
+        {
+          "relation": "has_visual_style",
+          "entity": "realistic_3d",
+          "age_days": 84
+        },
+        {
+          "relation": "set_in_environment",
+          "entity": "urban",
+          "age_days": 84
+        },
+        {
+          "relation": "has_color_palette",
+          "entity": "bright_vibrant",
+          "age_days": 84
+        },
+        {
+          "relation": "has_text_element",
+          "entity": "game_title",
+          "age_days": 84
+        },
+        {
+          "relation": "shows_platform",
+          "entity": "pc",
+          "age_days": 84
+        }
+      ],
+      "user_id": 12068
+    }
+  ]
+}
