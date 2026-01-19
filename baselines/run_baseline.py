@@ -59,7 +59,7 @@ def get_model_config(model_name: str, use_kg: bool = False):
         # Training
         'epochs': 300,
         'train_batch_size': 2048,
-        'eval_batch_size': 4096,
+        'eval_batch_size': 100000,  # Large batch for GPU evaluation (all users at once)
         'learning_rate': 0.001,
         'stopping_step': 10,  # Early stopping patience
         'eval_step': 1,  # Evaluate every N epochs

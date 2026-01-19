@@ -14,7 +14,7 @@ reg_weight: 0.00001
 # Training
 epochs: 300
 train_batch_size: 2048
-eval_batch_size: 4096
+eval_batch_size: 100000  # Large batch to process all users at once (80GB GPU)
 learning_rate: 0.001
 
 # Evaluation
