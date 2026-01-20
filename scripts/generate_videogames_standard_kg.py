@@ -86,6 +86,67 @@ def get_price_range(price: float) -> str:
         return "over_60"
 
 
+def clean_entity_name(text: str) -> str:
+    """
+    Clean entity name to be CSV/TSV safe.
+
+    Removes all special characters that could cause parsing issues.
+    """
+    if not text:
+        return "unknown"
+
+    # Remove/replace problematic characters
+    cleaned = (
+        text.lower()
+        .replace('"', '')          # Remove double quotes (CSV killer)
+        .replace("'", '')           # Remove single quotes
+        .replace('\t', '_')         # Replace tabs with underscore
+        .replace('\n', '_')         # Replace newlines with underscore
+        .replace('\r', '')          # Remove carriage returns
+        .replace('\\', '_')         # Replace backslashes
+        .replace(' ', '_')          # Replace spaces with underscore
+        .replace('&', 'and')        # Replace ampersand
+        .replace(',', '')           # Remove commas
+        .replace(';', '')           # Remove semicolons
+        .replace(':', '')           # Remove colons
+        .replace('(', '')           # Remove parentheses
+        .replace(')', '')
+        .replace('[', '')           # Remove brackets
+        .replace(']', '')
+        .replace('{', '')           # Remove braces
+        .replace('}', '')
+        .replace('/', '_')          # Replace slashes
+        .replace('|', '_')          # Replace pipes
+        .replace('<', '')           # Remove angle brackets
+        .replace('>', '')
+        .replace('?', '')           # Remove question marks
+        .replace('!', '')           # Remove exclamation marks
+        .replace('*', '')           # Remove asterisks
+        .replace('#', '')           # Remove hash
+        .replace('@', 'at')         # Replace at symbol
+        .replace('$', '')           # Remove dollar sign
+        .replace('%', 'percent')    # Replace percent
+        .replace('^', '')           # Remove caret
+        .replace('~', '')           # Remove tilde
+        .replace('`', '')           # Remove backticks
+        .replace('+', 'plus')       # Replace plus
+        .replace('=', 'equals')     # Replace equals
+    )
+
+    # Remove consecutive underscores
+    while '__' in cleaned:
+        cleaned = cleaned.replace('__', '_')
+
+    # Remove leading/trailing underscores
+    cleaned = cleaned.strip('_')
+
+    # If empty after cleaning, use placeholder
+    if not cleaned:
+        cleaned = 'unknown'
+
+    return cleaned
+
+
 def generate_kg_triples(items: List[Tuple[str, str, List[str], float]]) -> List[Tuple[str, str, str]]:
     """
     Generate KG triples from item metadata.
@@ -102,17 +163,12 @@ def generate_kg_triples(items: List[Tuple[str, str, List[str], float]]) -> List[
     for item_id, title, categories, price in items:
         # Add category relations
         for category in categories:
-            # Normalize category to lowercase and replace spaces/special chars
-            category_normalized = (
-                category.lower()
-                .replace("'", "")
-                .replace(" ", "_")
-                .replace("&", "and")
-                .replace(",", "")
-                .replace("(", "")
-                .replace(")", "")
-            )
-            triples.append((item_id, "has_category", category_normalized))
+            # Clean category name to be CSV-safe
+            category_cleaned = clean_entity_name(category)
+
+            # Skip empty or unknown categories
+            if category_cleaned and category_cleaned != 'unknown':
+                triples.append((item_id, "has_category", category_cleaned))
 
         # Add price range relation
         price_range = get_price_range(price)
