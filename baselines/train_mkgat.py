@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Train MKGAT model on MovieLens 1M.
+Train MKGAT model with visual features.
+
+Supports both MovieLens 1M and Amazon Video Games datasets.
 
 Usage:
     python baselines/train_mkgat.py \
@@ -445,7 +447,7 @@ def train_epoch(model, dataloader, kg_loader, optimizer, device):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Train MKGAT on MovieLens 1M')
+    parser = argparse.ArgumentParser(description='Train MKGAT with visual features')
 
     # Data args
     parser.add_argument('--data_dir', type=str, required=True,
@@ -491,13 +493,17 @@ def main():
     # Set seed
     set_seed(args.seed)
 
+    # Detect dataset name from data_dir
+    data_dir = Path(args.data_dir)
+    dataset_name = data_dir.name  # e.g., 'ml-1m' or 'amazon-videogames'
+
     # Create output directory
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     output_dir = Path(args.output_dir) / f"seed_{args.seed}_{timestamp}"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     print("="*80)
-    print("Training MKGAT on MovieLens 1M")
+    print(f"Training MKGAT on {dataset_name}")
     print("="*80)
     print(f"Output directory: {output_dir}")
     print(f"Seed: {args.seed}")
