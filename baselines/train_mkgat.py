@@ -262,7 +262,7 @@ def split_data_temporal(interactions, train_ratio=0.7, val_ratio=0.1):
 
 
 def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni100',
-             train_data=None, val_data=None):
+             train_data=None, val_data=None, n_layers=2):
     """
     Evaluate model with Recall@K, NDCG@K, Precision@K using uni100 mode.
 
@@ -276,6 +276,7 @@ def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni
         mode: 'uni100' (1 pos + 99 neg) or 'full' (all items)
         train_data: Training data (list of (user, item, rating)) for negative sampling
         val_data: Validation data (optional, for test evaluation)
+        n_layers: Number of GNN layers for neighbor sampling
 
     Returns:
         Dictionary of metrics
@@ -296,7 +297,7 @@ def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni
                 continue
 
             # Sample KG for this batch of items
-            adj_entity, adj_relation = kg_loader.sample_neighbors(batch_items)
+            adj_entity, adj_relation = kg_loader.sample_neighbors(batch_items, n_layers=n_layers)
             adj_entity = torch.LongTensor(adj_entity).to(device)
             adj_relation = torch.LongTensor(adj_relation).to(device)
 
@@ -405,7 +406,7 @@ def train_epoch(model, dataloader, kg_loader, optimizer, device):
 
         # Sample KG neighbors for positive and negative items
         all_items = torch.cat([pos_items, neg_items])
-        adj_entity, adj_relation = kg_loader.sample_neighbors(all_items.numpy().tolist())
+        adj_entity, adj_relation = kg_loader.sample_neighbors(all_items.numpy().tolist(), n_layers=model.n_layers)
 
         batch_size = users.shape[0]
         adj_entity_pos = adj_entity[:batch_size]
@@ -539,8 +540,9 @@ def main():
     print()
 
     # Load KG
-    # Estimate n_entities as 10x n_items (items + KG entities)
-    n_entities_est = n_items * 10
+    # Estimate n_entities conservatively as 20x n_items (items + KG entities)
+    # Video Games may have many category entities, so use larger multiplier
+    n_entities_est = n_items * 20
     kg_loader = KGDataLoader(kg_file, n_entities_est)
     n_relations = kg_loader.n_relations
     print(f"✓ KG loaded: {n_relations} relations")
@@ -612,7 +614,7 @@ def main():
             # Evaluate on validation (uni100 mode)
             # Only exclude train data when evaluating val
             val_metrics = evaluate(model, val_loader, kg_loader, device, k=10, n_items=n_items,
-                                 train_data=train_data)
+                                 train_data=train_data, n_layers=args.n_layers)
 
             print(f"Epoch {epoch}/{args.epochs}:")
             print(f"  Train Loss: {train_loss:.4f}")
@@ -646,7 +648,7 @@ def main():
     model.load_state_dict(torch.load(output_dir / 'best_model.pth'))
     # Exclude both train and val data when evaluating test
     test_metrics = evaluate(model, test_loader, kg_loader, device, k=10, n_items=n_items,
-                          train_data=train_data, val_data=val_data)
+                          train_data=train_data, val_data=val_data, n_layers=args.n_layers)
 
     print()
     print("="*80)
