@@ -84,7 +84,7 @@ def run_kgat_trial(data_path: str, seed: int, trial_num: int, output_dir: Path):
         # Training
         'epochs': 300,
         'train_batch_size': 2048,
-        'eval_batch_size': 4096,  # Large batch for fast evaluation
+        'eval_batch_size': 100000,  # Large batch to process all users at once (80GB GPU)
         'learning_rate': 0.001,
         'stopping_step': 10,
 
