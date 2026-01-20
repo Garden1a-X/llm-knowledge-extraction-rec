@@ -463,10 +463,10 @@ def main():
     parser.add_argument('--aggregator_type', type=str, default='bi-interaction',
                         choices=['bi-interaction', 'gcn', 'graphsage'],
                         help='Aggregator type')
-    parser.add_argument('--dropout', type=float, default=0.1,
-                        help='Dropout rate')
-    parser.add_argument('--reg_weight', type=float, default=1e-5,
-                        help='L2 regularization weight')
+    parser.add_argument('--dropout', type=float, default=0.2,
+                        help='Dropout rate (aligned with Ours method)')
+    parser.add_argument('--reg_weight', type=float, default=1e-4,
+                        help='L2 regularization weight (aligned with KGAT)')
 
     # Training args
     parser.add_argument('--epochs', type=int, default=300,
