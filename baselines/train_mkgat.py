@@ -283,14 +283,17 @@ def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni
     """
     model.eval()
 
-    # Pre-compute ALL item embeddings to avoid repeated KG sampling
-    print("  Pre-computing item embeddings...")
+    # Pre-compute ALL item embeddings WITH KG aggregation
+    print("  Pre-computing item embeddings with KG aggregation...")
     all_item_embeddings = []
     all_user_embeddings = []
 
     with torch.no_grad():
         # Compute item embeddings for all items (1 to n_items)
+        # Use dummy user (user_id=1) to compute item embeddings through forward pass
         batch_size_precompute = 512
+        dummy_user = torch.LongTensor([1]).to(device)
+
         for i in tqdm(range(0, n_items, batch_size_precompute), desc="  Items", leave=False):
             batch_items = list(range(i+1, min(i+batch_size_precompute+1, n_items+1)))
             if not batch_items:
@@ -303,8 +306,10 @@ def evaluate(model, dataloader, kg_loader, device, k=10, n_items=None, mode='uni
 
             batch_items_t = torch.LongTensor(batch_items).to(device)
 
-            # Get item embeddings (without user)
-            item_emb = model.get_item_embeddings(batch_items_t, device)
+            # Use forward pass to get KG-aggregated item embeddings
+            # Repeat dummy user for batch
+            dummy_users = dummy_user.repeat(len(batch_items))
+            _, item_emb = model.forward(dummy_users, batch_items_t, adj_entity, adj_relation)
             all_item_embeddings.append(item_emb.cpu())
 
         # Stack all item embeddings (n_items, embedding_dim)
