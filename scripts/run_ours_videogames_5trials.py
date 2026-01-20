@@ -10,11 +10,11 @@ import tempfile
 from pathlib import Path
 
 def main():
-    seeds = [12345]  # Only run trial 5
+    seeds = [42, 2023, 2024, 2025, 12345]
     base_config_file = "configs/ours_full_videogames.yaml"
 
     print("="*70)
-    print("Running Ours-Full on Video Games Dataset (Trial 5 only)")
+    print("Running Ours-Full on Video Games Dataset (5 trials)")
     print("="*70)
     print(f"Base config: {base_config_file}")
     print(f"Seeds: {seeds}")
