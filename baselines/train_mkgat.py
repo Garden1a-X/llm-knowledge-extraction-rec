@@ -48,13 +48,15 @@ def set_seed(seed):
 class KGDataLoader:
     """Load knowledge graph and build neighbor sampling structures."""
 
-    def __init__(self, kg_file, n_entities):
+    def __init__(self, kg_file, n_entities, n_items):
         """
         Args:
             kg_file: Path to .kg file
-            n_entities: Number of entities
+            n_entities: Total number of entities (for embedding size)
+            n_items: Number of items (to allocate entity IDs after item IDs)
         """
         self.n_entities = n_entities
+        self.n_items = n_items
         self.kg_dict = defaultdict(list)  # entity -> [(relation, tail_entity)]
         self.relation_dict = {}  # relation_name -> relation_id
 
@@ -66,7 +68,7 @@ class KGDataLoader:
 
         relation_id = 1  # Start from 1 for RecBole compatibility
         entity_map = {}  # Map entity names to IDs
-        next_entity_id = self.n_entities // 10 + 1  # Start after item IDs
+        next_entity_id = self.n_items + 1  # Start after item IDs (items are 1-indexed)
 
         with open(kg_file, 'r') as f:
             next(f)  # Skip header
@@ -146,24 +148,27 @@ class KGDataLoader:
                     neighbors = self.kg_dict.get(ent, [])
 
                     if neighbors:
-                        # Sample neighbors
+                        # Sample neighbors with replacement
                         sampled = random.choices(neighbors, k=n_neighbors)
                     else:
-                        # If no neighbors, use self-loop
+                        # If no neighbors, use self-loop (relation=0 for padding)
                         sampled = [(0, ent)] * n_neighbors
 
                     for rel, neighbor in sampled:
                         next_entities.append(neighbor)
                         layer_relations.append(rel)
 
-                # Store sampled neighbors
-                sampled_idx = random.sample(range(len(next_entities)), min(n_neighbors, len(next_entities)))
+                # Store sampled neighbors (take first n_neighbors if we have multiple entities)
+                # For first layer: we have n_neighbors from single entity
+                # For later layers: we have n_neighbors * len(current_entities)
+                n_to_store = min(n_neighbors, len(next_entities))
+                sampled_idx = random.sample(range(len(next_entities)), n_to_store)
                 for j, idx in enumerate(sampled_idx):
                     adj_entity[i, layer, j] = next_entities[idx]
                     adj_relation[i, layer, j] = layer_relations[idx]
 
-                # Update current entities for next layer
-                current_entities = next_entities
+                # Update current entities for next layer: only use the selected neighbors
+                current_entities = [next_entities[idx] for idx in sampled_idx]
 
         return adj_entity, adj_relation
 
@@ -548,7 +553,7 @@ def main():
     # Estimate n_entities conservatively as 20x n_items (items + KG entities)
     # Video Games may have many category entities, so use larger multiplier
     n_entities_est = n_items * 20
-    kg_loader = KGDataLoader(kg_file, n_entities_est)
+    kg_loader = KGDataLoader(kg_file, n_entities_est, n_items)
     n_relations = kg_loader.n_relations
     print(f"✓ KG loaded: {n_relations} relations")
     print()
