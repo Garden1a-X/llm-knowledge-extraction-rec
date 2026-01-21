@@ -115,7 +115,7 @@ class MKGAT(nn.Module):
         n_relations,
         embedding_dim=64,
         visual_dim=2048,
-        n_layers=3,
+        n_layers=2,
         aggregator_type='bi-interaction',
         dropout=0.1,
         reg_weight=1e-5

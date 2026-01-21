@@ -119,7 +119,7 @@ class KGDataLoader:
         self.n_relations = len(self.relation_dict)
         self.max_entity_id = max(next_entity_id - 1, max(self.kg_dict.keys()) if self.kg_dict else 0)
 
-    def sample_neighbors(self, entity_ids, n_neighbors=8, n_layers=3):
+    def sample_neighbors(self, entity_ids, n_neighbors=8, n_layers=2):
         """
         Sample neighbors for given entities.
 

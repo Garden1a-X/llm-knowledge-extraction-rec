@@ -80,23 +80,23 @@ def get_model_config(model_name: str, use_kg: bool = False):
     model_configs = {
         'LightGCN': {
             'embedding_size': 64,
-            'n_layers': 3,
+            'n_layers': 2,
             'reg_weight': 1e-4,
         },
 
         'KGAT': {
             'embedding_size': 64,
             'kg_embedding_size': 64,
-            'n_layers': 3,
+            'n_layers': 2,
             'reg_weight': 1e-5,
             'aggregator_type': 'bi-interaction',  # 'gcn', 'graphsage', 'bi-interaction'
         },
 
         'NGCF': {
             'embedding_size': 64,
-            'hidden_size_list': [64, 64, 64],
-            'node_dropout': [0.1, 0.1, 0.1],
-            'message_dropout': [0.1, 0.1, 0.1],
+            'hidden_size_list': [64, 64],
+            'node_dropout': [0.1, 0.1],
+            'message_dropout': [0.1, 0.1],
             'reg_weight': 1e-5,
         },
 
