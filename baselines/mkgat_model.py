@@ -217,7 +217,49 @@ class MKGAT(nn.Module):
 
         return item_emb
 
-    def aggregate_neighbors(self, entity_ids, adj_entity, adj_relation, layer_idx):
+    def get_entity_embeddings_with_visual(self, entity_ids, device):
+        """
+        Get entity embeddings, using visual features for items.
+
+        Args:
+            entity_ids: (batch_size,) or (batch_size, n_neighbors) entity IDs
+            device: torch device
+
+        Returns:
+            Entity embeddings with visual features for items
+        """
+        original_shape = entity_ids.shape
+        entity_ids_flat = entity_ids.flatten()
+
+        # Start with base entity embeddings
+        embeddings = self.entity_embed(entity_ids_flat)
+
+        # Identify which entities are items (1 <= id <= n_items)
+        item_mask = (entity_ids_flat > 0) & (entity_ids_flat <= self.n_items)
+
+        if item_mask.any():
+            # Get visual-enhanced embeddings for items
+            item_ids = entity_ids_flat[item_mask]
+            visual_feat = self.visual_features[item_ids.cpu() - 1].to(device)
+            visual_emb = self.visual_proj(visual_feat)
+
+            # Get entity embeddings for items
+            item_entity_emb = self.entity_embed(item_ids)
+
+            # Fuse visual and entity embeddings
+            multimodal_emb = torch.cat([visual_emb, item_entity_emb], dim=-1)
+            item_emb = self.fusion(multimodal_emb)
+
+            # Replace item embeddings with visual-enhanced ones
+            embeddings[item_mask] = item_emb
+
+        # Reshape back to original shape
+        if len(original_shape) == 2:
+            embeddings = embeddings.view(original_shape[0], original_shape[1], -1)
+
+        return embeddings
+
+    def aggregate_neighbors(self, entity_ids, adj_entity, adj_relation, layer_idx, device):
         """
         Aggregate neighbor information for given entities.
 
@@ -226,13 +268,14 @@ class MKGAT(nn.Module):
             adj_entity: (batch_size, n_neighbors) neighbor entity IDs
             adj_relation: (batch_size, n_neighbors) relation IDs
             layer_idx: Which aggregation layer to use
+            device: torch device
 
         Returns:
             Aggregated embeddings (batch_size, embedding_dim)
         """
-        # Get embeddings
-        ego_embed = self.entity_embed(entity_ids)
-        neighbor_embed = self.entity_embed(adj_entity)
+        # Get embeddings with visual features for items
+        ego_embed = self.get_entity_embeddings_with_visual(entity_ids, device)
+        neighbor_embed = self.get_entity_embeddings_with_visual(adj_entity, device)
         relation_embed = self.relation_embed(adj_relation)
 
         # Aggregate
@@ -274,7 +317,7 @@ class MKGAT(nn.Module):
 
             # Aggregate
             agg_embed = self.aggregate_neighbors(
-                entity_ids, layer_adj_entity, layer_adj_relation, layer
+                entity_ids, layer_adj_entity, layer_adj_relation, layer, device
             )
 
             entity_layers.append(agg_embed)
