@@ -59,7 +59,8 @@ class CFEncoder(nn.Module):
                 # First layer
                 in_channels = embedding_dim
                 out_channels = embedding_dim
-                concat = True
+                # If only 1 layer, don't concat (so output is embedding_dim)
+                concat = True if num_layers > 1 else False
             elif i < num_layers - 1:
                 # Middle layers
                 in_channels = embedding_dim * heads
@@ -148,7 +149,8 @@ class KGEncoder(nn.Module):
                 # First layer
                 in_channels = embedding_dim
                 out_channels = embedding_dim
-                concat = True
+                # If only 1 layer, don't concat (so output is embedding_dim)
+                concat = True if num_layers > 1 else False
             elif i < num_layers - 1:
                 # Middle layers
                 in_channels = embedding_dim * heads
