@@ -18,8 +18,9 @@ logger = logging.getLogger(__name__)
 def ndcg_at_k(
     scores: torch.Tensor,
     labels: torch.Tensor,
-    k: int = 10
-) -> float:
+    k: int = 10,
+    return_per_sample: bool = False
+) -> Union[float, torch.Tensor]:
     """
     计算NDCG@K
 
@@ -27,33 +28,39 @@ def ndcg_at_k(
         scores: [batch_size, num_items] - 预测分数
         labels: [batch_size, num_items] - 真实标签（1=相关，0=不相关）
         k: Top-K
+        return_per_sample: 是否返回每个样本的指标（True）或平均值（False）
 
     Returns:
-        ndcg: NDCG@K平均值
+        ndcg: NDCG@K平均值 (float) 或每个样本的NDCG (tensor [batch_size])
     """
     batch_size = scores.size(0)
+    device = scores.device
 
     # 获取Top-K预测
     _, top_k_indices = torch.topk(scores, k, dim=1)
 
-    ndcg_sum = 0.0
+    # 批量计算DCG
+    # 使用gather获取top-k标签
+    top_k_labels = torch.gather(labels, 1, top_k_indices)  # [batch, k]
 
-    for i in range(batch_size):
-        # 获取Top-K的标签
-        top_k_labels = labels[i, top_k_indices[i]]
+    # 计算DCG: sum((2^rel - 1) / log2(rank + 2))
+    gains = 2.0 ** top_k_labels.float() - 1
+    discounts = torch.log2(torch.arange(2, k + 2, dtype=torch.float32, device=device))
+    dcg = (gains / discounts).sum(dim=1)  # [batch]
 
-        # DCG@K
-        dcg = _dcg_at_k(top_k_labels)
+    # 批量计算IDCG
+    ideal_labels, _ = torch.sort(labels, dim=1, descending=True)
+    ideal_labels = ideal_labels[:, :k]  # [batch, k]
+    ideal_gains = 2.0 ** ideal_labels.float() - 1
+    idcg = (ideal_gains / discounts).sum(dim=1)  # [batch]
 
-        # IDCG@K（理想情况：按相关性排序）
-        ideal_labels, _ = torch.sort(labels[i], descending=True)
-        idcg = _dcg_at_k(ideal_labels[:k])
+    # 计算NDCG（避免除零）
+    ndcg = torch.where(idcg > 0, dcg / idcg, torch.zeros_like(dcg))  # [batch]
 
-        # NDCG
-        if idcg > 0:
-            ndcg_sum += dcg / idcg
-
-    return ndcg_sum / batch_size
+    if return_per_sample:
+        return ndcg
+    else:
+        return ndcg.mean().item()
 
 
 def _dcg_at_k(labels: torch.Tensor) -> float:
@@ -67,8 +74,9 @@ def _dcg_at_k(labels: torch.Tensor) -> float:
 def recall_at_k(
     scores: torch.Tensor,
     labels: torch.Tensor,
-    k: int = 10
-) -> float:
+    k: int = 10,
+    return_per_sample: bool = False
+) -> Union[float, torch.Tensor]:
     """
     计算Recall@K
 
@@ -76,39 +84,38 @@ def recall_at_k(
         scores: [batch_size, num_items] - 预测分数
         labels: [batch_size, num_items] - 真实标签（1=相关，0=不相关）
         k: Top-K
+        return_per_sample: 是否返回每个样本的指标（True）或平均值（False）
 
     Returns:
-        recall: Recall@K平均值
+        recall: Recall@K平均值 (float) 或每个样本的Recall (tensor [batch_size])
     """
     batch_size = scores.size(0)
 
     # 获取Top-K预测
     _, top_k_indices = torch.topk(scores, k, dim=1)
 
-    recall_sum = 0.0
+    # 批量计算：使用gather获取top-k标签
+    top_k_labels = torch.gather(labels, 1, top_k_indices)  # [batch, k]
+    num_hit = top_k_labels.sum(dim=1)  # [batch]
 
-    for i in range(batch_size):
-        # 真实相关物品数
-        num_relevant = labels[i].sum().item()
+    # 每个样本的相关物品总数
+    num_relevant = labels.sum(dim=1)  # [batch]
 
-        if num_relevant == 0:
-            continue
+    # Recall = Hit / Total Relevant（避免除零）
+    recall = torch.where(num_relevant > 0, num_hit / num_relevant, torch.zeros_like(num_hit))  # [batch]
 
-        # Top-K中的相关物品数
-        top_k_labels = labels[i, top_k_indices[i]]
-        num_hit = top_k_labels.sum().item()
-
-        # Recall = Hit / Total Relevant
-        recall_sum += num_hit / num_relevant
-
-    return recall_sum / batch_size
+    if return_per_sample:
+        return recall
+    else:
+        return recall.mean().item()
 
 
 def precision_at_k(
     scores: torch.Tensor,
     labels: torch.Tensor,
-    k: int = 10
-) -> float:
+    k: int = 10,
+    return_per_sample: bool = False
+) -> Union[float, torch.Tensor]:
     """
     计算Precision@K
 
@@ -116,33 +123,33 @@ def precision_at_k(
         scores: [batch_size, num_items] - 预测分数
         labels: [batch_size, num_items] - 真实标签
         k: Top-K
+        return_per_sample: 是否返回每个样本的指标（True）或平均值（False）
 
     Returns:
-        precision: Precision@K平均值
+        precision: Precision@K平均值 (float) 或每个样本的Precision (tensor [batch_size])
     """
-    batch_size = scores.size(0)
-
     # 获取Top-K预测
     _, top_k_indices = torch.topk(scores, k, dim=1)
 
-    precision_sum = 0.0
+    # 批量计算：使用gather获取top-k标签
+    top_k_labels = torch.gather(labels, 1, top_k_indices)  # [batch, k]
+    num_hit = top_k_labels.sum(dim=1)  # [batch]
 
-    for i in range(batch_size):
-        # Top-K中的相关物品数
-        top_k_labels = labels[i, top_k_indices[i]]
-        num_hit = top_k_labels.sum().item()
+    # Precision = Hit / K
+    precision = num_hit / k  # [batch]
 
-        # Precision = Hit / K
-        precision_sum += num_hit / k
-
-    return precision_sum / batch_size
+    if return_per_sample:
+        return precision
+    else:
+        return precision.mean().item()
 
 
 def hit_at_k(
     scores: torch.Tensor,
     labels: torch.Tensor,
-    k: int = 10
-) -> float:
+    k: int = 10,
+    return_per_sample: bool = False
+) -> Union[float, torch.Tensor]:
     """
     计算Hit@K（至少命中一个）
 
@@ -150,24 +157,24 @@ def hit_at_k(
         scores: [batch_size, num_items] - 预测分数
         labels: [batch_size, num_items] - 真实标签
         k: Top-K
+        return_per_sample: 是否返回每个样本的指标（True）或平均值（False）
 
     Returns:
-        hit_ratio: Hit@K比例
+        hit_ratio: Hit@K比例 (float) 或每个样本的Hit (tensor [batch_size])
     """
-    batch_size = scores.size(0)
-
     # 获取Top-K预测
     _, top_k_indices = torch.topk(scores, k, dim=1)
 
-    hit_count = 0
+    # 批量计算：使用gather获取top-k标签
+    top_k_labels = torch.gather(labels, 1, top_k_indices)  # [batch, k]
 
-    for i in range(batch_size):
-        # Top-K中是否有相关物品
-        top_k_labels = labels[i, top_k_indices[i]]
-        if top_k_labels.sum().item() > 0:
-            hit_count += 1
+    # Hit@K: 至少命中一个 (sum > 0)
+    hit = (top_k_labels.sum(dim=1) > 0).float()  # [batch]
 
-    return hit_count / batch_size
+    if return_per_sample:
+        return hit
+    else:
+        return hit.mean().item()
 
 
 def evaluate_all_metrics(
@@ -335,24 +342,19 @@ def evaluate_ranking_batched(
             batch_labels = torch.zeros_like(batch_scores)
             batch_labels[:, 0] = 1
 
-            # 批量计算指标
+            # 批量计算指标（向量化，无循环）
             for k in k_list:
-                all_metrics[f'NDCG@{k}'].extend(
-                    [ndcg_at_k(batch_scores[i:i+1], batch_labels[i:i+1], k)
-                     for i in range(current_batch_size)]
-                )
-                all_metrics[f'Recall@{k}'].extend(
-                    [recall_at_k(batch_scores[i:i+1], batch_labels[i:i+1], k)
-                     for i in range(current_batch_size)]
-                )
-                all_metrics[f'Precision@{k}'].extend(
-                    [precision_at_k(batch_scores[i:i+1], batch_labels[i:i+1], k)
-                     for i in range(current_batch_size)]
-                )
-                all_metrics[f'Hit@{k}'].extend(
-                    [hit_at_k(batch_scores[i:i+1], batch_labels[i:i+1], k)
-                     for i in range(current_batch_size)]
-                )
+                # 一次性计算整个batch的指标，返回 [batch_size] tensor
+                batch_ndcg = ndcg_at_k(batch_scores, batch_labels, k, return_per_sample=True)
+                batch_recall = recall_at_k(batch_scores, batch_labels, k, return_per_sample=True)
+                batch_precision = precision_at_k(batch_scores, batch_labels, k, return_per_sample=True)
+                batch_hit = hit_at_k(batch_scores, batch_labels, k, return_per_sample=True)
+
+                # 转为CPU numpy并添加到列表（只在最后才传输到CPU）
+                all_metrics[f'NDCG@{k}'].extend(batch_ndcg.cpu().numpy().tolist())
+                all_metrics[f'Recall@{k}'].extend(batch_recall.cpu().numpy().tolist())
+                all_metrics[f'Precision@{k}'].extend(batch_precision.cpu().numpy().tolist())
+                all_metrics[f'Hit@{k}'].extend(batch_hit.cpu().numpy().tolist())
 
     else:
         # === full ranking模式：批量并行评估 ===
@@ -396,21 +398,19 @@ def evaluate_ranking_batched(
                         if item_id < num_items:
                             batch_scores[i, item_id] = float('-inf')
 
-            # 批量计算指标（这里可以进一步优化为完全向量化）
-            for i in range(current_batch_size):
-                for k in k_list:
-                    all_metrics[f'NDCG@{k}'].append(
-                        ndcg_at_k(batch_scores[i:i+1], batch_labels[i:i+1], k)
-                    )
-                    all_metrics[f'Recall@{k}'].append(
-                        recall_at_k(batch_scores[i:i+1], batch_labels[i:i+1], k)
-                    )
-                    all_metrics[f'Precision@{k}'].append(
-                        precision_at_k(batch_scores[i:i+1], batch_labels[i:i+1], k)
-                    )
-                    all_metrics[f'Hit@{k}'].append(
-                        hit_at_k(batch_scores[i:i+1], batch_labels[i:i+1], k)
-                    )
+            # 批量计算指标（完全向量化，无循环）
+            for k in k_list:
+                # 一次性计算整个batch的指标，返回 [batch_size] tensor
+                batch_ndcg = ndcg_at_k(batch_scores, batch_labels, k, return_per_sample=True)
+                batch_recall = recall_at_k(batch_scores, batch_labels, k, return_per_sample=True)
+                batch_precision = precision_at_k(batch_scores, batch_labels, k, return_per_sample=True)
+                batch_hit = hit_at_k(batch_scores, batch_labels, k, return_per_sample=True)
+
+                # 转为CPU numpy并添加到列表（只在最后才传输到CPU）
+                all_metrics[f'NDCG@{k}'].extend(batch_ndcg.cpu().numpy().tolist())
+                all_metrics[f'Recall@{k}'].extend(batch_recall.cpu().numpy().tolist())
+                all_metrics[f'Precision@{k}'].extend(batch_precision.cpu().numpy().tolist())
+                all_metrics[f'Hit@{k}'].extend(batch_hit.cpu().numpy().tolist())
 
     # 平均所有指标
     avg_metrics = {key: np.mean(values) if len(values) > 0 else 0.0
