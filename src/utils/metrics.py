@@ -60,7 +60,7 @@ def _dcg_at_k(labels: torch.Tensor) -> float:
     """计算DCG@K"""
     k = labels.size(0)
     gains = 2 ** labels.float() - 1
-    discounts = torch.log2(torch.arange(2, k + 2, dtype=torch.float))
+    discounts = torch.log2(torch.arange(2, k + 2, dtype=torch.float, device=labels.device))
     return (gains / discounts).sum().item()
 
 
@@ -307,10 +307,11 @@ def evaluate_ranking_batched(
                 batch_pos_items.append(pos_item)
                 batch_neg_items.append(neg_items)
 
-            # 转换为tensor
-            batch_user_ids = torch.tensor(batch_user_ids, device=device)
-            batch_pos_items = torch.tensor(batch_pos_items, device=device)
-            batch_neg_items = torch.tensor(batch_neg_items, device=device)  # [batch, num_neg]
+            # 转换为tensor（优化：先转numpy再转tensor）
+            batch_user_ids = torch.tensor(batch_user_ids, dtype=torch.long, device=device)
+            batch_pos_items = torch.tensor(batch_pos_items, dtype=torch.long, device=device)
+            # 优化：先转numpy array再转tensor（避免list of arrays警告）
+            batch_neg_items = torch.from_numpy(np.array(batch_neg_items)).to(device)  # [batch, num_neg]
 
             # 批量获取embeddings
             batch_user_emb = user_emb[batch_user_ids]  # [batch, dim]
