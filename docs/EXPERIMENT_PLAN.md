@@ -111,8 +111,8 @@
 **实验设计**:
 - 选择3-4个传统图谱方法（从RecBole选择）
 - 每个方法分别在两种图谱上训练：
-  - **传统图谱**：RecBole原始metadata KG（genre, director, year等）
-  - **我们的图谱**：LLM提取的视觉知识图谱
+  - **Metadata-based KG**：从数据集原始metadata字段（genre, director, year等）构建的传统知识图谱
+  - **Visual KG (Ours)**：用我们的LLM方法从海报图像中提取的视觉知识图谱
 
 **候选方法**（从RecBole选择3-4个）:
 - [ ] KGAT
@@ -121,21 +121,21 @@
 - [ ] CKE
 
 **实验矩阵**:
-| 方法 | 传统图谱 NDCG@10 | 我们的图谱 NDCG@10 | 提升 |
-|------|------------------|-------------------|------|
+| 方法 | Metadata-based KG<br>NDCG@10 | Visual KG (Ours)<br>NDCG@10 | 提升 |
+|------|------------------------------|------------------------------|------|
 | KGAT | 0.2222 (已有) | 📝 待跑 | 📝 |
 | KGCN | 📝 待跑 | 📝 待跑 | 📝 |
 | KGIN | 📝 待跑 | 📝 待跑 | 📝 |
 | CKE | 📝 待跑 | 📝 待跑 | 📝 |
 
 **预期结果**:
-- 使用我们的图谱，传统方法都能获得提升
-- 但效果没有我们的方法（Ours-Full）用我们的图谱好
-- 证明：(1) 我们的图谱质量更高；(2) 我们的方法更好地利用了图谱
+- 使用Visual KG (Ours)，传统方法都能获得提升
+- 但效果没有我们的方法（Ours-Full）使用Visual KG好
+- 证明：(1) Visual KG质量更高；(2) 我们的方法更好地利用了知识图谱
 
 **待完成任务**:
 - [ ] 在RecBole中找到3-4个传统KG推荐方法
-- [ ] 准备"我们的图谱"的RecBole格式
+- [ ] 准备Visual KG (Ours)的RecBole格式
 - [ ] 对每个方法，分别用两种图谱训练（5 trials）
 - [ ] 记录和对比结果
 
@@ -297,12 +297,12 @@
 | KG-only | 0.2410±0.0097 | 0.4502±0.0132 | -11.0% | CF视图关键 |
 | CF-only | 0.2652±0.0006 | 0.4931±0.0020 | -2.0% | KG视图有效 |
 | **图谱有效性** |
-| KGAT + 传统KG | 0.2222±0.0019 | - | - | 基准 |
-| KGAT + 我们的KG | 📝 | 📝 | 📝 | 📝 |
-| KGCN + 传统KG | 📝 | 📝 | 📝 | 📝 |
-| KGCN + 我们的KG | 📝 | 📝 | 📝 | 📝 |
-| KGIN + 传统KG | 📝 | 📝 | 📝 | 📝 |
-| KGIN + 我们的KG | 📝 | 📝 | 📝 | 📝 |
+| KGAT + Metadata-based KG | 0.2222±0.0019 | - | - | 基准 |
+| KGAT + Visual KG (Ours) | 📝 | 📝 | 📝 | 📝 |
+| KGCN + Metadata-based KG | 📝 | 📝 | 📝 | 📝 |
+| KGCN + Visual KG (Ours) | 📝 | 📝 | 📝 | 📝 |
+| KGIN + Metadata-based KG | 📝 | 📝 | 📝 | 📝 |
+| KGIN + Visual KG (Ours) | 📝 | 📝 | 📝 | 📝 |
 
 ---
 
@@ -380,16 +380,16 @@
   - [ ] 测试运行（确保能跑通）
 
 - [ ] **准备两种图谱**
-  - [ ] 传统图谱：RecBole原始metadata（已有）
-  - [ ] 我们的图谱：LLM视觉知识图谱（转换格式）
+  - [ ] Metadata-based KG：从数据集metadata字段构建（已有）
+  - [ ] Visual KG (Ours)：用LLM从海报提取的视觉知识图谱（转换格式）
 
 - [ ] **运行对比实验（ML-1M）**
-  - [ ] KGAT + 传统KG（已有: 0.2222）
-  - [ ] KGAT + 我们的KG (5 trials)
-  - [ ] KGCN + 传统KG (5 trials)
-  - [ ] KGCN + 我们的KG (5 trials)
-  - [ ] KGIN + 传统KG (5 trials)
-  - [ ] KGIN + 我们的KG (5 trials)
+  - [ ] KGAT + Metadata-based KG（已有: 0.2222）
+  - [ ] KGAT + Visual KG (Ours) (5 trials)
+  - [ ] KGCN + Metadata-based KG (5 trials)
+  - [ ] KGCN + Visual KG (Ours) (5 trials)
+  - [ ] KGIN + Metadata-based KG (5 trials)
+  - [ ] KGIN + Visual KG (Ours) (5 trials)
   - [ ] 其他方法...
 
 - [ ] **分析和可视化**

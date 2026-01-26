@@ -395,9 +395,9 @@
 - Recall@5: 0.0887 ± 0.0011
 
 **vs BPR**: +1.2% (NDCG@10)
-**KG来源**: RecBole原始metadata KG（genre, director, year等）
+**KG来源**: Metadata-based KG（从数据集原始metadata字段如genre, director, year构建）
 **评估方法**: 从5个checkpoint重新评估（因Trial 2&3日志丢失）
-**结论**: 传统metadata KG带来的提升很小（仅1.2%），证明了我们LLM视觉KG的必要性
+**结论**: Metadata-based KG带来的提升很小（仅1.2%），证明了我们Visual KG (LLM从海报提取)的必要性
 
 #### **MKGAT (Multimodal KG + Visual Features, uni100, 5 trials)** ✅ 完成（2026-01-18）
 **关键指标**：

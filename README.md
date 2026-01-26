@@ -37,6 +37,7 @@
   - 3,900 电影
   - 1,000,209 评分
   - 5-core 过滤后：~3,700 电影，~900K 评分
+  - **原始metadata字段**：title, genres (18类), release_year
 
 - **海报数据**：
   - 来源：[@11Li11](https://github.com/11Li11/Li/tree/master/ml-1m)
@@ -47,12 +48,16 @@
 data/raw/ml-1m/
 ├── ratings.dat          # 评分记录
 ├── users.dat            # 用户信息
-├── movies.dat           # 电影信息
+├── movies.dat           # 电影信息（包含genres等metadata字段）
 └── posters/             # 海报图片
     ├── 1.jpg
     ├── 2.jpg
     └── ...
 ```
+
+**说明**：
+- **Metadata-based KG**：传统方法从`movies.dat`的genres等字段构建知识图谱
+- **Visual KG (Ours)**：我们的方法用LLM从`posters/`中提取细粒度视觉知识图谱
 
 ---
 
