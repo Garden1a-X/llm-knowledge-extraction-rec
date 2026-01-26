@@ -10,6 +10,7 @@ import numpy as np
 import random
 from typing import List, Dict, Union
 import logging
+from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
@@ -237,7 +238,12 @@ def evaluate_ranking(
         random.seed(seed)
         np.random.seed(seed)
 
-    for user_id, test_items in test_user_items.items():
+    # 添加进度条（uni100模式下评估较慢）
+    user_items_iter = test_user_items.items()
+    if mode == 'uni100':
+        user_items_iter = tqdm(user_items_iter, desc="Evaluating", total=len(test_user_items))
+
+    for user_id, test_items in user_items_iter:
         if user_id >= user_emb.size(0):
             continue
 
@@ -254,15 +260,17 @@ def evaluate_ranking(
             if val_user_items is not None:
                 excluded_items.update(val_user_items.get(user_id, []))
 
-            # 候选负样本池
-            candidate_items = [i for i in range(num_items) if i not in excluded_items]
+            # 候选负样本池 (优化：用 numpy 数组更快)
+            all_items = np.arange(num_items)
+            excluded_array = np.array(list(excluded_items))
+            candidate_items = np.setdiff1d(all_items, excluded_array)
             if len(candidate_items) < num_neg:
                 continue  # 候选池不够，跳过这个用户
 
             # 对每个测试集物品分别评估
             for pos_item in test_items:
-                # 随机采样 num_neg 个负样本
-                neg_items = random.sample(candidate_items, num_neg)
+                # 随机采样 num_neg 个负样本 (使用numpy更快)
+                neg_items = np.random.choice(candidate_items, size=num_neg, replace=False).tolist()
 
                 # 构建候选集：1 pos + num_neg neg
                 eval_items = [pos_item] + neg_items
