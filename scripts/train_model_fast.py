@@ -34,7 +34,7 @@ import string
 
 from src.data import KnowledgeGraphBuilder, compute_frequency_mask, split_data, create_dataloaders
 from src.model import KnowledgeEnhancedRecModel, RecommendationLoss
-from src.utils import load_config, evaluate_ranking
+from src.utils import load_config, evaluate_ranking_batched
 
 # 设置日志
 logging.basicConfig(
@@ -55,16 +55,17 @@ def generate_run_id(model_name, dataset_name):
 
 
 class AcceleratedTrainer:
-    """加速版训练器（混合精度 + 梯度累积）"""
+    """加速版训练器（混合精度 + 梯度累积 + 批量评估）"""
 
     def __init__(self, config, model, criterion, optimizer, device,
-                 use_amp=True, grad_accum_steps=1, use_compile=True):
+                 use_amp=True, grad_accum_steps=1, use_compile=True, eval_batch_size=512):
         self.config = config
         self.model = model
         self.criterion = criterion
         self.optimizer = optimizer
         self.device = device
         self.grad_accum_steps = grad_accum_steps
+        self.eval_batch_size = eval_batch_size  # 评估批量大小（A800可以设更大）
 
         # 混合精度训练
         self.use_amp = use_amp and torch.cuda.is_available()
@@ -132,6 +133,7 @@ class AcceleratedTrainer:
         if config.train.eval_mode == 'uni100':
             logger.info(f"  Num negatives: {config.train.eval_num_neg} (1 pos + {config.train.eval_num_neg} neg)")
         logger.info(f"  Eval every: {config.train.eval_every} epoch(s)")
+        logger.info(f"  Eval batch size: {eval_batch_size} (GPU并行评估)")
         logger.info(f"  Metrics: NDCG@[5,10,20], Recall@[5,10,20], Precision@[5,10,20], Hit@[5,10,20]")
         logger.info("="*80)
 
@@ -230,7 +232,7 @@ class AcceleratedTrainer:
 
     @torch.no_grad()
     def evaluate(self, val_loader, hetero_graph, cf_edge_index, test_user_items, train_user_items, val_user_items=None):
-        """评估模型（混合精度）
+        """评估模型（混合精度 + 批量并行评估）
 
         Args:
             val_user_items: 验证集用户物品（评估测试集时必须提供，用于排除）
@@ -243,7 +245,7 @@ class AcceleratedTrainer:
             user_emb = outputs['user_fused']
             item_emb = outputs['item_fused']
 
-        # 计算指标
+        # 计算指标（使用批量并行评估）
         eval_mode = self.config.train.eval_mode
         random_seed = self.config.train.random_seed
 
@@ -253,7 +255,7 @@ class AcceleratedTrainer:
         else:
             eval_num_neg = 99  # Default, not used in full mode
 
-        metrics = evaluate_ranking(
+        metrics = evaluate_ranking_batched(
             user_emb=user_emb,
             item_emb=item_emb,
             test_user_items=test_user_items,
@@ -263,7 +265,8 @@ class AcceleratedTrainer:
             exclude_train=True,
             mode=eval_mode,
             num_neg=eval_num_neg,
-            seed=random_seed
+            seed=random_seed,
+            batch_size=self.eval_batch_size  # 使用批量评估
         )
 
         return metrics
@@ -527,7 +530,8 @@ def main(args):
         config, model, criterion, optimizer, device,
         use_amp=args.use_amp,
         grad_accum_steps=args.grad_accum_steps,
-        use_compile=args.use_compile
+        use_compile=args.use_compile,
+        eval_batch_size=args.eval_batch_size
     )
 
     test_metrics = trainer.train(
@@ -558,6 +562,8 @@ if __name__ == '__main__':
                         help='Use torch.compile (default: True)')
     parser.add_argument('--no-compile', dest='use_compile', action='store_false',
                         help='Disable torch.compile')
+    parser.add_argument('--eval-batch-size', type=int, default=512,
+                        help='Batch size for evaluation (default: 512, A800 can handle 1024+)')
 
     args = parser.parse_args()
 

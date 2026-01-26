@@ -6,7 +6,8 @@ from .metrics import (
     precision_at_k,
     hit_at_k,
     evaluate_all_metrics,
-    evaluate_ranking
+    evaluate_ranking,
+    evaluate_ranking_batched
 )
 from .config import (
     DataConfig,
@@ -27,6 +28,7 @@ __all__ = [
     'hit_at_k',
     'evaluate_all_metrics',
     'evaluate_ranking',
+    'evaluate_ranking_batched',
     # Config
     'DataConfig',
     'ModelConfig',
