@@ -12,28 +12,28 @@ Total experiments: 5 (KGAT+Metadata already done, need to run 5 more)
 
 import os
 import sys
-import subprocess
 import json
 from pathlib import Path
 from datetime import datetime
 
-# 添加项目根目录到路径
-project_root = Path(__file__).parent.parent
-sys.path.append(str(project_root))
+# Add RecBole to path if needed
+try:
+    from recbole.quick_start import run_recbole
+except ImportError:
+    print("Error: RecBole not found. Please install RecBole first.")
+    sys.exit(1)
 
 
 class KGAblationRunner:
     def __init__(self):
-        # 数据路径
-        self.visual_kg_dir = "/data/xuao/llm-knowledge-extraction-rec/data/recbole/ml-1m"
-        self.metadata_kg_dir = "/data/xuao/KG4RecEval/dataset/ml-1m"
+        # 数据路径 - 注意：应该是基础路径，RecBole会自动找ml-1m子目录
+        self.visual_kg_dir = "/data/xuao/llm-knowledge-extraction-rec/data/recbole"
+        self.metadata_kg_dir = "/data/xuao/KG4RecEval/dataset"
 
         # 输出目录
+        project_root = Path(__file__).parent.parent
         self.output_dir = project_root / "outputs" / "kg_ablation"
         self.output_dir.mkdir(parents=True, exist_ok=True)
-
-        # run_baseline.py 脚本路径
-        self.run_baseline_script = project_root / "baselines" / "run_baseline.py"
 
         # 实验配置
         self.methods = ["KGAT", "KGCN", "KGIN"]
@@ -71,6 +71,83 @@ class KGAblationRunner:
         print(f"Already completed: {len(self.completed)}")
         print(f"{'='*80}\n")
 
+    def get_model_config(self, method):
+        """获取模型特定的配置参数"""
+        # 通用配置
+        base_config = {
+            # Data
+            'dataset': 'ml-1m',
+            'load_col': {
+                'inter': ['user_id', 'item_id', 'rating', 'timestamp'],
+                'kg': ['head_id', 'relation_id', 'tail_id'],
+                'link': ['item_id', 'entity_id']
+            },
+
+            # Data split (same as ours)
+            'eval_args': {
+                'split': {'RS': [0.7, 0.1, 0.2]},
+                'order': 'TO',
+                'group_by': 'user',
+                'mode': 'uni100'
+            },
+
+            # Evaluation metrics
+            'metrics': ['Recall', 'NDCG', 'Hit', 'Precision'],
+            'topk': [5, 10, 20],
+            'valid_metric': 'NDCG@10',
+
+            # Training
+            'epochs': 300,
+            'train_batch_size': 2048,
+            'learning_rate': 0.001,
+            'stopping_step': 10,
+
+            # Random seed
+            'seed': 42,
+
+            # Reproducibility
+            'reproducibility': True,
+            'state': 'INFO',
+            'show_progress': True,
+        }
+
+        # 模型特定参数
+        if method == "KGAT":
+            model_config = {
+                'embedding_size': 64,
+                'kg_embedding_size': 64,
+                'reg_weight': 0.0001,
+                'aggregator_type': 'bi-interaction',
+                'n_layers': 2,
+                'mess_dropout': 0.1,
+            }
+        elif method == "KGCN":
+            model_config = {
+                'embedding_size': 64,
+                'kg_embedding_size': 64,
+                'reg_weight': 0.0001,
+                'neighbor_sample_size': 8,
+                'n_iter': 1,
+                'aggregator': 'sum',
+            }
+        elif method == "KGIN":
+            model_config = {
+                'embedding_size': 64,
+                'kg_embedding_size': 64,
+                'reg_weight': 0.0001,
+                'n_layers': 3,
+                'context_hops': 3,
+                'node_dropout': 0.1,
+                'mess_dropout': 0.1,
+                'ind': 'distance',
+            }
+        else:
+            model_config = {}
+
+        # 合并配置
+        base_config.update(model_config)
+        return base_config
+
     def run_experiment(self, method, kg_type):
         """运行单个实验"""
         print(f"\n{'='*80}")
@@ -87,78 +164,66 @@ class KGAblationRunner:
         exp_output_dir = self.output_dir / f"{method}_{kg_type}"
         exp_output_dir.mkdir(parents=True, exist_ok=True)
 
-        # 构建命令 - 仿照KGAT的跑法
-        cmd = [
-            "python",
-            str(self.run_baseline_script),
-            "--model", method,
-            "--dataset", "ml-1m",
-            "--data_path", data_path,
-            "--output_dir", str(exp_output_dir),
-            "--device", "cuda",
-            "--use_kg",  # 所有KG方法都需要这个flag
-            "--seed", "42",  # 只跑1个trial，用seed=42
-            "--epochs", "300"
-        ]
+        # 获取模型配置
+        config_dict = self.get_model_config(method)
 
-        print(f"Command: {' '.join(cmd)}\n")
+        # 添加路径配置
+        config_dict['data_path'] = data_path
+        config_dict['checkpoint_dir'] = str(exp_output_dir / 'checkpoints')
+
+        print(f"Data path: {data_path}")
+        print(f"Output directory: {exp_output_dir}")
+        print(f"Evaluation mode: uni100")
+        print()
 
         # 运行实验
-        log_file = exp_output_dir / "run.log"
         try:
-            with open(log_file, 'w') as f:
-                result = subprocess.run(
-                    cmd,
-                    stdout=f,
-                    stderr=subprocess.STDOUT,
-                    text=True,
-                    check=False
-                )
+            result = run_recbole(
+                model=method,
+                dataset='ml-1m',
+                config_dict=config_dict,
+                saved=True
+            )
 
-            if result.returncode == 0:
-                print(f"✅ {method} + {kg_type} KG completed successfully")
-                return True
+            # 解析结果
+            if isinstance(result, tuple) and len(result) == 2:
+                best_valid_score, test_result = result
+                result_dict = {
+                    'best_valid_score': float(best_valid_score) if best_valid_score is not None else None,
+                    'test_result': test_result
+                }
+            elif isinstance(result, dict):
+                if 'test_result' not in result:
+                    result_dict = {'test_result': result}
+                else:
+                    result_dict = result
             else:
-                print(f"❌ {method} + {kg_type} KG failed with return code {result.returncode}")
-                print(f"   Check log: {log_file}")
-                return False
+                result_dict = {'test_result': result}
 
-        except Exception as e:
-            print(f"❌ Error running {method} + {kg_type} KG: {e}")
-            return False
+            # 保存结果
+            results_path = exp_output_dir / 'results.json'
+            with open(results_path, 'w') as f:
+                json.dump(result_dict, f, indent=2, default=str)
 
-    def parse_results(self, method, kg_type):
-        """解析实验结果"""
-        exp_output_dir = self.output_dir / f"{method}_{kg_type}"
+            print(f"\n✅ {method} + {kg_type} KG completed successfully")
+            print(f"Results saved to: {results_path}")
 
-        # 查找最新的results.json文件
-        result_files = list(exp_output_dir.glob("*/results.json"))
-
-        if not result_files:
-            return None
-
-        # 使用最新的结果文件
-        latest_result_file = sorted(result_files, key=lambda x: x.stat().st_mtime)[-1]
-
-        try:
-            with open(latest_result_file, 'r') as f:
-                data = json.load(f)
-
-            # 提取test_result
-            test_result = data.get('test_result', {})
-
-            if test_result:
-                # 标准化指标名称（小写）
+            # 返回标准化的结果
+            test_result = result_dict.get('test_result', {})
+            if isinstance(test_result, dict):
                 normalized = {}
                 for key, value in test_result.items():
                     normalized[key.lower()] = value
-
                 return normalized
 
-        except Exception as e:
-            print(f"Warning: Failed to parse results for {method} + {kg_type}: {e}")
+            return None
 
-        return None
+        except Exception as e:
+            print(f"\n❌ {method} + {kg_type} KG failed!")
+            print(f"Error: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
 
     def run_all(self):
         """运行所有实验"""
@@ -179,18 +244,14 @@ class KGAblationRunner:
             print(f"Experiment [{i}/{len(self.experiments)}]")
             print(f"{'='*80}")
 
-            success = self.run_experiment(method, kg_type)
+            exp_results = self.run_experiment(method, kg_type)
 
-            if success:
-                # 解析结果
-                exp_results = self.parse_results(method, kg_type)
-
-                if exp_results:
-                    if method not in results:
-                        results[method] = {}
-                    results[method][kg_type] = exp_results
-                else:
-                    print(f"⚠️  Could not parse results for {method} + {kg_type}")
+            if exp_results:
+                if method not in results:
+                    results[method] = {}
+                results[method][kg_type] = exp_results
+            else:
+                print(f"⚠️  Experiment failed or could not parse results")
 
         # 保存汇总结果
         summary_file = self.output_dir / "kg_ablation_summary.json"
@@ -267,12 +328,15 @@ def main():
     runner = KGAblationRunner()
 
     # 检查数据目录是否存在
-    if not Path(runner.visual_kg_dir).exists():
-        print(f"❌ Visual KG directory not found: {runner.visual_kg_dir}")
+    visual_data_dir = Path(runner.visual_kg_dir) / "ml-1m"
+    metadata_data_dir = Path(runner.metadata_kg_dir) / "ml-1m"
+
+    if not visual_data_dir.exists():
+        print(f"❌ Visual KG directory not found: {visual_data_dir}")
         return
 
-    if not Path(runner.metadata_kg_dir).exists():
-        print(f"❌ Metadata KG directory not found: {runner.metadata_kg_dir}")
+    if not metadata_data_dir.exists():
+        print(f"❌ Metadata KG directory not found: {metadata_data_dir}")
         return
 
     if args.dry_run:
