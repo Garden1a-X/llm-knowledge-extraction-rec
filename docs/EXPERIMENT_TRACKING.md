@@ -469,13 +469,15 @@
 | TALLRec | - | - | - | ⏸️ 待运行 |
 | MLLM MSR | - | - | - | ⏸️ 待运行 |
 | **Ours** 💡 |
-| **Ours-Full** | - | - | - | ⏸️ 待运行 |
+| **Ours-Full** | 0.3619 ± 0.0069 | 0.5766 ± 0.0074 | **+4.8%** | ✅ 完成 |
 
 **关键发现**（Video Games数据集）：
-- ✅ **LightGCN表现最好**：NDCG@10 = 0.3767（+9.1% vs BPR）
+- ✅ **LightGCN表现最好**：NDCG@10 = 0.3767（+9.1% vs BPR）🏆
+- ✅ **Ours-Full次之**：NDCG@10 = 0.3619（+4.8% vs BPR，但-3.9% vs LightGCN）
+- ✅ **KGAT第三**：NDCG@10 = 0.3532（+2.3% vs BPR）
 - ⚠️ **MKGAT表现不佳**：NDCG@10 = 0.3354（-2.9% vs BPR），低于BPR baseline
-- ✅ **KGAT轻微提升**：+2.3% vs BPR
 - 📊 **与ML-1M对比**：Video Games的所有方法分数普遍更高（BPR: 0.3453 vs 0.2196）
+- ⚠️ **Ours-Full在Video Games上未超过LightGCN**：与ML-1M形成对比（ML-1M上Ours超越所有baseline +18%）
 
 ---
 
