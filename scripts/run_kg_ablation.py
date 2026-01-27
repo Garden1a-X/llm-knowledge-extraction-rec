@@ -36,13 +36,23 @@ class KGAblationRunner:
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         # 实验配置
-        self.methods = ["KGAT", "KGCN", "KGIN"]
+        # 注意：KGIN有scipy兼容性问题，用CKE替代
+        self.methods = ["KGAT", "KGCN", "CKE"]
 
-        # KGAT + Metadata 已完成，NDCG@10 = 0.2222
+        # 已完成的实验
         self.completed = {
             ("KGAT", "metadata"): {
                 "ndcg@10": 0.2222,
                 "recall@10": 0.1518
+            },
+            # KGCN已完成
+            ("KGCN", "metadata"): {
+                "ndcg@10": 0.2104,
+                "recall@10": 0.1402
+            },
+            ("KGCN", "visual"): {
+                "ndcg@10": 0.2124,
+                "recall@10": 0.1406
             }
         }
 
@@ -51,13 +61,9 @@ class KGAblationRunner:
             # KGAT with Visual KG (metadata already done)
             {"method": "KGAT", "kg_type": "visual"},
 
-            # KGCN with both KGs
-            {"method": "KGCN", "kg_type": "metadata"},
-            {"method": "KGCN", "kg_type": "visual"},
-
-            # KGIN with both KGs
-            {"method": "KGIN", "kg_type": "metadata"},
-            {"method": "KGIN", "kg_type": "visual"},
+            # CKE with both KGs (替代KGIN，因为KGIN有scipy兼容性问题)
+            {"method": "CKE", "kg_type": "metadata"},
+            {"method": "CKE", "kg_type": "visual"},
         ]
 
         print(f"\n{'='*80}")
@@ -117,7 +123,7 @@ class KGAblationRunner:
                 'embedding_size': 64,
                 'kg_embedding_size': 64,
                 'reg_weight': 0.0001,
-                'aggregator_type': 'bi-interaction',
+                'aggregator_type': 'gcn',  # Changed from 'bi-interaction' to avoid NotImplementedError
                 'n_layers': 2,
                 'mess_dropout': 0.1,
             }
@@ -130,16 +136,12 @@ class KGAblationRunner:
                 'n_iter': 1,
                 'aggregator': 'sum',
             }
-        elif method == "KGIN":
+        elif method == "CKE":
+            # CKE替代KGIN（KGIN有scipy兼容性问题）
             model_config = {
                 'embedding_size': 64,
                 'kg_embedding_size': 64,
                 'reg_weight': 0.0001,
-                'n_layers': 3,
-                'context_hops': 3,
-                'node_dropout': 0.1,
-                'mess_dropout': 0.1,
-                'ind': 'distance',
             }
         else:
             model_config = {}

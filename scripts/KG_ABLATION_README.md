@@ -11,7 +11,7 @@
 ### 方法
 1. **KGAT** - Knowledge Graph Attention Network
 2. **KGCN** - Knowledge Graph Convolutional Networks
-3. **KGIN** - Knowledge Graph-based Intent Network
+3. **CKE** - Collaborative Knowledge Base Embedding (替代KGIN，因为KGIN有scipy兼容性问题)
 
 ### 图谱类型
 1. **Metadata-based KG**: 从数据集原始metadata字段构建（genre, director, year等）
@@ -25,10 +25,12 @@
 | 方法 | Metadata-based KG | Visual KG (Ours) |
 |------|-------------------|------------------|
 | KGAT | ✅ 已完成 (0.2222) | 📝 待跑 |
-| KGCN | 📝 待跑 | 📝 待跑 |
-| KGIN | 📝 待跑 | 📝 待跑 |
+| KGCN | ✅ 已完成 (0.2104) | ✅ 已完成 (0.2124, +0.95%) |
+| CKE | 📝 待跑 | 📝 待跑 |
 
-**总计**: 5个实验需要运行
+**总计**: 3个实验需要运行（KGAT+visual, CKE+metadata, CKE+visual）
+
+**注意**: KGIN因scipy版本兼容性问题（`dok_matrix._update`在scipy 1.11+被移除）无法运行，改用CKE替代。
 
 ## 使用方法
 
