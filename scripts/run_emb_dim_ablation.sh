@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run embedding dimension ablation experiments (5 trials each)
+# Run embedding dimension ablation experiments (1 trial each, seed=42)
 # Usage: ./scripts/run_emb_dim_ablation.sh [dim]
 #   dim: 32, 128, 256, or all (default: all)
 #
@@ -17,19 +17,26 @@ echo "============================================================"
 echo "Embedding Dimension Ablation Study"
 echo "============================================================"
 echo "Dimensions to run: $DIM"
-echo "Each dimension will run 5 trials (seeds: 42, 2023, 2024, 2025, 12345)"
+echo "Seed: 42 (single trial)"
 echo "============================================================"
 echo ""
 
 run_dim() {
     local dim=$1
+    local config="configs/ours_dim${dim}.yaml"
+
     echo ""
     echo "############################################################"
-    echo "# Running dim=$dim (5 trials)"
+    echo "# Running dim=$dim"
     echo "############################################################"
     echo ""
 
-    ./scripts/run_ours_5_trials.sh "ours_dim${dim}"
+    if [ ! -f "$config" ]; then
+        echo "Error: Config file $config not found!"
+        return 1
+    fi
+
+    python scripts/train_model_fast.py --config "$config"
 }
 
 if [ "$DIM" == "all" ]; then
@@ -51,11 +58,11 @@ echo "============================================================"
 echo "Embedding Dimension Ablation Complete!"
 echo "============================================================"
 echo ""
-echo "Summary of experiments:"
-echo "  - dim=32:  configs/ours_dim32.yaml"
-echo "  - dim=64:  (baseline, use ours_full results)"
-echo "  - dim=128: configs/ours_dim128.yaml"
-echo "  - dim=256: configs/ours_dim256.yaml"
-echo ""
-echo "Results saved to: outputs/ours_trials/"
+echo "Expected results table:"
+echo "  | dim |  NDCG@10  | vs dim=64 |"
+echo "  |-----|-----------|-----------|"
+echo "  |  32 |    ???    |    ???    |"
+echo "  |  64 |   0.2707  |     -     | (baseline)"
+echo "  | 128 |    ???    |    ???    |"
+echo "  | 256 |    ???    |    ???    |"
 echo "============================================================"
