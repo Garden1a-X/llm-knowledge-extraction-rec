@@ -52,7 +52,14 @@ def load_item_mapping(mapping_file: Path) -> tuple:
     """Load item mapping (ASIN <-> RecBole ID)."""
     with open(mapping_file, 'r') as f:
         data = json.load(f)
-    return data['recbole_to_original'], data['original_to_recbole']
+
+    # Format: id_mappings['item']['original_to_recbole']
+    original_to_recbole = data['item']['original_to_recbole']
+
+    # Build reverse mapping
+    recbole_to_original = {v: k for k, v in original_to_recbole.items()}
+
+    return recbole_to_original, original_to_recbole
 
 
 def load_phase1_ids(phase1_file: Path) -> Set[int]:
@@ -489,7 +496,7 @@ def main():
     completed_count = 0
 
     def extract_single_item(recbole_id):
-        asin = recbole_to_asin[str(recbole_id)]
+        asin = recbole_to_asin.get(recbole_id) or recbole_to_asin.get(str(recbole_id))
         meta = metadata.get(asin, {})
         title = meta.get('title', f'Product_{asin}')
         categories = '|'.join(meta.get('category', ['Unknown']))
