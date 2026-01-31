@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-Phase 2: Beauty Constrained Knowledge Extraction
+Phase 2: Beauty Constrained Knowledge Extraction with NEW_ Mechanism
 
-Extract visual knowledge using the predefined 9-relation vocabulary.
-Entities are post-processed through mapping functions to standard vocabulary.
+Extract visual knowledge using predefined vocabulary.
+- Relations: MUST use one of the 9 predefined relations
+- Entities: MUST use standard entities OR mark with NEW_ prefix
 
 Usage:
     python scripts/beauty_phase2_extraction.py \
         --metadata data/recbole/amazon-beauty/filtered_metadata.json \
         --mapping data/recbole/amazon-beauty/id_mappings.json \
         --images_dir /path/to/beauty/images \
-        --relation_vocab data/beauty_relation_vocabulary.json \
-        --entity_vocab data/beauty_entity_vocabulary.json \
+        --vocabulary data/beauty_entity_vocabulary.json \
         --api_key YOUR_KEY \
         --base_url YOUR_URL \
         --output results/beauty/phase2_results.json \
@@ -35,49 +35,8 @@ import threading
 
 from src.extraction.mllm_interface import create_mllm
 
-# Import entity mapping functions
-from beauty_entity_mapping import map_to_standard_entity, normalize_entity
 
-
-def parse_json_response(response: str) -> List[Dict]:
-    """
-    Parse JSON from MLLM response, handling various formats.
-    """
-    # Try direct parse first
-    try:
-        return json.loads(response)
-    except json.JSONDecodeError:
-        pass
-
-    # Try extracting from markdown code block
-    code_block_pattern = r'```(?:json)?\s*(\[.*?\])\s*```'
-    match = re.search(code_block_pattern, response, re.DOTALL)
-    if match:
-        try:
-            return json.loads(match.group(1))
-        except json.JSONDecodeError:
-            pass
-
-    # Try finding JSON array in text
-    array_pattern = r'\[\s*\{.*?\}\s*\]'
-    match = re.search(array_pattern, response, re.DOTALL)
-    if match:
-        try:
-            return json.loads(match.group(0))
-        except json.JSONDecodeError:
-            pass
-
-    # If all fails, raise original error
-    raise json.JSONDecodeError("Could not parse JSON from response", response, 0)
-
-
-def load_relation_vocabulary(vocab_file: Path) -> Dict:
-    """Load the relation vocabulary."""
-    with open(vocab_file, 'r') as f:
-        return json.load(f)
-
-
-def load_entity_vocabulary(vocab_file: Path) -> Dict:
+def load_vocabulary(vocab_file: Path) -> Dict:
     """Load the entity vocabulary."""
     with open(vocab_file, 'r') as f:
         return json.load(f)
@@ -89,7 +48,7 @@ def load_beauty_metadata(metadata_file: Path) -> Dict:
         return json.load(f)
 
 
-def load_item_mapping(mapping_file: Path) -> Dict:
+def load_item_mapping(mapping_file: Path) -> tuple:
     """Load item mapping (ASIN <-> RecBole ID)."""
     with open(mapping_file, 'r') as f:
         data = json.load(f)
@@ -102,11 +61,10 @@ def load_phase1_ids(phase1_file: Path) -> Set[int]:
         return set()
     with open(phase1_file, 'r') as f:
         data = json.load(f)
-    phase1_ids = {r['recbole_id'] for r in data.get('results', [])}
-    return phase1_ids
+    return {r['recbole_id'] for r in data.get('results', [])}
 
 
-def load_existing_results(result_file: Path) -> tuple[Dict, Set[int]]:
+def load_existing_results(result_file: Path) -> tuple:
     """Load existing extraction results to skip already processed items."""
     if not result_file.exists():
         return None, set()
@@ -114,7 +72,6 @@ def load_existing_results(result_file: Path) -> tuple[Dict, Set[int]]:
     with open(result_file, 'r') as f:
         data = json.load(f)
 
-    # Get IDs that were successfully extracted
     processed_ids = {
         r['recbole_id'] for r in data.get('results', [])
         if r.get('status') == 'success'
@@ -123,7 +80,7 @@ def load_existing_results(result_file: Path) -> tuple[Dict, Set[int]]:
     return data, processed_ids
 
 
-def save_results(output_file: Path, config: Dict, results: List[Dict]):
+def save_results(output_file: Path, config: Dict, results: List[Dict], vocab_stats: Dict = None):
     """Save extraction results to JSON file."""
     output_data = {
         'phase': 'phase2_constrained',
@@ -133,128 +90,210 @@ def save_results(output_file: Path, config: Dict, results: List[Dict]):
         'timestamp': datetime.now().isoformat()
     }
 
-    # Write atomically
+    if vocab_stats:
+        output_data['vocabulary_stats'] = vocab_stats
+
     temp_file = output_file.with_suffix('.tmp.json')
     with open(temp_file, 'w') as f:
         json.dump(output_data, f, indent=2)
-
     temp_file.replace(output_file)
 
 
-def create_constrained_extraction_prompt(
-    title: str,
-    categories: str,
-    relations: List[Dict]
-) -> str:
+def create_system_prompt(vocabulary: Dict) -> str:
     """
-    Create extraction prompt with predefined relation vocabulary.
+    Create system prompt with full vocabulary listing and NEW_ mechanism.
     """
-    # Format relation list for prompt
-    relation_list = []
-    for i, rel in enumerate(relations, 1):
-        relation_list.append(
-            f"{i}. **{rel['relation']}**: {rel['description']}"
-        )
-    relation_text = "\n".join(relation_list)
+    relations = vocabulary['relations']
+    total_entities = sum(len(r['standard_entities']) for r in relations.values())
 
-    prompt = f"""You are a beauty product expert analyzing product images (cosmetics, skincare, haircare, etc.).
+    # Build vocabulary description
+    vocab_str = "═══════════════════════════════════════════════════════════════\n"
+    vocab_str += f"APPROVED VOCABULARY ({len(relations)} Relations, {total_entities} Standard Entities)\n"
+    vocab_str += "═══════════════════════════════════════════════════════════════\n\n"
+
+    for idx, (relation, info) in enumerate(relations.items(), 1):
+        entities = info['standard_entities']
+        vocab_str += f"【Relation {idx}: {relation}】\n"
+        vocab_str += f"Description: {info['description']}\n"
+        vocab_str += f"Standard Entities ({len(entities)} total):\n"
+        for entity in entities:
+            vocab_str += f"  - {entity}\n"
+        vocab_str += "\n"
+
+    return f"""You are an expert in analyzing beauty product images and extracting visual knowledge for a recommendation system.
+
+Your task is to analyze product images and extract visual knowledge points using ONLY the approved vocabulary below.
+
+{vocab_str}═══════════════════════════════════════════════════════════════
+NEW ENTITY MECHANISM
+═══════════════════════════════════════════════════════════════
+
+If you observe an important visual feature that CANNOT be described by any of the {total_entities} standard entities listed above, you MUST mark it as NEW_entity_name.
+
+⚠️ MANDATORY: If an entity is NOT in the standard list, you MUST add the NEW_ prefix!
+
+Guidelines for NEW entities:
+✅ Use snake_case naming (e.g., NEW_rose_gold, NEW_holographic)
+✅ Keep it CONCISE (1-3 words maximum)
+✅ Make it ABSTRACT and GENERALIZABLE (could apply to multiple products)
+✅ ALWAYS check if the entity exists in the standard list first
+❌ Do NOT create overly specific descriptions
+❌ Do NOT use an entity that's not in the list WITHOUT the NEW_ prefix
+
+═══════════════════════════════════════════════════════════════
+CRITICAL RULES
+═══════════════════════════════════════════════════════════════
+
+1. Relations: MUST use one of the {len(relations)} relations listed above
+   ❌ NEVER create new relations
+   ✅ If unsure where an entity belongs, use "additional_property"
+
+2. Entities: MUST come from the EXACT relation's entity list OR use NEW_ prefix
+   ⚠️ Each relation has its OWN entity list. You MUST:
+      - First choose the relation
+      - Then check if your desired entity is in THAT relation's list
+      - ✅ If found in the list → use it directly
+      - ✅ If NOT found in the list → use NEW_entity_name format
+      - ❌ NEVER use an entity that's not in the list WITHOUT the NEW_ prefix
+
+3. Quantity: Extract 5-10 knowledge points per product image
+   ✅ Select the MOST visually significant features
+   ✅ Quality over quantity - only extract what you clearly see
+
+4. Focus: Extract ONLY what you can SEE in the image
+   ✅ Visual characteristics only (colors, textures, packaging, etc.)
+   ❌ No assumptions about ingredients, brand reputation, or product performance"""
+
+
+def create_user_prompt(title: str, categories: str) -> str:
+    """Create user prompt for extraction."""
+    return f"""Analyze this beauty product image.
 
 **Product Information:**
 - Title: {title}
 - Categories: {categories}
 
-**Task:** Extract visual knowledge from the product image using ONLY the predefined relation types below.
+Extract visual knowledge points using the approved vocabulary.
 
-**Predefined Relation Types:**
-{relation_text}
+## STEP 1: Draft Extraction
+First, list the visual knowledge points you observe:
 
-**Important Guidelines:**
-- Only extract what you can SEE in the image
-- Use ONLY the relation types listed above (no custom relations)
-- Use GENERAL descriptive terms for entities (e.g., "pink" not "coral_reef_sunset_pink")
-- Focus on TYPE/CATEGORY rather than specific details (e.g., "lip_product" not "MAC_Ruby_Woo")
-- Describe visual characteristics that could be shared across multiple products
-- Extract 3-8 knowledge points per image
-- If a visual aspect doesn't fit any relation, use "additional_property"
+## STEP 2: Self-Review
+For EACH knowledge point, check:
+1. ✓ Is the relation in the 9 approved relations?
+2. ✓ Is the entity in that relation's standard entity list?
+3. ✓ If entity NOT in the list, did I add NEW_ prefix?
 
-**Output Format:**
-Provide a JSON list of knowledge points, each with:
-- relation: MUST be one of the 9 predefined relations above
-- entity: General descriptive term (e.g., "pink", "matte", "tube", "high_end")
+## STEP 3: Final Output
+After review, output ONLY the corrected knowledge points below this line:
+--- FINAL ---
+<relation>: <entity>
+(one per line, 5-10 knowledge points)
 
-Example:
-[
-  {{"relation": "product_type", "entity": "lipstick"}},
-  {{"relation": "has_color", "entity": "red"}},
-  {{"relation": "finish_type", "entity": "matte"}},
-  {{"relation": "packaging", "entity": "tube"}},
-  {{"relation": "brand_aesthetic", "entity": "luxury"}}
-]
-
-**Output only the JSON array, nothing else.**"""
-
-    return prompt
+Now proceed:"""
 
 
-def filter_and_map_entities(
-    knowledge_points: List[Dict],
-    entity_vocab: Dict,
-    allowed_relations: Set[str]
-) -> tuple[List[Dict], List[Dict]]:
-    """
-    Filter knowledge points and map entities to standard vocabulary.
+def parse_extraction_output(output: str) -> List[Dict[str, str]]:
+    """Parse LLM output into structured knowledge points."""
+    knowledge_points = []
 
-    Returns:
-        (filtered_kps, unmapped_kps): Filtered/mapped KPs and unmapped KPs
-    """
-    filtered = []
-    unmapped = []
+    output = output.replace('```', '')
 
-    for kp in knowledge_points:
-        relation = kp.get('relation', '')
-        entity = kp.get('entity', '')
+    # Extract only after "--- FINAL ---" if present
+    if '--- FINAL ---' in output:
+        parts = output.split('--- FINAL ---')
+        if len(parts) > 1:
+            output = parts[-1]
 
-        # Check if relation is allowed
-        if relation not in allowed_relations:
-            unmapped.append({
-                'relation': relation,
-                'entity': entity,
-                'reason': 'invalid_relation'
-            })
+    for line in output.strip().split('\n'):
+        line = line.strip()
+
+        if not line or line.startswith('#') or line.startswith('//'):
+            continue
+        if line.startswith('##') or line.upper().startswith('STEP'):
             continue
 
-        # Map entity to standard vocabulary
-        mapped_entity = map_to_standard_entity(entity, relation)
+        if ':' in line:
+            parts = line.split(':', 1)
+            if len(parts) == 2:
+                relation = parts[0].strip()
+                entity = parts[1].strip()
 
-        # Verify entity exists in vocabulary
-        if relation in entity_vocab['relations']:
-            valid_entities = set(entity_vocab['relations'][relation]['standard_entities'])
-            if mapped_entity in valid_entities:
-                filtered.append({
-                    'relation': relation,
-                    'entity': mapped_entity,
-                    'original_entity': entity if entity != mapped_entity else None
-                })
-            else:
-                unmapped.append({
+                # Remove numbering
+                relation = re.sub(r'^\d+[\.)]\s*', '', relation)
+                entity = re.sub(r'^\d+[\.)]\s*', '', entity)
+
+                if relation and entity:
+                    knowledge_points.append({
+                        'relation': relation,
+                        'entity': entity
+                    })
+
+    return knowledge_points
+
+
+def calculate_coverage_stats(results: List[Dict], vocabulary: Dict) -> Dict:
+    """Calculate vocabulary coverage statistics."""
+    total_kps = 0
+    new_kps = 0
+    invalid_kps = 0
+    new_entities = []
+    invalid_entities = []
+
+    valid_relations = set(vocabulary['relations'].keys())
+
+    for result in results:
+        if result.get('status') != 'success':
+            continue
+
+        for kp in result.get('knowledge_points', []):
+            total_kps += 1
+            relation = kp['relation']
+            entity = kp['entity']
+
+            if entity.startswith('NEW_'):
+                new_kps += 1
+                new_entities.append({
                     'relation': relation,
                     'entity': entity,
-                    'mapped_entity': mapped_entity,
-                    'reason': 'entity_not_in_vocab'
+                    'recbole_id': result['recbole_id']
                 })
-        else:
-            unmapped.append({
-                'relation': relation,
-                'entity': entity,
-                'reason': 'relation_not_in_vocab'
-            })
+            else:
+                # Validate
+                if relation in valid_relations:
+                    valid_entities = set(vocabulary['relations'][relation]['standard_entities'])
+                    if entity not in valid_entities:
+                        invalid_kps += 1
+                        invalid_entities.append({
+                            'relation': relation,
+                            'entity': entity,
+                            'recbole_id': result['recbole_id'],
+                            'reason': f'Entity not in vocabulary'
+                        })
+                else:
+                    invalid_kps += 1
+                    invalid_entities.append({
+                        'relation': relation,
+                        'entity': entity,
+                        'recbole_id': result['recbole_id'],
+                        'reason': f'Invalid relation'
+                    })
 
-    # Clean up filtered results (remove None original_entity)
-    for kp in filtered:
-        if kp.get('original_entity') is None:
-            del kp['original_entity']
+    valid_kps = total_kps - new_kps - invalid_kps
+    coverage_rate = valid_kps / total_kps if total_kps > 0 else 0.0
 
-    return filtered, unmapped
+    return {
+        'total_knowledge_points': total_kps,
+        'valid_entities': valid_kps,
+        'new_entities_count': new_kps,
+        'invalid_entities_count': invalid_kps,
+        'coverage_rate': coverage_rate,
+        'coverage_percentage': coverage_rate * 100,
+        'new_entities': new_entities,
+        'invalid_entities': invalid_entities[:50],  # Limit to first 50
+        'target_coverage': 90.0,
+        'meets_target': coverage_rate >= 0.90
+    }
 
 
 def extract_product_knowledge(
@@ -263,60 +302,35 @@ def extract_product_knowledge(
     title: str,
     categories: str,
     image_path: Path,
-    relations: List[Dict],
-    entity_vocab: Dict,
-    allowed_relations: Set[str],
+    system_prompt: str,
     mllm
 ) -> Dict:
-    """Extract knowledge from a single product image with entity mapping."""
-
+    """Extract knowledge from a single product image."""
     try:
-        # Create prompt
-        prompt = create_constrained_extraction_prompt(title, categories, relations)
+        user_prompt = create_user_prompt(title, categories)
 
-        # Call MLLM
         response = mllm.extract_from_image(
             image=str(image_path),
-            system_prompt="You are a beauty product expert analyzing product images.",
-            user_prompt=prompt,
-            temperature=0.7,
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            temperature=0.0,
             max_tokens=1000
         )
 
-        # Parse response
-        raw_knowledge_points = parse_json_response(response)
-
-        # Filter and map to standard vocabulary
-        filtered_kps, unmapped_kps = filter_and_map_entities(
-            raw_knowledge_points,
-            entity_vocab,
-            allowed_relations
-        )
+        knowledge_points = parse_extraction_output(response)
 
         return {
             'asin': asin,
             'recbole_id': recbole_id,
             'title': title,
             'categories': categories,
-            'knowledge_points': filtered_kps,
-            'num_knowledge_points': len(filtered_kps),
-            'num_raw_knowledge_points': len(raw_knowledge_points),
-            'unmapped_knowledge_points': unmapped_kps if unmapped_kps else None,
+            'knowledge_points': knowledge_points,
+            'num_knowledge_points': len(knowledge_points),
+            'raw_output': response,
             'status': 'success',
             'timestamp': datetime.now().isoformat()
         }
 
-    except json.JSONDecodeError as e:
-        return {
-            'asin': asin,
-            'recbole_id': recbole_id,
-            'title': title,
-            'categories': categories,
-            'error': f'JSON parse error: {str(e)}',
-            'raw_response': response[:500] if 'response' in locals() else None,
-            'status': 'error',
-            'timestamp': datetime.now().isoformat()
-        }
     except Exception as e:
         return {
             'asin': asin,
@@ -339,26 +353,24 @@ def main():
                        help='Path to item mapping JSON')
     parser.add_argument('--images_dir', type=str, required=True,
                        help='Directory containing product images')
-    parser.add_argument('--relation_vocab', type=str, required=True,
-                       help='Path to relation vocabulary JSON')
-    parser.add_argument('--entity_vocab', type=str, required=True,
+    parser.add_argument('--vocabulary', type=str, required=True,
                        help='Path to entity vocabulary JSON')
     parser.add_argument('--output', type=str, required=True,
                        help='Output JSON file')
     parser.add_argument('--phase1_results', type=str, default=None,
-                       help='Phase 1 results JSON (if provided, include Phase 1 items)')
+                       help='Phase 1 results JSON (include Phase 1 items)')
     parser.add_argument('--api_key', type=str, required=True,
-                       help='OpenAI API key')
-    parser.add_argument('--base_url', type=str, default=None,
-                       help='OpenAI API base URL (optional, for custom endpoints)')
+                       help='API key')
+    parser.add_argument('--base_url', type=str, required=True,
+                       help='API base URL')
     parser.add_argument('--model', type=str, default='gpt-4o-mini',
-                       help='MLLM model to use (default: gpt-4o-mini)')
+                       help='Model to use')
     parser.add_argument('--workers', type=int, default=15,
-                       help='Number of concurrent workers (default: 15)')
+                       help='Number of concurrent workers')
     parser.add_argument('--percentage', type=float, default=20.0,
-                       help='Percentage of items to extract (default: 20.0)')
+                       help='Percentage of items to extract')
     parser.add_argument('--seed', type=int, default=42,
-                       help='Random seed for sampling')
+                       help='Random seed')
     parser.add_argument('--save_interval', type=int, default=20,
                        help='Save checkpoint every N completions')
 
@@ -368,8 +380,7 @@ def main():
     metadata_file = Path(args.metadata)
     mapping_file = Path(args.mapping)
     images_dir = Path(args.images_dir)
-    relation_vocab_file = Path(args.relation_vocab)
-    entity_vocab_file = Path(args.entity_vocab)
+    vocabulary_file = Path(args.vocabulary)
     output_file = Path(args.output)
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -377,58 +388,44 @@ def main():
     print("Phase 2: Beauty Constrained Knowledge Extraction")
     print("="*70)
     print(f"\nConfiguration:")
-    print(f"  Metadata: {metadata_file}")
-    print(f"  Mapping: {mapping_file}")
-    print(f"  Images: {images_dir}")
-    print(f"  Relation Vocabulary: {relation_vocab_file}")
-    print(f"  Entity Vocabulary: {entity_vocab_file}")
+    print(f"  Vocabulary: {vocabulary_file}")
     print(f"  Output: {output_file}")
     print(f"  Percentage: {args.percentage}%")
     print(f"  Model: {args.model}")
-    if args.base_url:
-        print(f"  Base URL: {args.base_url}")
+    print(f"  Base URL: {args.base_url}")
     print(f"  Workers: {args.workers}")
     print()
 
-    # Load vocabularies
-    print("Loading vocabularies...")
-    relation_vocab = load_relation_vocabulary(relation_vocab_file)
-    relations = relation_vocab['relations']
-    allowed_relations = set(r['relation'] for r in relations)
-
-    entity_vocab = load_entity_vocabulary(entity_vocab_file)
-    total_entities = entity_vocab.get('total_standard_entities', 0)
-
-    print(f"  Relations: {len(relations)}")
-    print(f"  Standard entities: {total_entities}")
+    # Load vocabulary
+    print("Loading vocabulary...")
+    vocabulary = load_vocabulary(vocabulary_file)
+    num_relations = len(vocabulary['relations'])
+    num_entities = sum(len(r['standard_entities']) for r in vocabulary['relations'].values())
+    print(f"  ✓ {num_relations} relations, {num_entities} standard entities")
     print()
 
     # Load data
     print("Loading data...")
     metadata = load_beauty_metadata(metadata_file)
     recbole_to_asin, asin_to_recbole = load_item_mapping(mapping_file)
-
     total_items = len(recbole_to_asin)
     print(f"  Total items: {total_items:,}")
-    print()
 
     # Calculate sample size
     num_samples = int(total_items * args.percentage / 100)
-    print(f"Target sample ({args.percentage}%): {num_samples}")
+    print(f"  Target ({args.percentage}%): {num_samples}")
 
-    # Load Phase 1 IDs if provided
+    # Load Phase 1 IDs
     phase1_ids = set()
     if args.phase1_results:
-        phase1_file = Path(args.phase1_results)
-        phase1_ids = load_phase1_ids(phase1_file)
+        phase1_ids = load_phase1_ids(Path(args.phase1_results))
         print(f"  Phase 1 items: {len(phase1_ids)}")
 
-    # Sample IDs (including Phase 1 IDs)
+    # Sample IDs
     random.seed(args.seed)
     all_ids = list(range(1, total_items + 1))
 
     if phase1_ids:
-        # Include Phase 1 IDs and sample remaining
         remaining_needed = num_samples - len(phase1_ids)
         available_ids = [rid for rid in all_ids if rid not in phase1_ids]
         if remaining_needed > 0:
@@ -436,8 +433,6 @@ def main():
             sampled_ids = sorted(list(phase1_ids) + new_samples)
         else:
             sampled_ids = sorted(list(phase1_ids))
-        print(f"  Phase 1 IDs: {len(phase1_ids)}")
-        print(f"  New samples: {len(sampled_ids) - len(phase1_ids)}")
     else:
         sampled_ids = random.sample(all_ids, min(num_samples, len(all_ids)))
 
@@ -446,34 +441,31 @@ def main():
 
     # Load existing results
     existing_data, processed_ids = load_existing_results(output_file)
-
     if existing_data:
-        print(f"Found existing results: {len(processed_ids)} already extracted")
+        print(f"✓ Found existing: {len(processed_ids)} already extracted")
         results = existing_data['results']
     else:
         results = []
 
-    # Filter out already processed
     items_to_extract = [id for id in sampled_ids if id not in processed_ids]
 
     if not items_to_extract:
-        print("\nAll sampled items already extracted!")
+        print("\n✓ All items already extracted!")
         return
 
-    print(f"  Remaining to extract: {len(items_to_extract)}")
+    print(f"  Remaining: {len(items_to_extract)}")
     print()
 
     # Initialize MLLM
     print(f"Initializing {args.model}...")
-    mllm_kwargs = {'api_key': args.api_key}
-    if args.base_url:
-        mllm_kwargs['base_url'] = args.base_url
-        print(f"  Using custom base URL: {args.base_url}")
-    mllm = create_mllm('openai', args.model, **mllm_kwargs)
-    print("MLLM ready")
+    mllm = create_mllm('openai', args.model, api_key=args.api_key, base_url=args.base_url)
+    print("✓ MLLM ready")
     print()
 
-    # Config for saving
+    # Create system prompt
+    system_prompt = create_system_prompt(vocabulary)
+
+    # Config
     config = {
         'model': args.model,
         'total_items': total_items,
@@ -481,16 +473,15 @@ def main():
         'percentage': args.percentage,
         'seed': args.seed,
         'workers': args.workers,
-        'relation_vocab_version': relation_vocab.get('version', '1.0'),
-        'entity_vocab_version': entity_vocab.get('version', '1.0'),
-        'num_relations': len(relations),
-        'num_standard_entities': total_entities
+        'vocabulary_version': vocabulary.get('version', '1.0'),
+        'num_relations': num_relations,
+        'num_standard_entities': num_entities
     }
 
-    # Extract knowledge (parallel)
-    print(f"Extracting knowledge from {len(items_to_extract)} products...")
-    print(f"Using {args.workers} concurrent workers...")
-    print()
+    # Extract
+    print(f"Extracting from {len(items_to_extract)} products...")
+    print(f"Using {args.workers} workers...")
+    print("-"*70)
 
     success_count = 0
     error_count = 0
@@ -498,7 +489,6 @@ def main():
     completed_count = 0
 
     def extract_single_item(recbole_id):
-        """Extract knowledge from a single item (thread-safe)."""
         asin = recbole_to_asin[str(recbole_id)]
         meta = metadata.get(asin, {})
         title = meta.get('title', f'Product_{asin}')
@@ -521,17 +511,14 @@ def main():
             title=title,
             categories=categories,
             image_path=image_path,
-            relations=relations,
-            entity_vocab=entity_vocab,
-            allowed_relations=allowed_relations,
+            system_prompt=system_prompt,
             mllm=mllm
         )
 
-    # Execute in parallel
     with ThreadPoolExecutor(max_workers=args.workers) as executor:
         futures = {
-            executor.submit(extract_single_item, recbole_id): recbole_id
-            for recbole_id in items_to_extract
+            executor.submit(extract_single_item, rid): rid
+            for rid in items_to_extract
         }
 
         with tqdm(total=len(items_to_extract), desc="Extracting") as pbar:
@@ -548,44 +535,47 @@ def main():
                         if result['status'] == 'success':
                             success_count += 1
                             kps = result['num_knowledge_points']
-                            raw_kps = result['num_raw_knowledge_points']
-                            pbar.write(f"  ID {recbole_id}: {kps}/{raw_kps} KPs mapped")
+                            new_count = sum(1 for kp in result['knowledge_points']
+                                          if kp['entity'].startswith('NEW_'))
+                            pbar.write(f"  ✓ ID {recbole_id}: {kps} KPs ({new_count} NEW)")
                         else:
                             error_count += 1
-                            pbar.write(f"  ID {recbole_id}: {result.get('error', 'Unknown error')}")
+                            pbar.write(f"  ✗ ID {recbole_id}: {result.get('error', 'Error')}")
 
-                        # Periodic save
                         if completed_count % args.save_interval == 0:
-                            save_results(output_file, config, results)
-                            pbar.write(f"  Checkpoint: {completed_count}/{len(items_to_extract)}")
+                            vocab_stats = calculate_coverage_stats(results, vocabulary)
+                            save_results(output_file, config, results, vocab_stats)
+                            pbar.write(f"  💾 Checkpoint: {completed_count}/{len(items_to_extract)} "
+                                      f"(Coverage: {vocab_stats['coverage_percentage']:.1f}%)")
 
                     pbar.update(1)
 
                 except Exception as e:
-                    pbar.write(f"Error processing ID {recbole_id}: {e}")
+                    pbar.write(f"  ✗ ID {recbole_id}: {e}")
                     error_count += 1
 
     # Final save
-    save_results(output_file, config, results)
-
-    # Calculate statistics
-    total_kps = sum(r.get('num_knowledge_points', 0) for r in results if r['status'] == 'success')
-    total_raw_kps = sum(r.get('num_raw_knowledge_points', 0) for r in results if r['status'] == 'success')
-    mapping_rate = total_kps / total_raw_kps * 100 if total_raw_kps > 0 else 0
+    vocab_stats = calculate_coverage_stats(results, vocabulary)
+    save_results(output_file, config, results, vocab_stats)
 
     # Summary
-    print()
+    print("-"*70)
+    print("\nSUMMARY")
     print("="*70)
-    print("Extraction Complete")
-    print("="*70)
-    print(f"\nTotal processed: {len(results)}")
+    print(f"Total processed: {len(results)}")
     print(f"  Successful: {success_count}")
     print(f"  Errors: {error_count}")
-    print(f"\nKnowledge Points:")
-    print(f"  Raw extracted: {total_raw_kps}")
-    print(f"  Mapped to vocab: {total_kps}")
-    print(f"  Mapping rate: {mapping_rate:.1f}%")
-    print(f"\nResults saved to: {output_file}")
+    print()
+    print("VOCABULARY COVERAGE:")
+    print(f"  Total KPs: {vocab_stats['total_knowledge_points']}")
+    print(f"  Valid (in vocab): {vocab_stats['valid_entities']}")
+    print(f"  NEW entities: {vocab_stats['new_entities_count']}")
+    print(f"  Invalid: {vocab_stats['invalid_entities_count']}")
+    print(f"  Coverage: {vocab_stats['coverage_percentage']:.1f}%")
+    print(f"  Target: {vocab_stats['target_coverage']}%")
+    print(f"  Meets target: {'✓ YES' if vocab_stats['meets_target'] else '✗ NO'}")
+    print()
+    print(f"Results saved to: {output_file}")
     print("="*70)
 
 
