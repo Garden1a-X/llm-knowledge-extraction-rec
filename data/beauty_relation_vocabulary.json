@@ -1,0 +1,113 @@
+{
+  "version": "1.0",
+  "dataset": "amazon-beauty",
+  "description": "Standard relation vocabulary for Beauty dataset, derived from Phase 1 exploration",
+  "num_relations": 12,
+  "relations": [
+    {
+      "relation": "product_type",
+      "description": "Type of beauty product (lipstick, skincare, haircare, nail_polish, perfume, etc.)",
+      "source_relations": ["product_type"],
+      "priority": 1
+    },
+    {
+      "relation": "has_color",
+      "description": "Main color or shade visible (black, white, pink, red, gold, etc.)",
+      "source_relations": ["has_color"],
+      "priority": 2
+    },
+    {
+      "relation": "finish_type",
+      "description": "Product finish/sheen (matte, glossy, shimmer, satin, metallic, etc.)",
+      "source_relations": ["finish_type"],
+      "priority": 3
+    },
+    {
+      "relation": "texture",
+      "description": "Product texture appearance (creamy, liquid, powder, gel, mousse, etc.)",
+      "source_relations": ["texture", "product_texture", "texture_type", "appearance_texture", "product_appearance"],
+      "priority": 4
+    },
+    {
+      "relation": "packaging_style",
+      "description": "Visual design style of packaging (minimalist, luxury, playful, elegant, etc.)",
+      "source_relations": ["packaging_style", "packaging_design", "design_style"],
+      "priority": 5
+    },
+    {
+      "relation": "packaging_type",
+      "description": "Container/package type (tube, jar, bottle, compact, palette, pump, etc.)",
+      "source_relations": ["packaging_type", "container_type", "base_type"],
+      "priority": 6
+    },
+    {
+      "relation": "packaging_material",
+      "description": "Apparent material of packaging (plastic, glass, metal, acrylic, etc.)",
+      "source_relations": ["packaging_material", "material", "material_appearance", "material_type", "cap_material", "lid_material"],
+      "priority": 7
+    },
+    {
+      "relation": "brand_aesthetic",
+      "description": "Brand positioning feel (high_end, drugstore, natural_organic, trendy, professional, etc.)",
+      "source_relations": ["brand_aesthetic"],
+      "priority": 8
+    },
+    {
+      "relation": "occasion",
+      "description": "Intended use occasion (everyday, party, professional, special_occasion, etc.)",
+      "source_relations": ["occasion", "target_occasion", "target_ocassion"],
+      "priority": 9
+    },
+    {
+      "relation": "visual_theme",
+      "description": "Overall aesthetic theme (natural_beauty, sophisticated, youthful, artistic, bold, etc.)",
+      "source_relations": ["visual_theme"],
+      "priority": 10
+    },
+    {
+      "relation": "size_indicator",
+      "description": "Apparent size (small, medium, large, travel_size, full_size, etc.)",
+      "source_relations": ["size_indicator", "size", "product_size", "size_indication", "height_indicator"],
+      "priority": 11
+    },
+    {
+      "relation": "additional_property",
+      "description": "Any other visual characteristic not covered by above relations",
+      "source_relations": [],
+      "priority": 12,
+      "note": "Catch-all for Phase 2 relations not seen in Phase 1"
+    }
+  ],
+  "relation_mapping": {
+    "product_type": "product_type",
+    "has_color": "has_color",
+    "finish_type": "finish_type",
+    "texture": "texture",
+    "product_texture": "texture",
+    "texture_type": "texture",
+    "appearance_texture": "texture",
+    "product_appearance": "texture",
+    "packaging_style": "packaging_style",
+    "packaging_design": "packaging_style",
+    "design_style": "packaging_style",
+    "packaging_type": "packaging_type",
+    "container_type": "packaging_type",
+    "base_type": "packaging_type",
+    "packaging_material": "packaging_material",
+    "material": "packaging_material",
+    "material_appearance": "packaging_material",
+    "material_type": "packaging_material",
+    "cap_material": "packaging_material",
+    "lid_material": "packaging_material",
+    "brand_aesthetic": "brand_aesthetic",
+    "occasion": "occasion",
+    "target_occasion": "occasion",
+    "target_ocassion": "occasion",
+    "visual_theme": "visual_theme",
+    "size_indicator": "size_indicator",
+    "size": "size_indicator",
+    "product_size": "size_indicator",
+    "size_indication": "size_indicator",
+    "height_indicator": "size_indicator"
+  }
+}
