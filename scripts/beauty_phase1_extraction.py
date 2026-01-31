@@ -127,12 +127,13 @@ def extract_with_openai(
     image_path: Path,
     prompt: str,
     api_key: str,
-    model: str = "gpt-4o-mini"
+    model: str = "gpt-4o-mini",
+    base_url: str = None
 ) -> str:
     """Extract using OpenAI API directly."""
     import openai
 
-    client = openai.OpenAI(api_key=api_key)
+    client = openai.OpenAI(api_key=api_key, base_url=base_url)
 
     # Encode image
     base64_image = encode_image_base64(image_path)
@@ -170,7 +171,9 @@ def extract_beauty_knowledge(
     categories: str,
     image_path: Path,
     mllm=None,
-    api_key: str = None
+    api_key: str = None,
+    base_url: str = None,
+    model: str = "gpt-4o-mini"
 ) -> Dict:
     """Extract knowledge from a single beauty product image."""
 
@@ -184,7 +187,7 @@ def extract_beauty_knowledge(
                 prompt=prompt
             )
         elif api_key:
-            response = extract_with_openai(image_path, prompt, api_key)
+            response = extract_with_openai(image_path, prompt, api_key, model, base_url)
         else:
             raise ValueError("No MLLM or API key provided")
 
@@ -254,6 +257,8 @@ def main():
                         help='Sample ratio (default: 0.05 = 5%)')
     parser.add_argument('--api_key', type=str, default=None,
                         help='OpenAI API key (or set OPENAI_API_KEY env var)')
+    parser.add_argument('--base_url', type=str, default=None,
+                        help='OpenAI API base URL (or set OPENAI_BASE_URL env var)')
     parser.add_argument('--model', type=str, default='gpt-4o-mini',
                         help='Model to use')
     parser.add_argument('--max_workers', type=int, default=5,
@@ -263,8 +268,9 @@ def main():
 
     args = parser.parse_args()
 
-    # Get API key
+    # Get API key and base URL
     api_key = args.api_key or os.environ.get('OPENAI_API_KEY')
+    base_url = args.base_url or os.environ.get('OPENAI_BASE_URL')
     if not api_key and not HAS_MLLM:
         print("Error: No API key provided. Set --api_key or OPENAI_API_KEY env var")
         return
@@ -314,12 +320,18 @@ def main():
                 })
 
     print(f"  Items with images: {len(items_to_process):,}")
+    print(f"  Model: {args.model}")
+    if base_url:
+        print(f"  Base URL: {base_url}")
 
     # Create MLLM if available
     mllm = None
     if HAS_MLLM:
         try:
-            mllm = create_mllm(model=args.model)
+            mllm_kwargs = {'api_key': api_key}
+            if base_url:
+                mllm_kwargs['base_url'] = base_url
+            mllm = create_mllm('openai', args.model, **mllm_kwargs)
         except Exception as e:
             print(f"  Warning: Could not create MLLM: {e}")
 
@@ -336,7 +348,9 @@ def main():
             categories=item['categories'],
             image_path=item['image_path'],
             mllm=mllm,
-            api_key=api_key
+            api_key=api_key,
+            base_url=base_url,
+            model=args.model
         )
         results.append(result)
 
