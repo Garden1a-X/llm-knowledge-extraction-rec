@@ -230,7 +230,7 @@ def load_id_mappings(mapping_file: Path) -> Dict:
 
 
 def save_results(output_file: Path, config: Dict, results: List[Dict]):
-    """Save extraction results."""
+    """Save extraction results atomically."""
     output_data = {
         'phase': 'phase1_exploration',
         'dataset': 'amazon-beauty',
@@ -244,8 +244,30 @@ def save_results(output_file: Path, config: Dict, results: List[Dict]):
         'timestamp': datetime.now().isoformat()
     }
 
-    with open(output_file, 'w') as f:
+    # Write atomically
+    temp_file = output_file.with_suffix('.tmp.json')
+    with open(temp_file, 'w') as f:
         json.dump(output_data, f, indent=2)
+    temp_file.replace(output_file)
+
+
+def load_existing_results(output_file: Path) -> tuple:
+    """Load existing results for resume support."""
+    if not output_file.exists():
+        return None, set()
+
+    try:
+        with open(output_file, 'r') as f:
+            data = json.load(f)
+
+        processed_asins = {
+            r['asin'] for r in data.get('results', [])
+            if r.get('status') == 'success'
+        }
+        return data, processed_asins
+    except Exception as e:
+        print(f"  Warning: Could not load existing results: {e}")
+        return None, set()
 
 
 def main():
@@ -264,8 +286,10 @@ def main():
                         help='OpenAI API base URL (or set OPENAI_BASE_URL env var)')
     parser.add_argument('--model', type=str, default='gpt-4o-mini',
                         help='Model to use')
-    parser.add_argument('--max_workers', type=int, default=5,
+    parser.add_argument('--max_workers', type=int, default=10,
                         help='Max parallel workers')
+    parser.add_argument('--save_interval', type=int, default=50,
+                        help='Save results every N items')
     parser.add_argument('--seed', type=int, default=42,
                         help='Random seed')
 
@@ -324,8 +348,30 @@ def main():
 
     print(f"  Items with images: {len(items_to_process):,}")
     print(f"  Model: {args.model}")
+    print(f"  Workers: {args.max_workers}")
     if base_url:
         print(f"  Base URL: {base_url}")
+
+    # Load existing results for resume
+    output_file = Path(args.output)
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+
+    existing_data, processed_asins = load_existing_results(output_file)
+
+    if existing_data:
+        results = existing_data['results']
+        print(f"  ✓ Resuming: {len(processed_asins)} already processed")
+    else:
+        results = []
+
+    # Filter out already processed
+    items_to_extract = [item for item in items_to_process if item['asin'] not in processed_asins]
+
+    if not items_to_extract:
+        print("\n✓ All items already extracted!")
+        return
+
+    print(f"  Remaining: {len(items_to_extract):,}")
 
     # Create MLLM if available
     mllm = None
@@ -335,16 +381,27 @@ def main():
             if base_url:
                 mllm_kwargs['base_url'] = base_url
             mllm = create_mllm('openai', args.model, **mllm_kwargs)
+            print("  ✓ MLLM initialized")
         except Exception as e:
             print(f"  Warning: Could not create MLLM: {e}")
 
-    # Extract knowledge
-    print(f"\nExtracting knowledge (model: {args.model})...")
-    results = []
+    config = {
+        'sample_ratio': args.sample_ratio,
+        'model': args.model,
+        'seed': args.seed,
+        'max_workers': args.max_workers
+    }
 
-    # Use tqdm for progress
-    for item in tqdm(items_to_process, desc="Extracting"):
-        result = extract_beauty_knowledge(
+    # Extract knowledge with parallel processing
+    print(f"\nExtracting knowledge...")
+
+    success_count = sum(1 for r in results if r.get('status') == 'success')
+    error_count = sum(1 for r in results if r.get('status') == 'error')
+    results_lock = threading.Lock()
+
+    def extract_single_item(item):
+        """Extract knowledge from a single item."""
+        return extract_beauty_knowledge(
             asin=item['asin'],
             recbole_id=item['recbole_id'],
             title=item['title'],
@@ -355,33 +412,53 @@ def main():
             base_url=base_url,
             model=args.model
         )
-        results.append(result)
 
-    # Save results
-    output_file = Path(args.output)
-    output_file.parent.mkdir(parents=True, exist_ok=True)
+    # Execute in parallel
+    with ThreadPoolExecutor(max_workers=args.max_workers) as executor:
+        futures = {
+            executor.submit(extract_single_item, item): item
+            for item in items_to_extract
+        }
 
-    config = {
-        'sample_ratio': args.sample_ratio,
-        'model': args.model,
-        'seed': args.seed
-    }
+        with tqdm(total=len(items_to_extract), desc="Extracting") as pbar:
+            for future in as_completed(futures):
+                try:
+                    result = future.result()
+
+                    with results_lock:
+                        results.append(result)
+
+                        if result['status'] == 'success':
+                            success_count += 1
+                        else:
+                            error_count += 1
+
+                        # Save periodically
+                        if len(results) % args.save_interval == 0:
+                            save_results(output_file, config, results)
+
+                    pbar.update(1)
+                    pbar.set_postfix({'ok': success_count, 'err': error_count})
+
+                except Exception as e:
+                    item = futures[future]
+                    pbar.write(f"Error {item['asin']}: {e}")
+                    error_count += 1
+
+    # Final save
     save_results(output_file, config, results)
 
     # Print summary
-    success = sum(1 for r in results if r['status'] == 'success')
-    errors = sum(1 for r in results if r['status'] == 'error')
-
     print(f"\n{'='*70}")
     print("Summary")
     print(f"{'='*70}")
     print(f"  Total processed: {len(results):,}")
-    print(f"  Success: {success:,} ({success/len(results)*100:.1f}%)")
-    print(f"  Errors: {errors:,}")
+    print(f"  Success: {success_count:,} ({success_count/len(results)*100:.1f}%)")
+    print(f"  Errors: {error_count:,}")
     print(f"  Output: {output_file}")
 
     # Analyze relations
-    if success > 0:
+    if success_count > 0:
         all_relations = {}
         for r in results:
             if r['status'] == 'success':
