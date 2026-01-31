@@ -1,0 +1,144 @@
+{
+  "version": "1.0",
+  "dataset": "amazon-beauty",
+  "description": "Standard entity vocabulary for Beauty dataset Phase 2 extraction",
+  "num_relations": 9,
+  "relations": {
+    "product_type": {
+      "description": "Type of beauty product",
+      "standard_entities": [
+        "skincare",
+        "lip_product",
+        "eye_makeup",
+        "nail_product",
+        "haircare",
+        "hair_styling",
+        "hair_accessory",
+        "fragrance",
+        "body_care",
+        "makeup_base",
+        "jewelry",
+        "makeup_tool",
+        "hair_tool",
+        "bath_product",
+        "product_other"
+      ]
+    },
+    "has_color": {
+      "description": "Main color or shade",
+      "standard_entities": [
+        "black",
+        "white",
+        "pink",
+        "red",
+        "gold",
+        "silver",
+        "brown",
+        "nude",
+        "blue",
+        "green",
+        "purple",
+        "orange",
+        "yellow",
+        "multicolor",
+        "transparent"
+      ]
+    },
+    "finish_type": {
+      "description": "Surface finish or sheen",
+      "standard_entities": [
+        "matte",
+        "glossy",
+        "shimmer",
+        "satin",
+        "metallic",
+        "glitter",
+        "natural",
+        "cream"
+      ]
+    },
+    "texture": {
+      "description": "Product texture",
+      "standard_entities": [
+        "creamy",
+        "liquid",
+        "powder",
+        "gel",
+        "solid",
+        "mousse",
+        "foam",
+        "spray"
+      ]
+    },
+    "packaging": {
+      "description": "Packaging type and style",
+      "standard_entities": [
+        "tube",
+        "jar",
+        "bottle",
+        "pump_bottle",
+        "compact",
+        "stick",
+        "palette",
+        "dropper_bottle",
+        "spray_bottle",
+        "box",
+        "pouch",
+        "container"
+      ]
+    },
+    "brand_aesthetic": {
+      "description": "Brand positioning and aesthetic",
+      "standard_entities": [
+        "high_end",
+        "drugstore",
+        "natural_organic",
+        "trendy",
+        "professional",
+        "playful",
+        "minimalist",
+        "luxury"
+      ]
+    },
+    "occasion": {
+      "description": "Intended use occasion",
+      "standard_entities": [
+        "everyday",
+        "party",
+        "professional",
+        "special_occasion",
+        "wedding",
+        "travel",
+        "night_out",
+        "daytime"
+      ]
+    },
+    "visual_theme": {
+      "description": "Overall visual aesthetic",
+      "standard_entities": [
+        "natural_beauty",
+        "sophisticated",
+        "youthful",
+        "artistic",
+        "bold",
+        "elegant",
+        "cute",
+        "glamorous"
+      ]
+    },
+    "additional_property": {
+      "description": "Catch-all for anything not fitting above categories",
+      "standard_entities": [
+        "set_collection",
+        "travel_size",
+        "full_size",
+        "sample",
+        "refill",
+        "limited_edition",
+        "gift_set",
+        "property_other"
+      ]
+    }
+  },
+  "total_standard_entities": 82
+}
