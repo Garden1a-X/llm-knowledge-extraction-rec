@@ -45,7 +45,7 @@
       "priority": 8
     },
     {
-      "relation": "other",
+      "relation": "additional_property",
       "description": "Catch-all for anything not fitting above categories",
       "priority": 9
     }
@@ -76,10 +76,10 @@
     "target_occasion": "occasion",
     "target_ocassion": "occasion",
     "visual_theme": "visual_theme",
-    "size_indicator": "other",
-    "size": "other",
-    "product_size": "other",
-    "size_indication": "other",
-    "height_indicator": "other"
+    "size_indicator": "additional_property",
+    "size": "additional_property",
+    "product_size": "additional_property",
+    "size_indication": "additional_property",
+    "height_indicator": "additional_property"
   }
 }
