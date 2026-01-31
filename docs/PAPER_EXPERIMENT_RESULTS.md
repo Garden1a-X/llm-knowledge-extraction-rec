@@ -8,10 +8,16 @@
 
 ### 数据集
 
-| 数据集 | Users | Items | Interactions | Density | 处理方式 |
-|--------|-------|-------|--------------|---------|----------|
-| **ML-1M** | 6,040 | 3,416 | ~1M | - | 5-core filtered |
-| **Amazon Video Games** | - | - | - | - | 5-core filtered |
+| 数据集 | Users | Items | Interactions | Density | Avg/User | 处理方式 |
+|--------|-------|-------|--------------|---------|----------|----------|
+| **ML-1M** | 6,040 | 3,416 | ~1M | - | ~165 | 5-core filtered |
+| **Amazon Video Games** | - | - | - | - | - | 5-core filtered |
+| **Amazon Beauty** | 233,222 | 16,340 | 264,801 | 0.007% | 1.14 | **No filtering** |
+
+**Beauty 数据集特点**:
+- 极度稀疏（density = 0.007%）
+- 平均每用户仅 1.14 个交互 → 典型冷启动场景
+- 用于验证 KG 方法在冷启动场景的优势
 
 ### 评估协议
 
