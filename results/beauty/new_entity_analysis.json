@@ -1,0 +1,1702 @@
+{
+  "analysis": {
+    "NEW_cartoon_graphic": {
+      "total_new": 1,
+      "unique_new": 1,
+      "top_20": [
+        {
+          "entity": "cartoon_graphic",
+          "count": 1
+        }
+      ],
+      "potential_matches": [],
+      "standard_entities": []
+    },
+    "additional_property": {
+      "total_new": 1419,
+      "unique_new": 1020,
+      "top_20": [
+        {
+          "entity": "travel_size",
+          "count": 42
+        },
+        {
+          "entity": "set_collection",
+          "count": 30
+        },
+        {
+          "entity": "waterproof",
+          "count": 15
+        },
+        {
+          "entity": "property_other",
+          "count": 14
+        },
+        {
+          "entity": "flower_design",
+          "count": 11
+        },
+        {
+          "entity": "full_size",
+          "count": 10
+        },
+        {
+          "entity": "cosplay",
+          "count": 9
+        },
+        {
+          "entity": "none",
+          "count": 9
+        },
+        {
+          "entity": "rhinestone_detail",
+          "count": 9
+        },
+        {
+          "entity": "vintage_style",
+          "count": 9
+        },
+        {
+          "entity": "portable",
+          "count": 8
+        },
+        {
+          "entity": "rhinestone",
+          "count": 8
+        },
+        {
+          "entity": "handmade",
+          "count": 6
+        },
+        {
+          "entity": "heat_resistant",
+          "count": 6
+        },
+        {
+          "entity": "reusable",
+          "count": 6
+        },
+        {
+          "entity": "butterfly_design",
+          "count": 6
+        },
+        {
+          "entity": "adjustable",
+          "count": 6
+        },
+        {
+          "entity": "accessory",
+          "count": 5
+        },
+        {
+          "entity": "cruelty_free",
+          "count": 5
+        },
+        {
+          "entity": "vegan",
+          "count": 5
+        }
+      ],
+      "potential_matches": [
+        {
+          "new_entity": "travel_size",
+          "count": 42,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: travel_size"
+        },
+        {
+          "new_entity": "set_collection",
+          "count": 30,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: set_collection"
+        },
+        {
+          "new_entity": "property_other",
+          "count": 14,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: property_other"
+        },
+        {
+          "new_entity": "full_size",
+          "count": 10,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: full_size"
+        },
+        {
+          "new_entity": "gift_set",
+          "count": 4,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: gift_set"
+        },
+        {
+          "new_entity": "limited_edition",
+          "count": 4,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: limited_edition"
+        },
+        {
+          "new_entity": "sample",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: sample"
+        },
+        {
+          "new_entity": "property_other_charging_stand",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: property_other"
+        }
+      ],
+      "standard_entities": [
+        "set_collection",
+        "travel_size",
+        "full_size",
+        "sample",
+        "refill",
+        "limited_edition",
+        "gift_set",
+        "property_other"
+      ]
+    },
+    "brand_aesthetic": {
+      "total_new": 32,
+      "unique_new": 21,
+      "top_20": [
+        {
+          "entity": "trendy",
+          "count": 5
+        },
+        {
+          "entity": "playful",
+          "count": 3
+        },
+        {
+          "entity": "traditional",
+          "count": 3
+        },
+        {
+          "entity": "playful_aesthetic",
+          "count": 2
+        },
+        {
+          "entity": "vintage",
+          "count": 2
+        },
+        {
+          "entity": "natural_organic",
+          "count": 2
+        },
+        {
+          "entity": "brand_aesthetic_high_end",
+          "count": 1
+        },
+        {
+          "entity": "practical",
+          "count": 1
+        },
+        {
+          "entity": "awareness",
+          "count": 1
+        },
+        {
+          "entity": "artistic_aesthetic",
+          "count": 1
+        },
+        {
+          "entity": "minimalist",
+          "count": 1
+        },
+        {
+          "entity": "luxurious",
+          "count": 1
+        },
+        {
+          "entity": "trendy_aesthetic",
+          "count": 1
+        },
+        {
+          "entity": "team_merchandise",
+          "count": 1
+        },
+        {
+          "entity": "masculine",
+          "count": 1
+        },
+        {
+          "entity": "sporty",
+          "count": 1
+        },
+        {
+          "entity": "boho",
+          "count": 1
+        },
+        {
+          "entity": "classic",
+          "count": 1
+        },
+        {
+          "entity": "casual",
+          "count": 1
+        },
+        {
+          "entity": "professional",
+          "count": 1
+        }
+      ],
+      "potential_matches": [
+        {
+          "new_entity": "trendy",
+          "count": 5,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: trendy"
+        },
+        {
+          "new_entity": "playful",
+          "count": 3,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: playful"
+        },
+        {
+          "new_entity": "playful_aesthetic",
+          "count": 2,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: playful"
+        },
+        {
+          "new_entity": "natural_organic",
+          "count": 2,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: natural_organic"
+        },
+        {
+          "new_entity": "brand_aesthetic_high_end",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: high_end"
+        },
+        {
+          "new_entity": "minimalist",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: minimalist"
+        },
+        {
+          "new_entity": "trendy_aesthetic",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: trendy"
+        },
+        {
+          "new_entity": "professional",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: professional"
+        }
+      ],
+      "standard_entities": [
+        "high_end",
+        "drugstore",
+        "natural_organic",
+        "trendy",
+        "professional",
+        "playful",
+        "minimalist",
+        "luxury"
+      ]
+    },
+    "finish_type": {
+      "total_new": 197,
+      "unique_new": 38,
+      "top_20": [
+        {
+          "entity": "shiny",
+          "count": 111
+        },
+        {
+          "entity": "glossy",
+          "count": 25
+        },
+        {
+          "entity": "smooth",
+          "count": 7
+        },
+        {
+          "entity": "matte",
+          "count": 5
+        },
+        {
+          "entity": "glitter",
+          "count": 5
+        },
+        {
+          "entity": "natural_finish",
+          "count": 4
+        },
+        {
+          "entity": "textured",
+          "count": 3
+        },
+        {
+          "entity": "lace",
+          "count": 3
+        },
+        {
+          "entity": "mat",
+          "count": 2
+        },
+        {
+          "entity": "natural",
+          "count": 2
+        },
+        {
+          "entity": "finish_shiny",
+          "count": 2
+        },
+        {
+          "entity": "sheer",
+          "count": 2
+        },
+        {
+          "entity": "creamy",
+          "count": 1
+        },
+        {
+          "entity": "transparent_finish",
+          "count": 1
+        },
+        {
+          "entity": "sleek",
+          "count": 1
+        },
+        {
+          "entity": "soft",
+          "count": 1
+        },
+        {
+          "entity": "fuzzy",
+          "count": 1
+        },
+        {
+          "entity": "shiny_finish",
+          "count": 1
+        },
+        {
+          "entity": "smooth_finish",
+          "count": 1
+        },
+        {
+          "entity": "fabric_texture",
+          "count": 1
+        }
+      ],
+      "potential_matches": [
+        {
+          "new_entity": "glossy",
+          "count": 25,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: glossy"
+        },
+        {
+          "new_entity": "matte",
+          "count": 5,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: matte"
+        },
+        {
+          "new_entity": "glitter",
+          "count": 5,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: glitter"
+        },
+        {
+          "new_entity": "natural_finish",
+          "count": 4,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: natural"
+        },
+        {
+          "new_entity": "mat",
+          "count": 2,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: matte"
+        },
+        {
+          "new_entity": "natural",
+          "count": 2,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: natural"
+        },
+        {
+          "new_entity": "creamy",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: cream"
+        },
+        {
+          "new_entity": "satin_finish",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: satin"
+        },
+        {
+          "new_entity": "glossy_or_cream",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: cream"
+        },
+        {
+          "new_entity": "matte_finish",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: matte"
+        },
+        {
+          "new_entity": "cream",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: cream"
+        },
+        {
+          "new_entity": "non_glossy",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: glossy"
+        },
+        {
+          "new_entity": "gloss",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: glossy"
+        }
+      ],
+      "standard_entities": [
+        "matte",
+        "glossy",
+        "shimmer",
+        "satin",
+        "metallic",
+        "glitter",
+        "natural",
+        "cream"
+      ]
+    },
+    "has_color": {
+      "total_new": 159,
+      "unique_new": 67,
+      "top_20": [
+        {
+          "entity": "beige",
+          "count": 14
+        },
+        {
+          "entity": "blonde",
+          "count": 9
+        },
+        {
+          "entity": "gray",
+          "count": 9
+        },
+        {
+          "entity": "clear",
+          "count": 7
+        },
+        {
+          "entity": "turquoise",
+          "count": 7
+        },
+        {
+          "entity": "green",
+          "count": 7
+        },
+        {
+          "entity": "blue",
+          "count": 5
+        },
+        {
+          "entity": "teal",
+          "count": 5
+        },
+        {
+          "entity": "bronze",
+          "count": 5
+        },
+        {
+          "entity": "yellow",
+          "count": 4
+        },
+        {
+          "entity": "grey",
+          "count": 4
+        },
+        {
+          "entity": "brown",
+          "count": 4
+        },
+        {
+          "entity": "multicolor",
+          "count": 3
+        },
+        {
+          "entity": "black",
+          "count": 3
+        },
+        {
+          "entity": "pink",
+          "count": 3
+        },
+        {
+          "entity": "orange",
+          "count": 3
+        },
+        {
+          "entity": "navy_blue",
+          "count": 3
+        },
+        {
+          "entity": "light_blue",
+          "count": 3
+        },
+        {
+          "entity": "nude",
+          "count": 3
+        },
+        {
+          "entity": "dark_blue",
+          "count": 2
+        }
+      ],
+      "potential_matches": [
+        {
+          "new_entity": "green",
+          "count": 7,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: green"
+        },
+        {
+          "new_entity": "blue",
+          "count": 5,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: blue"
+        },
+        {
+          "new_entity": "yellow",
+          "count": 4,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: yellow"
+        },
+        {
+          "new_entity": "brown",
+          "count": 4,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: brown"
+        },
+        {
+          "new_entity": "multicolor",
+          "count": 3,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: multicolor"
+        },
+        {
+          "new_entity": "black",
+          "count": 3,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: black"
+        },
+        {
+          "new_entity": "pink",
+          "count": 3,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: pink"
+        },
+        {
+          "new_entity": "orange",
+          "count": 3,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: orange"
+        },
+        {
+          "new_entity": "navy_blue",
+          "count": 3,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: blue"
+        },
+        {
+          "new_entity": "light_blue",
+          "count": 3,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: blue"
+        },
+        {
+          "new_entity": "nude",
+          "count": 3,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: nude"
+        },
+        {
+          "new_entity": "dark_blue",
+          "count": 2,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: blue"
+        },
+        {
+          "new_entity": "hot_pink",
+          "count": 2,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: pink"
+        },
+        {
+          "new_entity": "baby_blue",
+          "count": 2,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: blue"
+        },
+        {
+          "new_entity": "mint_green",
+          "count": 2,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: green"
+        },
+        {
+          "new_entity": "light_green",
+          "count": 2,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: green"
+        },
+        {
+          "new_entity": "light_purple",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: purple"
+        },
+        {
+          "new_entity": "light_brown",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: brown"
+        },
+        {
+          "new_entity": "pearl_greyish_green",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: green"
+        },
+        {
+          "new_entity": "gold",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: gold"
+        }
+      ],
+      "standard_entities": [
+        "black",
+        "white",
+        "pink",
+        "red",
+        "gold",
+        "silver",
+        "brown",
+        "nude",
+        "blue",
+        "green",
+        "purple",
+        "orange",
+        "yellow",
+        "multicolor",
+        "transparent"
+      ]
+    },
+    "length": {
+      "total_new": 1,
+      "unique_new": 1,
+      "top_20": [
+        {
+          "entity": "long",
+          "count": 1
+        }
+      ],
+      "potential_matches": [],
+      "standard_entities": []
+    },
+    "occasion": {
+      "total_new": 21,
+      "unique_new": 16,
+      "top_20": [
+        {
+          "entity": "beach",
+          "count": 3
+        },
+        {
+          "entity": "nighttime",
+          "count": 3
+        },
+        {
+          "entity": "everyday",
+          "count": 2
+        },
+        {
+          "entity": "everyday_use",
+          "count": 1
+        },
+        {
+          "entity": "decorative",
+          "count": 1
+        },
+        {
+          "entity": "occasion_everyday",
+          "count": 1
+        },
+        {
+          "entity": "charity",
+          "count": 1
+        },
+        {
+          "entity": "cosplay",
+          "count": 1
+        },
+        {
+          "entity": "salon_treatment",
+          "count": 1
+        },
+        {
+          "entity": "playful",
+          "count": 1
+        },
+        {
+          "entity": "special_occasion",
+          "count": 1
+        },
+        {
+          "entity": "creative_art",
+          "count": 1
+        },
+        {
+          "entity": "summer",
+          "count": 1
+        },
+        {
+          "entity": "party",
+          "count": 1
+        },
+        {
+          "entity": "stress_relief",
+          "count": 1
+        },
+        {
+          "entity": "gift_set",
+          "count": 1
+        }
+      ],
+      "potential_matches": [
+        {
+          "new_entity": "everyday",
+          "count": 2,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: everyday"
+        },
+        {
+          "new_entity": "everyday_use",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: everyday"
+        },
+        {
+          "new_entity": "occasion_everyday",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: everyday"
+        },
+        {
+          "new_entity": "special_occasion",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: special_occasion"
+        },
+        {
+          "new_entity": "party",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: party"
+        }
+      ],
+      "standard_entities": [
+        "everyday",
+        "party",
+        "professional",
+        "special_occasion",
+        "wedding",
+        "travel",
+        "night_out",
+        "daytime"
+      ]
+    },
+    "packaging": {
+      "total_new": 380,
+      "unique_new": 187,
+      "top_20": [
+        {
+          "entity": "container",
+          "count": 39
+        },
+        {
+          "entity": "none",
+          "count": 23
+        },
+        {
+          "entity": "box",
+          "count": 19
+        },
+        {
+          "entity": "case",
+          "count": 12
+        },
+        {
+          "entity": "bag",
+          "count": 11
+        },
+        {
+          "entity": "sheet",
+          "count": 11
+        },
+        {
+          "entity": "pouch",
+          "count": 11
+        },
+        {
+          "entity": "roll_on",
+          "count": 8
+        },
+        {
+          "entity": "pencil",
+          "count": 7
+        },
+        {
+          "entity": "no_packaging",
+          "count": 7
+        },
+        {
+          "entity": "product_other",
+          "count": 5
+        },
+        {
+          "entity": "handheld",
+          "count": 5
+        },
+        {
+          "entity": "property_other",
+          "count": 5
+        },
+        {
+          "entity": "roll",
+          "count": 4
+        },
+        {
+          "entity": "pen",
+          "count": 4
+        },
+        {
+          "entity": "handle",
+          "count": 4
+        },
+        {
+          "entity": "clip",
+          "count": 4
+        },
+        {
+          "entity": "stand",
+          "count": 4
+        },
+        {
+          "entity": "tin",
+          "count": 4
+        },
+        {
+          "entity": "cover",
+          "count": 3
+        }
+      ],
+      "potential_matches": [
+        {
+          "new_entity": "container",
+          "count": 39,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: container"
+        },
+        {
+          "new_entity": "box",
+          "count": 19,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: box"
+        },
+        {
+          "new_entity": "pouch",
+          "count": 11,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: pouch"
+        },
+        {
+          "new_entity": "squeeze_bottle",
+          "count": 3,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: bottle"
+        },
+        {
+          "new_entity": "box_packaging",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: box"
+        },
+        {
+          "new_entity": "box_style",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: box"
+        },
+        {
+          "new_entity": "jar",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: jar"
+        }
+      ],
+      "standard_entities": [
+        "tube",
+        "jar",
+        "bottle",
+        "pump_bottle",
+        "compact",
+        "stick",
+        "palette",
+        "dropper_bottle",
+        "spray_bottle",
+        "box",
+        "pouch",
+        "container"
+      ]
+    },
+    "product_other": {
+      "total_new": 2,
+      "unique_new": 2,
+      "top_20": [
+        {
+          "entity": "appliance",
+          "count": 1
+        },
+        {
+          "entity": "non_beauty_product",
+          "count": 1
+        }
+      ],
+      "potential_matches": [],
+      "standard_entities": []
+    },
+    "product_type": {
+      "total_new": 319,
+      "unique_new": 207,
+      "top_20": [
+        {
+          "entity": "jewelry",
+          "count": 25
+        },
+        {
+          "entity": "hair_product",
+          "count": 11
+        },
+        {
+          "entity": "hair_extensions",
+          "count": 8
+        },
+        {
+          "entity": "product_type",
+          "count": 7
+        },
+        {
+          "entity": "cosmetic_bag",
+          "count": 6
+        },
+        {
+          "entity": "temporary_tattoo",
+          "count": 6
+        },
+        {
+          "entity": "soap",
+          "count": 5
+        },
+        {
+          "entity": "product_case",
+          "count": 4
+        },
+        {
+          "entity": "accessory",
+          "count": 4
+        },
+        {
+          "entity": "bag",
+          "count": 4
+        },
+        {
+          "entity": "scarf",
+          "count": 3
+        },
+        {
+          "entity": "hair_extension",
+          "count": 3
+        },
+        {
+          "entity": "deodorant",
+          "count": 3
+        },
+        {
+          "entity": "beauty_tool",
+          "count": 3
+        },
+        {
+          "entity": "tattoo_tool",
+          "count": 3
+        },
+        {
+          "entity": "lotion",
+          "count": 3
+        },
+        {
+          "entity": "product_accessory",
+          "count": 3
+        },
+        {
+          "entity": "supplement",
+          "count": 3
+        },
+        {
+          "entity": "container",
+          "count": 3
+        },
+        {
+          "entity": "hair_tool",
+          "count": 3
+        }
+      ],
+      "potential_matches": [
+        {
+          "new_entity": "jewelry",
+          "count": 25,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: jewelry"
+        },
+        {
+          "new_entity": "accessory",
+          "count": 4,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: hair_accessory"
+        },
+        {
+          "new_entity": "hair_tool",
+          "count": 3,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: hair_tool"
+        },
+        {
+          "new_entity": "haircare",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: haircare"
+        },
+        {
+          "new_entity": "product_other",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: product_other"
+        },
+        {
+          "new_entity": "tool",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: hair_tool"
+        },
+        {
+          "new_entity": "skincare_tool",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: skincare"
+        },
+        {
+          "new_entity": "product_other_wireless_charging_stand",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: product_other"
+        },
+        {
+          "new_entity": "hair_accessory",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: hair_accessory"
+        },
+        {
+          "new_entity": "product",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: bath_product"
+        },
+        {
+          "new_entity": "bath_product",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: bath_product"
+        }
+      ],
+      "standard_entities": [
+        "skincare",
+        "lip_product",
+        "eye_makeup",
+        "nail_product",
+        "haircare",
+        "hair_styling",
+        "hair_accessory",
+        "fragrance",
+        "body_care",
+        "makeup_base",
+        "jewelry",
+        "makeup_tool",
+        "hair_tool",
+        "bath_product",
+        "product_other"
+      ]
+    },
+    "texture": {
+      "total_new": 248,
+      "unique_new": 86,
+      "top_20": [
+        {
+          "entity": "soft",
+          "count": 36
+        },
+        {
+          "entity": "solid",
+          "count": 22
+        },
+        {
+          "entity": "fabric",
+          "count": 19
+        },
+        {
+          "entity": "smooth",
+          "count": 18
+        },
+        {
+          "entity": "synthetic",
+          "count": 14
+        },
+        {
+          "entity": "curly",
+          "count": 9
+        },
+        {
+          "entity": "mesh",
+          "count": 7
+        },
+        {
+          "entity": "wavy",
+          "count": 6
+        },
+        {
+          "entity": "fluffy",
+          "count": 5
+        },
+        {
+          "entity": "knitted",
+          "count": 4
+        },
+        {
+          "entity": "straight",
+          "count": 4
+        },
+        {
+          "entity": "silky",
+          "count": 4
+        },
+        {
+          "entity": "texture",
+          "count": 3
+        },
+        {
+          "entity": "lace",
+          "count": 3
+        },
+        {
+          "entity": "woven",
+          "count": 3
+        },
+        {
+          "entity": "sheer",
+          "count": 3
+        },
+        {
+          "entity": "leather",
+          "count": 3
+        },
+        {
+          "entity": "sticker",
+          "count": 3
+        },
+        {
+          "entity": "soft_bristles",
+          "count": 3
+        },
+        {
+          "entity": "flat",
+          "count": 2
+        }
+      ],
+      "potential_matches": [
+        {
+          "new_entity": "solid",
+          "count": 22,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: solid"
+        },
+        {
+          "new_entity": "powder_texture",
+          "count": 2,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: powder"
+        },
+        {
+          "new_entity": "cream",
+          "count": 2,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: creamy"
+        },
+        {
+          "new_entity": "powder",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: powder"
+        },
+        {
+          "new_entity": "liquid",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: liquid"
+        },
+        {
+          "new_entity": "creamy",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: creamy"
+        },
+        {
+          "new_entity": "texture_solid",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: solid"
+        },
+        {
+          "new_entity": "gel_texture",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: gel"
+        }
+      ],
+      "standard_entities": [
+        "creamy",
+        "liquid",
+        "powder",
+        "gel",
+        "solid",
+        "mousse",
+        "foam",
+        "spray"
+      ]
+    },
+    "visual_theme": {
+      "total_new": 132,
+      "unique_new": 55,
+      "top_20": [
+        {
+          "entity": "artistic",
+          "count": 22
+        },
+        {
+          "entity": "practical",
+          "count": 14
+        },
+        {
+          "entity": "playful",
+          "count": 11
+        },
+        {
+          "entity": "cute",
+          "count": 5
+        },
+        {
+          "entity": "stylish",
+          "count": 5
+        },
+        {
+          "entity": "minimalistic",
+          "count": 4
+        },
+        {
+          "entity": "bohemian",
+          "count": 4
+        },
+        {
+          "entity": "festive",
+          "count": 3
+        },
+        {
+          "entity": "simple",
+          "count": 3
+        },
+        {
+          "entity": "vibrant",
+          "count": 3
+        },
+        {
+          "entity": "clean",
+          "count": 3
+        },
+        {
+          "entity": "sophisticated",
+          "count": 2
+        },
+        {
+          "entity": "functional",
+          "count": 2
+        },
+        {
+          "entity": "boho",
+          "count": 2
+        },
+        {
+          "entity": "bold",
+          "count": 2
+        },
+        {
+          "entity": "elegant",
+          "count": 2
+        },
+        {
+          "entity": "casual",
+          "count": 2
+        },
+        {
+          "entity": "soothing",
+          "count": 2
+        },
+        {
+          "entity": "sleek",
+          "count": 2
+        },
+        {
+          "entity": "gothic",
+          "count": 2
+        }
+      ],
+      "potential_matches": [
+        {
+          "new_entity": "artistic",
+          "count": 22,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: artistic"
+        },
+        {
+          "new_entity": "cute",
+          "count": 5,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: cute"
+        },
+        {
+          "new_entity": "sophisticated",
+          "count": 2,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: sophisticated"
+        },
+        {
+          "new_entity": "bold",
+          "count": 2,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: bold"
+        },
+        {
+          "new_entity": "elegant",
+          "count": 2,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: elegant"
+        },
+        {
+          "new_entity": "elegant_design",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: elegant"
+        },
+        {
+          "new_entity": "youthful",
+          "count": 1,
+          "match_type": "EXACT_MATCH_EXISTS",
+          "suggestion": "Should use: youthful"
+        },
+        {
+          "new_entity": "artistic_pattern",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: artistic"
+        },
+        {
+          "new_entity": "visual_theme_artistic",
+          "count": 1,
+          "match_type": "PARTIAL_MATCH",
+          "suggestion": "Similar to: artistic"
+        }
+      ],
+      "standard_entities": [
+        "natural_beauty",
+        "sophisticated",
+        "youthful",
+        "artistic",
+        "bold",
+        "elegant",
+        "cute",
+        "glamorous"
+      ]
+    }
+  },
+  "invalid_by_relation": {
+    "packaging": {
+      "property_other": 94,
+      "product_other": 144,
+      "bar": 5,
+      "sample": 1,
+      "aerosol": 1,
+      "sheet": 6,
+      "set_collection": 30,
+      "pen": 4,
+      "bowl": 2,
+      "solid": 2,
+      "roll_on": 2,
+      "clip_in": 1,
+      "hair_tool": 2,
+      "pencil": 7,
+      "mask": 1,
+      "additional_property": 1,
+      "cap": 1,
+      "stand": 1,
+      "hair_accessory": 1,
+      "bag": 2,
+      "transparent_packaging": 1,
+      "none": 2,
+      "hand_held": 1,
+      "roll_on_bottle": 1,
+      "transparent": 1,
+      "gift_set": 1,
+      "tin": 3,
+      "standard_dvd": 1,
+      "case": 2,
+      "tub": 1,
+      "comb": 1,
+      "bundle": 1,
+      "capsule": 1,
+      "wallet": 1
+    },
+    "texture": {
+      "cream": 71,
+      "lace": 3,
+      "wavy": 3,
+      "synthetic": 7,
+      "curly": 3,
+      "straight": 3,
+      "lotion": 1,
+      "soft": 2,
+      "chiffon": 1,
+      "knitted": 2,
+      "smooth": 4,
+      "silky": 2,
+      "mesh": 1,
+      "transparent": 1,
+      "fluffy": 1,
+      "knit": 1,
+      "oil": 1,
+      "New_entity": 1
+    },
+    "visual_theme": {
+      "playful": 64,
+      "trendy": 9,
+      "minimalist": 18,
+      "professional": 11,
+      "practical": 2,
+      "relaxed": 1,
+      "athletic": 1,
+      "casual": 3,
+      "masculine": 1,
+      "modern": 1,
+      "boho": 1,
+      "stylish": 1
+    },
+    "has_color": {
+      "peach": 5,
+      "beige": 18,
+      "grey": 12,
+      "turquoise": 6,
+      "ivory": 1,
+      "clear": 6,
+      "dark_brown": 3,
+      "teal": 3,
+      "light_green": 1,
+      "burgundy": 1,
+      "light_blonde": 3,
+      "dark_green": 1,
+      "dark grey": 1,
+      "light_brown": 2,
+      "neutral": 1,
+      "tan": 1,
+      "navy": 2,
+      "bronze": 10,
+      "gray": 11,
+      "amber": 1,
+      "plum": 1,
+      "platinum_blonde": 1,
+      "dark_blue": 1,
+      "dark brown": 1,
+      "hot pink": 1,
+      "rose_red": 1,
+      "light blue": 1,
+      "auburn": 2,
+      "cream": 4,
+      "ombre": 1,
+      "highlights": 1,
+      "hot_pink": 1,
+      "blonde": 11,
+      "blond": 1,
+      "light_blue": 1,
+      "dark_pink": 1,
+      "leopard": 1,
+      "camel": 1,
+      "dark blue": 1,
+      "rose": 1,
+      "golden": 1
+    },
+    "finish_type": {
+      "shiny": 15,
+      "transparent": 14,
+      "creamy": 20,
+      "silky": 1
+    },
+    "product_type": {
+      "hair_product": 39,
+      "hair_removal": 1,
+      "head_accessory": 1,
+      "spray_bottle": 2,
+      "makeup": 2,
+      "lingerie": 1,
+      "hair_extension": 1,
+      "powder": 1,
+      "mask_product": 1,
+      "hairpiece": 1,
+      "hair_dye": 1,
+      "travel_size": 1,
+      "gift_set": 1,
+      "toner": 1,
+      "face_mask": 1,
+      "foot_care": 1,
+      "scarf": 1,
+      "antiperspirant": 1,
+      "shave_gel": 1,
+      "cleaning_tool": 1,
+      "eye_mask": 2,
+      "costume": 1,
+      "mask": 3,
+      "sheet_mask": 1,
+      "facial sponge": 1,
+      "haircolor": 1,
+      "makeup_bag": 1,
+      "hair_color": 1,
+      "hair_extensions": 1,
+      "makeup_remover": 1,
+      "hair_dryer": 1,
+      "skin_product": 1
+    },
+    "additional_property": {
+      "portable": 3,
+      "folding": 1,
+      "cosplay": 1,
+      "container": 1,
+      "holiday_design": 1,
+      "winter_theme": 1,
+      "handmade": 4,
+      "wedding": 5,
+      "vintage_style": 1,
+      "professional": 9,
+      "product_other": 10,
+      "makeup_tool": 2,
+      "engagement_ring": 1,
+      "bridal": 2,
+      "no_ear_hole_design": 1,
+      "elegant": 2,
+      "jewelry": 1,
+      "multi_layered_design": 1,
+      "leak_proof": 1,
+      "food_safe": 1,
+      "adjustable_mechanism": 1,
+      "waterproof": 3,
+      "accessory": 1,
+      "no_packaging": 1,
+      "reusable": 1,
+      "wrinkle_free": 1,
+      "hypoallergenic": 1,
+      "temporary": 1,
+      "special_occasion": 4,
+      "clinical_strength": 1,
+      "vegan_friendly": 1,
+      "gmp_certified": 1,
+      "dual_voltage": 1,
+      "playful": 1,
+      "certified_organic": 1,
+      "adjustable": 1,
+      "reflective_material": 1,
+      "long_necklace": 1,
+      "heat_resistant": 6,
+      "custom_size": 1,
+      "trial_size": 1,
+      "lingerie_storage": 1,
+      "lace_detail": 1,
+      "zippered": 1,
+      "multicolor": 1,
+      "tool": 1,
+      "casual": 1,
+      "self_adhesive": 1,
+      "fake": 1,
+      "auto_shut_off": 1,
+      "natural_hair": 1,
+      "professional_quality": 1,
+      "bundle": 1,
+      "trendy": 1,
+      "NO_fragrance": 1,
+      "cruelty_free": 2,
+      "vegan": 2,
+      "refillable": 1,
+      "disposable": 1,
+      "natural_organic": 1,
+      "portable_design": 1,
+      "cordless_design": 1,
+      "label_stickers": 1,
+      "professional_strength": 1,
+      "multi_functional": 1
+    },
+    "brand_aesthetic": {
+      "elegant": 16,
+      "luxurious": 1,
+      "cute": 3,
+      "classic": 2,
+      "artistic": 1,
+      "vintage": 1,
+      "sporty": 1
+    },
+    "occasion": {
+      "gift_set": 3,
+      "summer": 1,
+      "property_other": 1,
+      "nighttime": 2,
+      "cosplay": 3,
+      "travel_size": 1,
+      "body_care": 1
+    }
+  }
+}
