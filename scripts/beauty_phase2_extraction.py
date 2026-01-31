@@ -122,82 +122,77 @@ def create_system_prompt(vocabulary: Dict) -> str:
         entities = info['standard_entities']
         vocab_str += f"【Relation {idx}: {relation}】\n"
         vocab_str += f"Description: {info['description']}\n"
-        vocab_str += f"Standard Entities ({len(entities)} total):\n"
-        for entity in entities:
-            vocab_str += f"  - {entity}\n"
-        vocab_str += "\n"
+        vocab_str += f"Standard Entities: {', '.join(entities)}\n\n"
 
     return f"""You are an expert in analyzing beauty product images and extracting visual knowledge for a recommendation system.
 
 Your task is to analyze product images and extract visual knowledge points using ONLY the approved vocabulary below.
 
 {vocab_str}═══════════════════════════════════════════════════════════════
-NEW ENTITY MECHANISM
+CRITICAL RULES - READ VERY CAREFULLY!
 ═══════════════════════════════════════════════════════════════
 
-If you observe an important visual feature that CANNOT be described by any of the {total_entities} standard entities listed above, you MUST mark it as NEW_entity_name.
+1. **Relations**: MUST use one of the {len(relations)} relations listed above
+   - NEVER create new relations
 
-⚠️ MANDATORY: If an entity is NOT in the standard list, you MUST add the NEW_ prefix!
+2. **Entities**: You have TWO options for each entity:
 
-Guidelines for NEW entities:
-✅ Use snake_case naming (e.g., NEW_rose_gold, NEW_holographic)
-✅ Keep it CONCISE (1-3 words maximum)
-✅ Make it ABSTRACT and GENERALIZABLE (could apply to multiple products)
-✅ ALWAYS check if the entity exists in the standard list first
-❌ Do NOT create overly specific descriptions
-❌ Do NOT use an entity that's not in the list WITHOUT the NEW_ prefix
+   OPTION A - Use a STANDARD entity (PREFERRED):
+   - The entity MUST be an EXACT CHARACTER-BY-CHARACTER match from that relation's list
+   - Example: If list has "glossy", you must write "glossy" (not "shiny", not "Glossy")
+   - Check the description for synonyms (e.g., "shiny=glossy" means use "glossy")
 
-═══════════════════════════════════════════════════════════════
-CRITICAL RULES
-═══════════════════════════════════════════════════════════════
+   OPTION B - Use NEW_ prefix (ONLY when truly necessary):
+   - ONLY use NEW_ when NO standard entity can describe the visual feature
+   - Format: NEW_entity_name (e.g., NEW_holographic)
+   - Before using NEW_, ask yourself: "Is there ANY standard entity that fits?"
 
-1. Relations: MUST use one of the {len(relations)} relations listed above
-   ❌ NEVER create new relations
-   ✅ If unsure where an entity belongs, use "additional_property"
+3. **Common Mistakes to AVOID**:
+   ❌ Writing "shiny" when "glossy" exists → Use "glossy"
+   ❌ Writing "cream" for texture when "creamy" exists → Use "creamy"
+   ❌ Writing "gray" when "grey" exists → Use "grey"
+   ❌ Writing "NEW_pink" when "pink" exists → Use "pink"
+   ❌ Using entity from wrong relation (e.g., "product_other" in packaging)
 
-2. Entities: MUST come from the EXACT relation's entity list OR use NEW_ prefix
-   ⚠️ Each relation has its OWN entity list. You MUST:
-      - First choose the relation
-      - Then check if your desired entity is in THAT relation's list
-      - ✅ If found in the list → use it directly
-      - ✅ If NOT found in the list → use NEW_entity_name format
-      - ❌ NEVER use an entity that's not in the list WITHOUT the NEW_ prefix
-
-3. Quantity: Extract 5-10 knowledge points per product image
-   ✅ Select the MOST visually significant features
-   ✅ Quality over quantity - only extract what you clearly see
-
-4. Focus: Extract ONLY what you can SEE in the image
-   ✅ Visual characteristics only (colors, textures, packaging, etc.)
-   ❌ No assumptions about ingredients, brand reputation, or product performance"""
+4. **Quantity**: Extract 5-10 knowledge points
+5. **Focus**: ONLY what you can SEE in the image"""
 
 
 def create_user_prompt(title: str, categories: str) -> str:
-    """Create user prompt for extraction."""
+    """Create user prompt for extraction with Chain-of-Thought verification."""
     return f"""Analyze this beauty product image.
 
 **Product Information:**
 - Title: {title}
 - Categories: {categories}
 
-Extract visual knowledge points using the approved vocabulary.
+Follow these steps carefully:
 
-## STEP 1: Draft Extraction
-First, list the visual knowledge points you observe:
+## STEP 1: Initial Observation
+List what you see in the image (colors, textures, packaging, style, etc.)
 
-## STEP 2: Self-Review
-For EACH knowledge point, check:
-1. ✓ Is the relation in the 9 approved relations?
-2. ✓ Is the entity in that relation's standard entity list?
-3. ✓ If entity NOT in the list, did I add NEW_ prefix?
+## STEP 2: Map to Vocabulary (CRITICAL)
+For each observation, find the matching relation and entity:
 
-## STEP 3: Final Output
-After review, output ONLY the corrected knowledge points below this line:
+Think through each one like this:
+- "I see [observation]. Which relation does this belong to?"
+- "For that relation, what are the standard entities?" (Look at the list above!)
+- "Is my entity an EXACT match to one in the list?"
+- "If yes → use it. If no → either find a similar one OR use NEW_"
+
+## STEP 3: Verification Checklist
+Before finalizing, verify EACH knowledge point:
+□ Relation is one of the 9 valid relations
+□ Entity is EXACTLY spelled as in the vocabulary (character-by-character)
+□ If using NEW_, confirm no standard entity could work
+
+## STEP 4: Final Output
+Output ONLY the verified knowledge points below this line:
 --- FINAL ---
 <relation>: <entity>
-(one per line, 5-10 knowledge points)
+(one per line, 5-10 knowledge points, no explanations)
 
-Now proceed:"""
+Begin:"""
 
 
 def parse_extraction_output(output: str) -> List[Dict[str, str]]:

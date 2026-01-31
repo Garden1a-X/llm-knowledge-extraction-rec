@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "dataset": "amazon-beauty",
   "description": "Standard entity vocabulary for Beauty dataset Phase 2 extraction",
   "num_relations": 9,
@@ -25,7 +25,7 @@
       ]
     },
     "has_color": {
-      "description": "Main color or shade",
+      "description": "Main color or shade visible in the product/packaging",
       "standard_entities": [
         "black",
         "white",
@@ -41,11 +41,17 @@
         "orange",
         "yellow",
         "multicolor",
-        "transparent"
+        "transparent",
+        "beige",
+        "grey",
+        "bronze",
+        "blonde",
+        "teal",
+        "clear"
       ]
     },
     "finish_type": {
-      "description": "Surface finish or sheen",
+      "description": "Surface finish or sheen (Note: shiny=glossy, use 'glossy')",
       "standard_entities": [
         "matte",
         "glossy",
@@ -58,7 +64,7 @@
       ]
     },
     "texture": {
-      "description": "Product texture",
+      "description": "Product texture (Note: cream=creamy, use 'creamy')",
       "standard_entities": [
         "creamy",
         "liquid",
@@ -114,7 +120,7 @@
       ]
     },
     "visual_theme": {
-      "description": "Overall visual aesthetic",
+      "description": "Overall visual aesthetic of the product/packaging design",
       "standard_entities": [
         "natural_beauty",
         "sophisticated",
@@ -123,7 +129,9 @@
         "bold",
         "elegant",
         "cute",
-        "glamorous"
+        "glamorous",
+        "playful",
+        "minimalist"
       ]
     },
     "additional_property": {
@@ -140,5 +148,5 @@
       ]
     }
   },
-  "total_standard_entities": 82
+  "total_standard_entities": 90
 }
