@@ -184,7 +184,10 @@ def extract_beauty_knowledge(
         if mllm is not None:
             response = mllm.extract_from_image(
                 image=str(image_path),
-                prompt=prompt
+                system_prompt="You are a beauty product expert analyzing product images.",
+                user_prompt=prompt,
+                temperature=0.7,
+                max_tokens=1000
             )
         elif api_key:
             response = extract_with_openai(image_path, prompt, api_key, model, base_url)
