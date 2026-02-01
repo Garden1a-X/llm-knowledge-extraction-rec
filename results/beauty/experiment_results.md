@@ -37,7 +37,7 @@ RecBole使用的数据划分与我们的`split_data()`函数不同，导致结�
 
 | Method | NDCG@10 | Recall@10 | KG Type |
 |--------|---------|-----------|---------|
-| Ours | - | - | LLM-extracted visual KG |
+| Ours | 0.5789 ± 0.0127 | 0.7219 ± 0.0121 | LLM-extracted visual + user KG |
 
 ## 数据集统计
 - Users: 233,222
@@ -65,3 +65,4 @@ python scripts/train_kgat_our_split.py --seed 42
 - 2026-02-01: 发现数据划分不一致问题
 - 2026-02-01: 创建使用我们划分的baseline训练脚本
 - 2026-02-01: BPR (我们划分) seed=42: NDCG@10=0.5120, Recall@10=0.5941
+- 2026-02-01: Ours 5-trial完成: NDCG@10=0.5789±0.0127, Recall@10=0.7219±0.0121
