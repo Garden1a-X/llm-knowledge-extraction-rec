@@ -99,8 +99,15 @@ class KnowledgeGraphBuilder:
         self.id2item = {idx: iid for iid, idx in self.item_id_map.items()}
 
         # Entity ID映射（来自Item KG和User KG的tail）
-        entities_from_item = set(item_kg['tail_id'].unique())
-        entities_from_user = set(user_kg['tail_id'].unique())
+        # Filter out NaN and non-string values
+        entities_from_item = set(
+            e for e in item_kg['tail_id'].unique()
+            if isinstance(e, str) and e.strip()
+        )
+        entities_from_user = set(
+            e for e in user_kg['tail_id'].unique()
+            if isinstance(e, str) and e.strip()
+        )
         all_entities = sorted(entities_from_item | entities_from_user)
 
         self.entity_id_map = {eid: idx for idx, eid in enumerate(all_entities)}
