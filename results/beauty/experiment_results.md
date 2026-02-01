@@ -3,17 +3,35 @@
 ## 实验设置
 - 数据集: Amazon Beauty (无5-core过滤)
 - 评估模式: uni100 (1 positive + 99 negatives)
-- 数据划分: 7:1:2 (train:val:test)
+- 数据划分: 7:1:2 (train:val:test), per-user temporal split
 - Seeds: 42, 123, 456, 789, 2024
 - Metrics: NDCG@10, Recall@10
 
-## Baseline Results
+## 重要发现: 数据划分不一致问题
+
+RecBole使用的数据划分与我们的`split_data()`函数不同，导致结果不可比。
+
+验证方法: 使用相同的BPR实现，分别用RecBole划分和我们的划分进行对比:
+- RecBole划分 BPR: NDCG@10=0.6655, Recall@10=0.7208
+- 我们的划分 BPR: NDCG@10=0.5120, Recall@10=0.5941
+
+**结论**: 必须使用我们的划分重新运行所有baseline。
+
+## Baseline Results (使用我们的数据划分)
+
+| Method | NDCG@10 | Recall@10 | KG Type | 备注 |
+|--------|---------|-----------|---------|------|
+| BPR | 0.5120 | 0.5941 | - | seed=42 单次 |
+| LightGCN | - | - | - | 待运行 |
+| KGAT | - | - | metadata | 待运行 |
+
+## Baseline Results (RecBole默认划分 - 仅供参考，不可比)
 
 | Method | NDCG@10 | Recall@10 | KG Type |
 |--------|---------|-----------|---------|
 | BPR | 0.6655 ± 0.0106 | 0.7208 ± 0.0094 | - |
 | LightGCN | 0.6789 ± 0.0048 | 0.7410 ± 0.0026 | - |
-| KGAT | 0.6978 ± 0.0184 | 0.8259 ± 0.0036 | metadata (categories + price) |
+| KGAT | 0.6978 ± 0.0184 | 0.8259 ± 0.0036 | metadata |
 
 ## Our Method
 
@@ -29,5 +47,21 @@
 - User KG triplets: 167,035
 - Total KG triplets: 255,414
 
+## 训练脚本
+
+使用我们数据划分的baseline脚本:
+- `scripts/train_bpr_our_split.py` - BPR
+- `scripts/train_lightgcn_our_split.py` - LightGCN
+- `scripts/train_kgat_our_split.py` - KGAT (使用metadata KG)
+
+运行方式:
+```bash
+python scripts/train_bpr_our_split.py --seed 42
+python scripts/train_lightgcn_our_split.py --seed 42
+python scripts/train_kgat_our_split.py --seed 42
+```
+
 ## 更新记录
-- 2026-02-01: BPR baseline完成
+- 2026-02-01: 发现数据划分不一致问题
+- 2026-02-01: 创建使用我们划分的baseline训练脚本
+- 2026-02-01: BPR (我们划分) seed=42: NDCG@10=0.5120, Recall@10=0.5941
