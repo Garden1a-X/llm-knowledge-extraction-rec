@@ -187,9 +187,9 @@ class BeautyKGBuilder:
         return triplets
 
     def save_kg(self, triplets: List[Dict]):
-        """保存知识图谱"""
-        # 保存.kg文件（RecBole格式）
-        kg_path = self.output_dir / "amazon-beauty.kg"
+        """保存Item知识图谱"""
+        # 保存.item.kg文件（RecBole格式）
+        kg_path = self.output_dir / "amazon-beauty.item.kg"
 
         # RecBole格式: head_id:token, relation_id:token, tail_id:token
         with open(kg_path, 'w', newline='') as f:
