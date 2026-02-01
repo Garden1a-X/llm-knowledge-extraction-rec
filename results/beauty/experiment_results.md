@@ -19,11 +19,11 @@ RecBole使用的数据划分与我们的`split_data()`函数不同，导致结�
 
 ## Baseline Results (使用我们的数据划分)
 
-| Method | NDCG@10 | Recall@10 | KG Type | 备注 |
-|--------|---------|-----------|---------|------|
-| BPR | 0.5120 | 0.5941 | - | seed=42 单次 |
-| LightGCN | - | - | - | 待运行 |
-| KGAT | - | - | metadata | 待运行 |
+| Method | NDCG@10 | Recall@10 | KG Type |
+|--------|---------|-----------|---------|
+| BPR | 0.5089 ± 0.0041 | 0.5928 ± 0.0072 | - |
+| LightGCN | 0.5311 ± 0.0098 | 0.6106 ± 0.0154 | - |
+| KGAT | 0.5185 ± 0.0087 | 0.5998 ± 0.0149 | metadata |
 
 ## Baseline Results (RecBole默认划分 - 仅供参考，不可比)
 
@@ -64,5 +64,5 @@ python scripts/train_kgat_our_split.py --seed 42
 ## 更新记录
 - 2026-02-01: 发现数据划分不一致问题
 - 2026-02-01: 创建使用我们划分的baseline训练脚本
-- 2026-02-01: BPR (我们划分) seed=42: NDCG@10=0.5120, Recall@10=0.5941
 - 2026-02-01: Ours 5-trial完成: NDCG@10=0.5789±0.0127, Recall@10=0.7219±0.0121
+- 2026-02-01: Baseline 5-trial完成 (BPR, LightGCN, KGAT)
