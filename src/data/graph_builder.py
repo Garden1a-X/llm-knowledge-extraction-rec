@@ -59,6 +59,8 @@ class KnowledgeGraphBuilder:
             names=['head_id', 'relation_id', 'tail_id'],
             skiprows=1
         )
+        # Drop rows with NaN values
+        item_kg = item_kg.dropna()
         logger.info(f"  Item KG: {len(item_kg)} triplets")
 
         # 读取User KG
@@ -68,6 +70,8 @@ class KnowledgeGraphBuilder:
             names=['head_id', 'relation_id', 'tail_id'],
             skiprows=1
         )
+        # Drop rows with NaN values
+        user_kg = user_kg.dropna()
         logger.info(f"  User KG: {len(user_kg)} triplets")
 
         # 读取交互数据
