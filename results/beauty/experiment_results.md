@@ -12,7 +12,7 @@
 | Method | NDCG@10 | Recall@10 | KG Type |
 |--------|---------|-----------|---------|
 | BPR | 0.6655 ± 0.0106 | 0.7208 ± 0.0094 | - |
-| LightGCN | - | - | - |
+| LightGCN | 0.6789 ± 0.0048 | 0.7410 ± 0.0026 | - |
 | KGAT | - | - | metadata (categories + price) |
 
 ## Our Method
