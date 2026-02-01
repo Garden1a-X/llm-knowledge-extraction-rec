@@ -229,6 +229,15 @@ def main():
     else:
         user_ids = list(user_ratings_dict.keys())
 
+    # Filter out users with < 2 interactions (cannot extract meaningful interests)
+    original_count = len(user_ids)
+    user_ids = [uid for uid in user_ids if len(user_ratings_dict[uid]) >= 2]
+    skipped_count = original_count - len(user_ids)
+    if skipped_count > 0:
+        print(f"⏭️  Skipping {skipped_count} users with < 2 interactions")
+        print(f"  ✓ {len(user_ids)} users remaining for extraction")
+        print()
+
     # Initialize MLLM
     print(f"Initializing MLLM: {args.model}")
     mllm = create_mllm(
