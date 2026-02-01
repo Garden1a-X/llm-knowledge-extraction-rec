@@ -31,6 +31,7 @@ RecBole使用的数据划分与我们的`split_data()`函数不同，导致结�
 |--------|---------|-----------|------|
 | VBPR | 0.5267 ± 0.0073 | 0.6039 ± 0.0029 | visual features |
 | MMGCN | 0.5592 ± 0.0079 | 0.6609 ± 0.0081 | visual features + GCN |
+| MKGAT | - | - | KG + visual features |
 
 ## Baseline Results (RecBole默认划分 - 仅供参考，不可比)
 
@@ -62,6 +63,7 @@ RecBole使用的数据划分与我们的`split_data()`函数不同，导致结�
 - `scripts/train_kgat_our_split.py` - KGAT (使用metadata KG)
 - `scripts/train_vbpr_our_split.py` - VBPR (使用visual features)
 - `scripts/train_mmgcn_our_split.py` - MMGCN (使用visual features)
+- `scripts/train_mkgat_our_split.py` - MKGAT (使用KG + visual features)
 
 运行方式:
 ```bash
@@ -71,10 +73,12 @@ python scripts/train_lightgcn_our_split.py --seed 42
 python scripts/train_kgat_our_split.py --seed 42
 python scripts/train_vbpr_our_split.py --seed 42
 python scripts/train_mmgcn_our_split.py --seed 42
+python scripts/train_mkgat_our_split.py --seed 42
 
 # 5-trial批量运行
 python scripts/run_baselines_our_split_5trials.py --method all
-python scripts/run_baselines_our_split_5trials.py --method multimodal  # 只跑VBPR和MMGCN
+python scripts/run_baselines_our_split_5trials.py --method multimodal  # VBPR, MMGCN, MKGAT
+python scripts/run_baselines_our_split_5trials.py --method mkgat
 ```
 
 ## 更新记录
