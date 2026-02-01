@@ -30,7 +30,7 @@ RecBole使用的数据划分与我们的`split_data()`函数不同，导致结�
 | Method | NDCG@10 | Recall@10 | 备注 |
 |--------|---------|-----------|------|
 | VBPR | 0.5267 ± 0.0073 | 0.6039 ± 0.0029 | visual features |
-| MMGCN | - | - | visual features + GCN |
+| MMGCN | 0.5592 ± 0.0079 | 0.6609 ± 0.0081 | visual features + GCN |
 
 ## Baseline Results (RecBole默认划分 - 仅供参考，不可比)
 
