@@ -13,7 +13,7 @@
 |--------|---------|-----------|---------|
 | BPR | 0.6655 ± 0.0106 | 0.7208 ± 0.0094 | - |
 | LightGCN | 0.6789 ± 0.0048 | 0.7410 ± 0.0026 | - |
-| KGAT | - | - | metadata (categories + price) |
+| KGAT | 0.6978 ± 0.0184 | 0.8259 ± 0.0036 | metadata (categories + price) |
 
 ## Our Method
 
