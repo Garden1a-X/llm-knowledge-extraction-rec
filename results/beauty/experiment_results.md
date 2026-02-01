@@ -29,7 +29,7 @@ RecBole使用的数据划分与我们的`split_data()`函数不同，导致结�
 ### Multimodal Baselines
 | Method | NDCG@10 | Recall@10 | 备注 |
 |--------|---------|-----------|------|
-| VBPR | - | - | visual features |
+| VBPR | 0.5267 ± 0.0073 | 0.6039 ± 0.0029 | visual features |
 | MMGCN | - | - | visual features + GCN |
 
 ## Baseline Results (RecBole默认划分 - 仅供参考，不可比)
