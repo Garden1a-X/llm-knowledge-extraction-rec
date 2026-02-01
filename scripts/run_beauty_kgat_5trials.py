@@ -2,11 +2,16 @@
 """
 Run KGAT baseline 5-trial experiments for Amazon Beauty dataset.
 
-Uses our LLM-extracted KG (amazon-beauty.kg).
+Uses standard metadata KG (categories + price) for fair comparison.
 
 Usage:
-    python scripts/run_beauty_kgat_5trials.py
-    python scripts/run_beauty_kgat_5trials.py --seeds 42 123 456
+    # First generate standard KG:
+    python scripts/generate_beauty_standard_kg.py \
+        --output_dir /data/xuao/KG4RecEval/dataset/amazon-beauty
+
+    # Then run KGAT:
+    python scripts/run_beauty_kgat_5trials.py \
+        --data_path /data/xuao/KG4RecEval/dataset
 """
 
 import argparse
@@ -18,7 +23,7 @@ from datetime import datetime
 from recbole.quick_start import run_recbole
 
 
-def run_trial(seed: int, trial_num: int, output_dir: Path):
+def run_trial(data_path: str, seed: int, trial_num: int, output_dir: Path):
     """Run single KGAT trial."""
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -26,8 +31,8 @@ def run_trial(seed: int, trial_num: int, output_dir: Path):
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
     config_dict = {
-        # Data
-        'data_path': 'data/recbole',
+        # Data - use external data path with standard metadata KG
+        'data_path': data_path,
         'dataset': 'amazon-beauty',
         'load_col': {
             'inter': ['user_id', 'item_id', 'timestamp'],
@@ -74,7 +79,10 @@ def run_trial(seed: int, trial_num: int, output_dir: Path):
 
     print(f"\n{'='*60}")
     print(f"KGAT Trial {trial_num} (seed={seed})")
-    print(f"{'='*60}\n")
+    print(f"{'='*60}")
+    print(f"Data path: {data_path}")
+    print(f"KG type: Standard metadata (categories + price)")
+    print()
 
     result = run_recbole(
         model='KGAT',
@@ -91,6 +99,7 @@ def run_trial(seed: int, trial_num: int, output_dir: Path):
         'seed': seed,
         'model': 'KGAT',
         'dataset': 'amazon-beauty',
+        'kg_type': 'standard_metadata',
         'timestamp': datetime.now().isoformat(),
         'test_metrics': {k: float(v) for k, v in test_result.items()},
     }
@@ -107,6 +116,9 @@ def run_trial(seed: int, trial_num: int, output_dir: Path):
 
 def main():
     parser = argparse.ArgumentParser(description='Run KGAT 5-trial on Beauty')
+    parser.add_argument('--data_path', type=str,
+                        default='/data/xuao/KG4RecEval/dataset',
+                        help='Path to dataset directory containing amazon-beauty/')
     parser.add_argument('--seeds', type=int, nargs='+',
                         default=[42, 123, 456, 789, 2024],
                         help='Random seeds for trials')
@@ -115,47 +127,26 @@ def main():
     print("=" * 60)
     print("Amazon Beauty - KGAT Baseline 5-Trial")
     print("=" * 60)
+    print(f"Data path: {args.data_path}")
     print(f"Seeds: {args.seeds}")
-    print(f"KG: data/recbole/amazon-beauty/amazon-beauty.kg")
+    print(f"KG type: Standard metadata (categories + price)")
     print()
 
     # Check required files
-    kg_path = Path('data/recbole/amazon-beauty/amazon-beauty.kg')
-    link_path = Path('data/recbole/amazon-beauty/amazon-beauty.link')
+    dataset_dir = Path(args.data_path) / 'amazon-beauty'
+    required_files = ['amazon-beauty.inter', 'amazon-beauty.kg', 'amazon-beauty.link']
 
-    if not kg_path.exists():
-        print(f"Error: KG file not found: {kg_path}")
-        print("Please run the KG building scripts first.")
+    missing = [f for f in required_files if not (dataset_dir / f).exists()]
+    if missing:
+        print(f"Error: Missing files in {dataset_dir}:")
+        for f in missing:
+            print(f"  - {f}")
+        print("\nPlease run first:")
+        print("  python scripts/generate_beauty_standard_kg.py \\")
+        print(f"      --output_dir {dataset_dir}")
         return
 
-    if not link_path.exists():
-        print(f"Warning: Link file not found: {link_path}")
-        print("Creating link file from KG...")
-
-        # Create link file (item_id -> entity_id mapping)
-        # For KGAT, we need a .link file mapping items to entities
-        # Since our KG has item_id as head_id, we can create a simple identity mapping
-        with open(kg_path, 'r') as f:
-            lines = f.readlines()[1:]  # Skip header
-
-        # Get unique item IDs from KG
-        item_ids = set()
-        for line in lines:
-            parts = line.strip().split('\t')
-            if len(parts) >= 1:
-                try:
-                    item_id = int(parts[0])
-                    item_ids.add(item_id)
-                except ValueError:
-                    pass
-
-        # Write link file
-        with open(link_path, 'w') as f:
-            f.write("item_id:token\tentity_id:token\n")
-            for item_id in sorted(item_ids):
-                f.write(f"{item_id}\t{item_id}\n")
-
-        print(f"✓ Created link file with {len(item_ids)} items")
+    print("✓ All required files found\n")
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_base = Path(f"outputs/beauty/kgat_{timestamp}")
@@ -167,7 +158,7 @@ def main():
         trial_output = output_base / f"trial_{trial_num}_seed_{seed}"
 
         try:
-            result = run_trial(seed, trial_num, trial_output)
+            result = run_trial(args.data_path, seed, trial_num, trial_output)
             all_results.append(result)
         except Exception as e:
             print(f"\n✗ Trial {trial_num} failed: {e}")
@@ -188,6 +179,7 @@ def main():
         summary = {
             'model': 'KGAT',
             'dataset': 'amazon-beauty',
+            'kg_type': 'standard_metadata',
             'num_trials': len(all_results),
             'seeds': args.seeds[:len(all_results)],
             'metrics': metrics,
