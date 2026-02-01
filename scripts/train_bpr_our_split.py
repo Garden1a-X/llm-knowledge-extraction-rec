@@ -95,9 +95,9 @@ def evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, k=10)
     # Build all positive items per user
     user_pos_items = defaultdict(set)
     for u, items in train_pos.items():
-        user_pos_items[u].update(items)
+        user_pos_items[int(u)].update(int(i) for i in items)
     for u, items in val_pos.items():
-        user_pos_items[u].update(items)
+        user_pos_items[int(u)].update(int(i) for i in items)
 
     recalls = []
     ndcgs = []
@@ -187,8 +187,8 @@ def main():
     print()
 
     # Get n_users and n_items
-    all_users = set(train_df['user_id:token'].unique())
-    all_items = set(train_df['item_id:token'].unique())
+    all_users = set(int(u) for u in train_df['user_id:token'].unique())
+    all_items = set(int(i) for i in train_df['item_id:token'].unique())
     n_users = max(all_users)
     n_items = max(all_items)
 
@@ -198,22 +198,22 @@ def main():
     # Build user positive items
     train_pos = defaultdict(set)
     for _, row in train_df.iterrows():
-        train_pos[row['user_id:token']].add(row['item_id:token'])
+        train_pos[int(row['user_id:token'])].add(int(row['item_id:token']))
 
     val_pos = defaultdict(set)
     for _, row in val_df.iterrows():
-        val_pos[row['user_id:token']].add(row['item_id:token'])
+        val_pos[int(row['user_id:token'])].add(int(row['item_id:token']))
 
     # Create train dataset
-    train_interactions = [(row['user_id:token'], row['item_id:token'])
+    train_interactions = [(int(row['user_id:token']), int(row['item_id:token']))
                           for _, row in train_df.iterrows()]
     train_dataset = BPRDataset(train_interactions, n_items, train_pos)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
 
     # Val and test data
-    val_data = [(row['user_id:token'], row['item_id:token'])
+    val_data = [(int(row['user_id:token']), int(row['item_id:token']))
                 for _, row in val_df.iterrows()]
-    test_data = [(row['user_id:token'], row['item_id:token'])
+    test_data = [(int(row['user_id:token']), int(row['item_id:token']))
                  for _, row in test_df.iterrows()]
 
     # Model
