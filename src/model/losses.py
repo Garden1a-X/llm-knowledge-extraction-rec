@@ -153,6 +153,10 @@ def entity_item_alignment_loss(
     Returns:
         loss: scalar
     """
+    # Handle empty edge_index (e.g., when Item KG is empty in ablation)
+    if edge_index.size(1) == 0:
+        return torch.tensor(0.0, device=entity_emb.device, requires_grad=True)
+
     entity_ids = edge_index[0]  # [num_edges]
     item_ids = edge_index[1]    # [num_edges]
 
