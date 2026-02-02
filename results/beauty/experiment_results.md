@@ -31,7 +31,7 @@ RecBole使用的数据划分与我们的`split_data()`函数不同，导致结�
 |--------|---------|-----------|------|
 | VBPR | 0.5267 ± 0.0073 | 0.6039 ± 0.0029 | visual features |
 | MMGCN | 0.5592 ± 0.0079 | 0.6609 ± 0.0081 | visual features + GCN |
-| MKGAT | - | - | KG + visual features |
+| MKGAT | 0.5574 ± 0.0105 | 0.6687 ± 0.0092 | KG + visual features |
 
 ## Baseline Results (RecBole默认划分 - 仅供参考，不可比)
 

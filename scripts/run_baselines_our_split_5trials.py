@@ -196,20 +196,31 @@ def run_mkgat_trials():
     results = []
     for i, seed in enumerate(SEEDS):
         print(f"\n--- Trial {i+1}/5 (seed={seed}) ---")
-        result = subprocess.run(
-            ["python", "scripts/train_mkgat_our_split.py", "--seed", str(seed)],
-            capture_output=True,
-            text=True
+        # Use Popen for real-time output
+        process = subprocess.Popen(
+            ["python", "-u", "scripts/train_mkgat_our_split.py", "--seed", str(seed)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
         )
-        print(result.stdout)
-        if result.returncode != 0:
-            print(f"Error: {result.stderr}")
+
+        output_lines = []
+        for line in process.stdout:
+            print(line, end='')
+            output_lines.append(line)
+
+        process.wait()
+        output = ''.join(output_lines)
+
+        if process.returncode != 0:
+            print(f"Error: Trial failed with return code {process.returncode}")
             continue
 
         # Parse results from output
         ndcg = None
         recall = None
-        for line in result.stdout.split('\n'):
+        for line in output.split('\n'):
             if 'NDCG@10:' in line:
                 ndcg = float(line.split(':')[1].strip())
             if 'Recall@10:' in line:
