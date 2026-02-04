@@ -314,16 +314,16 @@ if __name__ == '__main__':
     from graph_builder import KnowledgeGraphBuilder
 
     builder = KnowledgeGraphBuilder(
-        item_kg_path='data/recbole/ml-1m/ml-1m.item.kg',
-        user_kg_path='data/recbole/ml-1m/ml-1m.user.kg',
-        inter_path='data/recbole/ml-1m/ml-1m.inter'
+        item_kg_path='data/ml-1m/ml-1m.item.kg',
+        user_kg_path='data/ml-1m/ml-1m.user.kg',
+        inter_path='data/ml-1m/ml-1m.inter'
     )
 
     _, _, stats = builder.build_hetero_graph()
 
     # 分割数据
     train_df, val_df, test_df = split_data(
-        'data/recbole/ml-1m/ml-1m.inter',
+        'data/ml-1m/ml-1m.inter',
         time_based=True
     )
 

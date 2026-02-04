@@ -377,9 +377,9 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     builder = KnowledgeGraphBuilder(
-        item_kg_path='data/recbole/ml-1m/ml-1m.item.kg',
-        user_kg_path='data/recbole/ml-1m/ml-1m.user.kg',
-        inter_path='data/recbole/ml-1m/ml-1m.inter'
+        item_kg_path='data/ml-1m/ml-1m.item.kg',
+        user_kg_path='data/ml-1m/ml-1m.user.kg',
+        inter_path='data/ml-1m/ml-1m.inter'
     )
 
     hetero_graph, cf_graph, stats = builder.build_hetero_graph()

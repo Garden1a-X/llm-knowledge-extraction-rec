@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 @dataclass
 class DataConfig:
     """数据相关配置"""
-    item_kg_path: str = 'data/recbole/ml-1m/ml-1m.item.kg'
-    user_kg_path: str = 'data/recbole/ml-1m/ml-1m.user.kg'
-    inter_path: str = 'data/recbole/ml-1m/ml-1m.inter'
+    item_kg_path: str = 'data/ml-1m/ml-1m.item.kg'
+    user_kg_path: str = 'data/ml-1m/ml-1m.user.kg'
+    inter_path: str = 'data/ml-1m/ml-1m.inter'
     train_ratio: float = 0.7
     val_ratio: float = 0.1
     test_ratio: float = 0.2
