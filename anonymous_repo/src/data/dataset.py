@@ -116,7 +116,7 @@ class RecDataset(Dataset):
 
 def collate_fn(batch: List[Dict]) -> Dict[str, torch.Tensor]:
     """
-    将batch整理成tensor
+    Collate a batch into tensors
 
     Args:
         batch: List of dicts from Dataset.__getitem__
@@ -149,16 +149,16 @@ def split_data(
     per_user_split: bool = True
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
-    分割数据集为训练/验证/测试集（对齐RecBole的RS split）
+    Split dataset into train/validation/test sets (aligned with RecBole's RS split)
 
     Args:
-        inter_path: 交互文件路径
-        train_ratio: 训练集比例
-        val_ratio: 验证集比例
-        test_ratio: 测试集比例
-        time_based: 是否先按时间排序（对每个用户）
-        random_seed: 随机种子
-        per_user_split: 是否per-user split（推荐，对齐RecBole RS）
+        inter_path: Path to interaction file
+        train_ratio: Ratio for training set
+        val_ratio: Ratio for validation set
+        test_ratio: Ratio for test set
+        time_based: Whether to sort by time first (per user)
+        random_seed: Random seed
+        per_user_split: Whether to use per-user split (recommended, aligned with RecBole RS)
 
     Returns:
         train_df, val_df, test_df
@@ -168,15 +168,15 @@ def split_data(
     np.random.seed(random_seed)
 
     if per_user_split:
-        # Per-user Random Split（对齐RecBole的RS策略）
-        # 对每个用户的交互序列单独划分70/10/20
+        # Per-user Random Split (aligned with RecBole's RS strategy)
+        # Split each user's interaction sequence individually as 70/10/20
 
         train_list = []
         val_list = []
         test_list = []
 
         for user_id, user_inter in inter.groupby('user_id:token'):
-            # 对该用户的交互按时间排序
+            # Sort this user's interactions by time
             if time_based:
                 user_inter = user_inter.sort_values('timestamp:float')
             else:
@@ -184,13 +184,13 @@ def split_data(
 
             n = len(user_inter)
 
-            # 至少需要3条交互才能划分（train/val/test各1条）
+            # Need at least 3 interactions to split (1 for each of train/val/test)
             if n < 3:
-                # 少于3条：全部放入训练集
+                # Fewer than 3: put all into training set
                 train_list.append(user_inter)
                 continue
 
-            # 按比例划分
+            # Split by ratio
             train_end = max(1, int(n * train_ratio))
             val_end = min(n - 1, train_end + max(1, int(n * val_ratio)))
 
@@ -203,7 +203,7 @@ def split_data(
         test_df = pd.concat(test_list, ignore_index=True) if test_list else pd.DataFrame(columns=inter.columns)
 
     else:
-        # Global split（旧版本，不推荐）
+        # Global split (legacy, not recommended)
         if time_based:
             inter = inter.sort_values('timestamp:float')
         else:
@@ -236,19 +236,19 @@ def create_dataloaders(
     num_workers: int = 4
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """
-    创建训练/验证/测试DataLoader
+    Create train/validation/test DataLoaders
 
     Args:
-        train_df, val_df, test_df: 数据集
-        user_id_map, item_id_map: ID映射
-        batch_size: batch大小
-        num_negatives: 负采样数量
-        num_workers: 数据加载进程数
+        train_df, val_df, test_df: Datasets
+        user_id_map, item_id_map: ID mappings
+        batch_size: Batch size
+        num_negatives: Number of negative samples
+        num_workers: Number of data loading workers
 
     Returns:
         train_loader, val_loader, test_loader
     """
-    # 创建Dataset
+    # Create Datasets
     train_dataset = RecDataset(
         train_df, user_id_map, item_id_map,
         num_negatives=num_negatives,

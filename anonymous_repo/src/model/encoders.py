@@ -172,7 +172,7 @@ class KGEncoder(nn.Module):
                     heads=heads if concat else 1,
                     dropout=dropout,
                     concat=concat,
-                    add_self_loops=False  # 异构边不能添加自环
+                    add_self_loops=False  # Cannot add self-loops to heterogeneous edges
                 ),
                 ('user', 'short_term', 'entity'): GATConv(
                     in_channels,
@@ -190,7 +190,7 @@ class KGEncoder(nn.Module):
                     concat=concat,
                     add_self_loops=False
                 ),
-                # Reverse edges (确保所有节点类型都能被更新)
+                # Reverse edges (ensure all node types can be updated)
                 ('entity', 'rev_long_term', 'user'): GATConv(
                     in_channels,
                     out_channels,
@@ -215,7 +215,7 @@ class KGEncoder(nn.Module):
                     concat=concat,
                     add_self_loops=False
                 ),
-            }, aggr='sum')  # 不同边类型的聚合方式
+            }, aggr='sum')  # Aggregation method across different edge types
 
             self.convs.append(hetero_conv)
 
@@ -256,7 +256,7 @@ class KGEncoder(nn.Module):
             h_dict = conv(h_dict, edge_index_dict)
 
             if i < len(self.convs) - 1:
-                # ReLU和Dropout（除了最后一层）
+                # ReLU and Dropout (except for the last layer)
                 h_dict = {
                     key: F.dropout(F.relu(h), p=self.dropout, training=self.training)
                     for key, h in h_dict.items()
@@ -266,7 +266,7 @@ class KGEncoder(nn.Module):
 
 
 if __name__ == '__main__':
-    # 测试编码器
+    # Test encoders
     torch.manual_seed(42)
 
     num_users = 100
@@ -274,14 +274,14 @@ if __name__ == '__main__':
     num_entities = 30
     dim = 64
 
-    # === 测试CF编码器 ===
+    # === Test CF Encoder ===
     print("Testing CF Encoder...")
 
-    # 创建CF图
+    # Create CF graph
     num_cf_edges = 500
     cf_edge_index = torch.randint(0, num_users + num_items, (2, num_cf_edges * 2))
 
-    # 初始embeddings
+    # Initial embeddings
     cf_x = torch.randn(num_users + num_items, dim)
 
     cf_encoder = CFEncoder(num_users, num_items, dim, num_layers=2)
@@ -290,10 +290,10 @@ if __name__ == '__main__':
     print(f"  User embedding: {user_emb_cf.shape}")
     print(f"  Item embedding: {item_emb_cf.shape}")
 
-    # === 测试KG编码器 ===
+    # === Test KG Encoder ===
     print("\nTesting KG Encoder...")
 
-    # 创建异构图
+    # Create heterogeneous graph
     x_dict = {
         'user': torch.randn(num_users, dim),
         'entity': torch.randn(num_entities, dim),

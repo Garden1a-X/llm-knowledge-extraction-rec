@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class KnowledgeEnhancedRecModel(nn.Module):
-    """知识增强推荐模型（Ours-Full）"""
+    """Knowledge-Enhanced Recommendation Model (Ours-Full)"""
 
     def __init__(
         self,
@@ -37,17 +37,17 @@ class KnowledgeEnhancedRecModel(nn.Module):
     ):
         """
         Args:
-            num_users: 用户数量
-            num_items: 物品数量
-            num_entities: Entity数量
-            embedding_dim: Embedding维度
-            num_layers: GNN层数
+            num_users: Number of users
+            num_items: Number of items
+            num_entities: Number of entities
+            embedding_dim: Embedding dimension
+            num_layers: Number of GNN layers
             gat_heads: GAT attention heads
-            dropout: Dropout概率
-            use_mask: 是否使用可学习Mask
-            mask_init: Mask初始值（基于频率）
-            use_cf_view: 是否使用CF视图
-            use_kg_view: 是否使用KG视图
+            dropout: Dropout probability
+            use_mask: Whether to use learnable Mask
+            mask_init: Mask initial values (frequency-based)
+            use_cf_view: Whether to use CF view
+            use_kg_view: Whether to use KG view
         """
         super().__init__()
 
@@ -65,26 +65,26 @@ class KnowledgeEnhancedRecModel(nn.Module):
         self.item_embed = nn.Embedding(num_items, embedding_dim)
         self.entity_embed = nn.Embedding(num_entities, embedding_dim)
 
-        # 初始化
+        # Initialization
         nn.init.xavier_uniform_(self.user_embed.weight)
         nn.init.xavier_uniform_(self.item_embed.weight)
         nn.init.xavier_uniform_(self.entity_embed.weight)
 
-        # === 可学习Mask ===
+        # === Learnable Mask ===
         if use_mask:
             if mask_init is not None:
-                # 基于频率初始化
-                # 注意：需要clamp避免logit(0)=-inf或logit(1)=inf
+                # Frequency-based initialization
+                # Note: clamp to avoid logit(0)=-inf or logit(1)=inf
                 eps = 1e-7
                 mask_init_clamped = torch.clamp(mask_init, eps, 1 - eps)
                 self.mask_logits = nn.Parameter(torch.logit(mask_init_clamped))
             else:
-                # 全1初始化（等价于no mask）
+                # All-ones initialization (equivalent to no mask)
                 self.mask_logits = nn.Parameter(torch.zeros(num_entities))
         else:
             self.register_buffer('mask_logits', torch.zeros(num_entities))
 
-        # === CF视图编码器 ===
+        # === CF View Encoder ===
         if use_cf_view:
             self.cf_encoder = CFEncoder(
                 num_users=num_users,
@@ -97,7 +97,7 @@ class KnowledgeEnhancedRecModel(nn.Module):
         else:
             self.cf_encoder = None
 
-        # === KG视图编码器 ===
+        # === KG View Encoder ===
         if use_kg_view:
             self.kg_encoder = KGEncoder(
                 embedding_dim=embedding_dim,
@@ -108,9 +108,9 @@ class KnowledgeEnhancedRecModel(nn.Module):
         else:
             self.kg_encoder = None
 
-        # === 融合层 ===
+        # === Fusion Layer ===
         if use_cf_view and use_kg_view:
-            # 两个视图都用：融合
+            # Both views enabled: fuse
             self.fusion_user = nn.Sequential(
                 nn.Linear(embedding_dim * 2, embedding_dim),
                 nn.ReLU(),
@@ -125,12 +125,12 @@ class KnowledgeEnhancedRecModel(nn.Module):
                 nn.Linear(embedding_dim, embedding_dim)
             )
         else:
-            # 只用一个视图：不需要融合
+            # Only one view: no fusion needed
             self.fusion_user = None
             self.fusion_item = None
 
     def get_mask(self) -> torch.Tensor:
-        """获取当前Mask值（sigmoid）"""
+        """Get current Mask values (sigmoid)"""
         if self.use_mask:
             return torch.sigmoid(self.mask_logits)
         else:
@@ -145,8 +145,8 @@ class KnowledgeEnhancedRecModel(nn.Module):
         Forward pass
 
         Args:
-            hetero_graph: 异构图（包含User-Entity-Item边）
-            cf_edge_index: CF图边索引（User-Item双向边）
+            hetero_graph: Heterogeneous graph (contains User-Entity-Item edges)
+            cf_edge_index: CF graph edge index (User-Item bidirectional edges)
 
         Returns:
             outputs: {

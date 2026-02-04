@@ -62,7 +62,7 @@ def generate_run_id(model_name, dataset_name):
 
 
 class Trainer:
-    """训练器"""
+    """Trainer class for the knowledge-enhanced recommendation model."""
 
     def __init__(self, config, model, criterion, optimizer, device):
         self.config = config
@@ -71,7 +71,7 @@ class Trainer:
         self.optimizer = optimizer
         self.device = device
 
-        # 生成运行ID（类似RecBole格式）
+        # Generate run ID (RecBole-like format)
         model_name = config.name
         dataset_name = "ml-1m"  # 从config中提取
         timestamp_str, short_hash, date_str, time_str = generate_run_id(model_name, dataset_name)
@@ -79,24 +79,24 @@ class Trainer:
         self.run_id = f"{model_name}-{dataset_name}-{timestamp_str}-{short_hash}"
         self.checkpoint_id = f"{model_name}_{dataset_name}_{date_str}_{time_str}"
 
-        # 创建输出目录（类似RecBole结构）
-        # 1. log目录：log/{MODEL_NAME}/{RUN_ID}.log
+        # Create output directories (RecBole-like structure)
+        # 1. Log directory: log/{MODEL_NAME}/{RUN_ID}.log
         log_dir = Path("log") / model_name
         log_dir.mkdir(parents=True, exist_ok=True)
         self.log_file = log_dir / f"{self.run_id}.log"
 
-        # 2. TensorBoard目录：log_tensorboard/{RUN_ID}/
+        # 2. TensorBoard directory: log_tensorboard/{RUN_ID}/
         tensorboard_dir = Path("log_tensorboard") / self.run_id
         tensorboard_dir.mkdir(parents=True, exist_ok=True)
         self.writer = SummaryWriter(tensorboard_dir)
 
-        # 3. Checkpoint目录：outputs/ours/{CHECKPOINT_ID}/checkpoints/
+        # 3. Checkpoint directory: outputs/ours/{CHECKPOINT_ID}/checkpoints/
         self.output_dir = Path(config.output_dir) / "ours" / self.checkpoint_id
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.checkpoint_dir = self.output_dir / "checkpoints"
         self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
-        # 设置文件日志
+        # Set up file logging
         file_handler = logging.FileHandler(self.log_file)
         file_handler.setLevel(logging.INFO)
         file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
@@ -109,16 +109,16 @@ class Trainer:
         logger.info(f"Checkpoints: {self.checkpoint_dir}")
         logger.info(f"="*80)
 
-        # 最佳指标
+        # Best metrics
         self.best_ndcg = 0.0
         self.best_epoch = 0
         self.patience_counter = 0
 
-        # 历史记录
+        # Training history
         self.history = defaultdict(list)
 
     def train_epoch(self, train_loader, hetero_graph, cf_edge_index, epoch):
-        """训练一个epoch"""
+        """Train for one epoch."""
         self.model.train()
 
         total_loss = 0.0
@@ -127,13 +127,13 @@ class Trainer:
         pbar = tqdm(train_loader, desc=f'Epoch {epoch}')
 
         for batch_idx, batch in enumerate(pbar):
-            # 移动到设备
+            # Move to device
             batch = {k: v.to(self.device) for k, v in batch.items()}
 
             # Forward
             outputs = self.model(hetero_graph, cf_edge_index)
 
-            # 获取batch embedding
+            # Get batch embeddings
             user_ids = batch['user_id']
             pos_item_ids = batch['pos_item_id']
             neg_item_ids = batch['neg_item_ids']
@@ -142,7 +142,7 @@ class Trainer:
             pos_item_emb = outputs['item_fused'][pos_item_ids]
             neg_item_emb = outputs['item_fused'][neg_item_ids]
 
-            # 计算损失
+            # Compute loss
             loss_dict = self.criterion(
                 user_emb_fused=user_emb_fused,
                 pos_item_emb=pos_item_emb,
@@ -157,7 +157,7 @@ class Trainer:
 
             loss = loss_dict['loss']
 
-            # 检查NaN
+            # Check for NaN
             if torch.isnan(loss) or torch.isinf(loss):
                 logger.error(f"NaN/Inf detected in loss! Loss components:")
                 for key, value in loss_dict.items():
@@ -168,17 +168,17 @@ class Trainer:
             self.optimizer.zero_grad()
             loss.backward()
 
-            # Gradient clipping (防止梯度爆炸)
+            # Gradient clipping (prevent gradient explosion)
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
 
             self.optimizer.step()
 
-            # 记录
+            # Record metrics
             total_loss += loss.item()
             for key, value in loss_dict.items():
                 loss_components[key] += value.item()
 
-            # 更新进度条
+            # Update progress bar
             pbar.set_postfix({
                 'loss': f"{loss.item():.4f}",
                 'L_rec': f"{loss_dict['L_rec'].item():.4f}"

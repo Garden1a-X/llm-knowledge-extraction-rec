@@ -91,7 +91,7 @@ class ExperimentConfig:
     loss: LossConfig = field(default_factory=LossConfig)
     train: TrainConfig = field(default_factory=TrainConfig)
 
-    # 消融实验标志
+    # Ablation study flags
     ablation: Dict[str, bool] = field(default_factory=lambda: {
         'use_contrast': True,
         'use_align': True,
@@ -100,20 +100,20 @@ class ExperimentConfig:
         'use_kg_view': True,
     })
 
-    # 输出路径
+    # Output paths
     output_dir: str = 'outputs'
     checkpoint_dir: str = 'checkpoints'
 
 
 def load_config(config_path: str) -> ExperimentConfig:
     """
-    从YAML文件加载配置
+    Load configuration from a YAML file
 
     Args:
-        config_path: 配置文件路径
+        config_path: Path to the configuration file
 
     Returns:
-        config: ExperimentConfig对象
+        config: ExperimentConfig object
     """
     config_path = Path(config_path)
 
@@ -123,44 +123,44 @@ def load_config(config_path: str) -> ExperimentConfig:
     with open(config_path, 'r') as f:
         config_dict = yaml.safe_load(f)
 
-    # 创建配置对象
+    # Create config object
     config = ExperimentConfig()
 
-    # 更新配置
+    # Update config
     if 'name' in config_dict:
         config.name = config_dict['name']
     if 'description' in config_dict:
         config.description = config_dict['description']
 
-    # 数据配置
+    # Data config
     if 'data' in config_dict:
         for key, value in config_dict['data'].items():
             if hasattr(config.data, key):
                 setattr(config.data, key, value)
 
-    # 模型配置
+    # Model config
     if 'model' in config_dict:
         for key, value in config_dict['model'].items():
             if hasattr(config.model, key):
                 setattr(config.model, key, value)
 
-    # 损失配置
+    # Loss config
     if 'loss' in config_dict:
         for key, value in config_dict['loss'].items():
             if hasattr(config.loss, key):
                 setattr(config.loss, key, value)
 
-    # 训练配置
+    # Training config
     if 'train' in config_dict:
         for key, value in config_dict['train'].items():
             if hasattr(config.train, key):
                 setattr(config.train, key, value)
 
-    # 消融实验配置
+    # Ablation study config
     if 'ablation' in config_dict:
         config.ablation.update(config_dict['ablation'])
 
-    # 输出路径
+    # Output paths
     if 'output_dir' in config_dict:
         config.output_dir = config_dict['output_dir']
     if 'checkpoint_dir' in config_dict:

@@ -104,7 +104,7 @@ def multiview_contrastive_loss(
     pos_sim = (emb_view1 * emb_view2).sum(dim=-1) / temperature  # [batch_size]
 
     if batch_wise:
-        # 负样本：batch内其他user的cross-view相似度
+        # Negative pairs: cross-view similarity with other users in the batch
         neg_sim = emb_view1 @ emb_view2.T / temperature  # [batch_size, batch_size]
 
         # InfoNCE formulation
@@ -113,17 +113,17 @@ def multiview_contrastive_loss(
 
         loss = F.cross_entropy(logits, labels)
     else:
-        # 全局对比（更准确但更慢）
-        # 正样本分数
+        # Global contrast (more accurate but slower)
+        # Positive pair scores
         pos_logits = pos_sim
 
-        # 负样本：所有其他user
+        # Negative pairs: all other users
         neg_sim_all = emb_view1 @ emb_view2.T / temperature  # [batch_size, batch_size]
 
-        # 构建logits矩阵
+        # Build logits matrix
         logits = neg_sim_all
 
-        # 对角线是正样本
+        # Diagonal entries are positive pairs
         labels = torch.arange(batch_size, dtype=torch.long, device=logits.device)
 
         loss = F.cross_entropy(logits, labels)
@@ -138,17 +138,17 @@ def entity_item_alignment_loss(
     num_neg: int = 5
 ) -> torch.Tensor:
     """
-    Entity-Item对齐损失
+    Entity-Item alignment loss.
 
-    让Entity和它描述的Item在embedding空间中接近
+    Encourages entities and the items they describe to be close in embedding space.
 
     Args:
         entity_emb: [num_entities, dim] - Entity embeddings
         item_emb: [num_items, dim] - Item embeddings
-        edge_index: [2, num_edges] - (entity_describes_item边)
+        edge_index: [2, num_edges] - (entity_describes_item edges)
             edge_index[0]: entity IDs
             edge_index[1]: item IDs
-        num_neg: 负采样数量
+        num_neg: number of negative samples
 
     Returns:
         loss: scalar
@@ -168,7 +168,7 @@ def entity_item_alignment_loss(
     pos_item = item_emb[item_ids]        # [num_edges, dim]
     pos_score = (pos_entity * pos_item).sum(dim=-1)  # [num_edges]
 
-    # Negative sampling（随机采样）
+    # Negative sampling (random sampling)
     neg_items = torch.randint(
         0, num_items,
         (num_edges, num_neg),
@@ -193,31 +193,31 @@ def mask_regularization(
     lambda_entropy: float = 0.1
 ) -> torch.Tensor:
     """
-    Mask正则化损失
+    Mask regularization loss.
 
-    目标：
-    1. 稀疏性：大部分Entity保留（mask≈1）
-    2. 确定性：避免模棱两可（mask接近0或1）
+    Goals:
+    1. Sparsity: retain most entities (mask ~ 1)
+    2. Certainty: avoid ambiguity (mask close to 0 or 1)
 
     Args:
-        mask: [num_entities] - sigmoid输出，范围[0, 1]
-        lambda_sparse: 稀疏正则权重
-        lambda_entropy: 熵正则权重
+        mask: [num_entities] - sigmoid output, range [0, 1]
+        lambda_sparse: sparsity regularization weight
+        lambda_entropy: entropy regularization weight
 
     Returns:
         loss: scalar
     """
-    # L1稀疏正则：鼓励大部分=1（不mask）
+    # L1 sparsity regularization: encourage most values = 1 (not masked)
     L_sparse = (1 - mask).sum()
 
-    # 熵正则：鼓励接近0或1（最小化熵）
+    # Entropy regularization: encourage values close to 0 or 1 (minimize entropy)
     eps = 1e-8
     entropy = -(
         mask * torch.log(mask + eps) +
         (1 - mask) * torch.log(1 - mask + eps)
     ).mean()
 
-    # 组合损失
+    # Combined loss
     loss = lambda_sparse * L_sparse - lambda_entropy * entropy
 
     return loss
