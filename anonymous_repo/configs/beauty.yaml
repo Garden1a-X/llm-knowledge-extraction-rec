@@ -1,0 +1,58 @@
+name: ours_full_beauty
+description: Full model with all components (Amazon Beauty)
+
+data:
+  item_kg_path: data/amazon-beauty/amazon-beauty.item.kg
+  user_kg_path: data/amazon-beauty/amazon-beauty.user.kg
+  inter_path: data/amazon-beauty/amazon-beauty.inter
+  train_ratio: 0.7
+  val_ratio: 0.1
+  test_ratio: 0.2
+  time_based_split: true
+  per_user_split: true
+  min_rating: 4.0
+
+model:
+  embedding_dim: 64
+  num_gnn_layers: 2
+  gat_heads: 4
+  dropout: 0.2
+  use_mask: true
+  mask_min_freq: 5
+  mask_max_freq: 1000
+
+loss:
+  alpha_contrast: 0.01
+  beta_align: 0.01
+  gamma_mask: 0.001
+  temperature_rec: 0.2
+  temperature_contrast: 0.1
+  lambda_sparse: 1.0
+  lambda_entropy: 0.1
+  num_neg_align: 5
+
+train:
+  batch_size: 2048
+  num_negatives: 1
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  num_epochs: 300
+  early_stop_patience: 10
+  eval_every: 1
+  eval_mode: uni100
+  eval_num_neg: 99
+  log_every: 1
+  save_every: 10
+  num_workers: 4
+  device: cuda
+  random_seed: 42
+
+ablation:
+  use_contrast: true
+  use_align: true
+  use_mask: true
+  use_cf_view: true
+  use_kg_view: true
+
+output_dir: outputs
+checkpoint_dir: checkpoints
