@@ -5,6 +5,8 @@
 SRC=/data/xuao/llm-knowledge-extraction-rec/data/recbole
 DST=/data/xuao/llm-knowledge-extraction-rec/anonymous_repo/data
 
+mkdir -p "$DST/ml-1m" "$DST/amazon-beauty" "$DST/amazon-videogames"
+
 echo "Copying dataset files for anonymous repo..."
 
 # ML-1M
