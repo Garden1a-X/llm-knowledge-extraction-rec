@@ -28,7 +28,7 @@ from src.data import KnowledgeGraphBuilder, compute_frequency_mask, split_data, 
 from src.model import KnowledgeEnhancedRecModel, RecommendationLoss
 from src.utils import load_config, evaluate_ranking
 
-# 设置日志 (先临时设置，稍后会重定向到文件)
+# Set up logging (temporary setup, will be redirected to file later)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -38,9 +38,9 @@ logger = logging.getLogger(__name__)
 
 def generate_run_id(model_name, dataset_name):
     """
-    生成运行ID（类似RecBole格式）
+    Generate a run ID (RecBole-like format).
 
-    返回:
+    Returns:
         timestamp_str: "Dec-27-2025_13-18-09"
         short_hash: "8c4cec"
         date_str: "20251227"
@@ -48,14 +48,14 @@ def generate_run_id(model_name, dataset_name):
     """
     now = datetime.now()
 
-    # 时间戳格式：Dec-27-2025_13-18-09
+    # Timestamp format: Dec-27-2025_13-18-09
     timestamp_str = now.strftime("%b-%d-%Y_%H-%M-%S")
 
-    # 日期和时间（用于文件夹名）
+    # Date and time (for folder naming)
     date_str = now.strftime("%Y%m%d")
     time_str = now.strftime("%H%M%S")
 
-    # 生成6位随机hash
+    # Generate 6-character random hash
     short_hash = ''.join(random.choices(string.hexdigits.lower(), k=6))
 
     return timestamp_str, short_hash, date_str, time_str

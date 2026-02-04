@@ -2,7 +2,7 @@
 """
 Loss functions for recommendation
 
-实现InfoNCE、多视图对比、Entity对齐等损失函数。
+Implements InfoNCE, multi-view contrastive, and entity alignment loss functions.
 """
 
 import torch
@@ -21,13 +21,13 @@ def info_nce_loss(
     temperature: float = 0.2
 ) -> torch.Tensor:
     """
-    InfoNCE对比学习损失（推荐任务）
+    InfoNCE contrastive learning loss (recommendation task).
 
     Args:
-        user_emb: [batch_size, dim] - 用户embedding
-        pos_item_emb: [batch_size, dim] - 正样本item embedding
-        neg_item_emb: [batch_size, num_neg, dim] - 负样本item embeddings
-        temperature: 温度系数
+        user_emb: [batch_size, dim] - user embedding
+        pos_item_emb: [batch_size, dim] - positive item embedding
+        neg_item_emb: [batch_size, num_neg, dim] - negative item embeddings
+        temperature: temperature coefficient
 
     Returns:
         loss: scalar
@@ -42,7 +42,7 @@ def info_nce_loss(
     ).squeeze(-1) / temperature  # [batch_size, num_neg]
 
     # InfoNCE: -log( exp(pos) / (exp(pos) + sum(exp(neg))) )
-    # 等价于 CrossEntropy，其中正样本标签=0
+    # Equivalent to CrossEntropy where positive sample label = 0
     logits = torch.cat([pos_score.unsqueeze(1), neg_score], dim=1)  # [batch_size, 1+num_neg]
     labels = torch.zeros(logits.size(0), dtype=torch.long, device=logits.device)
 
@@ -56,11 +56,11 @@ def bpr_loss(
     neg_score: torch.Tensor
 ) -> torch.Tensor:
     """
-    BPR (Bayesian Personalized Ranking) 损失
+    BPR (Bayesian Personalized Ranking) loss.
 
     Args:
-        pos_score: [batch_size] or [batch_size, 1] - 正样本分数
-        neg_score: [batch_size, num_neg] - 负样本分数
+        pos_score: [batch_size] or [batch_size, 1] - positive sample scores
+        neg_score: [batch_size, num_neg] - negative sample scores
 
     Returns:
         loss: scalar
@@ -81,26 +81,26 @@ def multiview_contrastive_loss(
     batch_wise: bool = True
 ) -> torch.Tensor:
     """
-    多视图对比学习损失
+    Multi-view contrastive learning loss.
 
-    目标：让两个视图学到的User表示相似但互补
+    Goal: encourage the two views to learn similar yet complementary user representations.
 
     Args:
-        emb_view1: [batch_size or num_users, dim] - 视图1的embedding (CF)
-        emb_view2: [batch_size or num_users, dim] - 视图2的embedding (KG)
-        temperature: 温度系数
-        batch_wise: 是否只在batch内对比（推荐，更快）
+        emb_view1: [batch_size or num_users, dim] - view 1 embedding (CF)
+        emb_view2: [batch_size or num_users, dim] - view 2 embedding (KG)
+        temperature: temperature coefficient
+        batch_wise: whether to contrast only within the batch (recommended, faster)
 
     Returns:
         loss: scalar
     """
-    # L2归一化
+    # L2 normalization
     emb_view1 = F.normalize(emb_view1, dim=-1)
     emb_view2 = F.normalize(emb_view2, dim=-1)
 
     batch_size = emb_view1.size(0)
 
-    # 正样本：同一个user的两个视图
+    # Positive pairs: two views of the same user
     pos_sim = (emb_view1 * emb_view2).sum(dim=-1) / temperature  # [batch_size]
 
     if batch_wise:

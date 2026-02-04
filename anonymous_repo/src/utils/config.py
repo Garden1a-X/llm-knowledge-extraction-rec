@@ -2,7 +2,7 @@
 """
 Configuration management
 
-使用YAML文件管理实验配置。
+Manages experiment configuration using YAML files.
 """
 
 import yaml
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class DataConfig:
-    """数据相关配置"""
+    """Data-related configuration"""
     item_kg_path: str = 'data/ml-1m/ml-1m.item.kg'
     user_kg_path: str = 'data/ml-1m/ml-1m.user.kg'
     inter_path: str = 'data/ml-1m/ml-1m.inter'
@@ -24,13 +24,13 @@ class DataConfig:
     val_ratio: float = 0.1
     test_ratio: float = 0.2
     time_based_split: bool = True
-    per_user_split: bool = True  # Per-user Random Split（对齐RecBole RS）
+    per_user_split: bool = True  # Per-user Random Split (aligned with RecBole RS)
     min_rating: float = 4.0
 
 
 @dataclass
 class ModelConfig:
-    """模型相关配置"""
+    """Model-related configuration"""
     embedding_dim: int = 64
     num_gnn_layers: int = 2
     gat_heads: int = 4
@@ -42,27 +42,27 @@ class ModelConfig:
 
 @dataclass
 class LossConfig:
-    """损失函数相关配置"""
-    # 损失权重
-    alpha_contrast: float = 0.1   # 多视图对比
-    beta_align: float = 0.05       # Entity-Item对齐
-    gamma_mask: float = 0.01       # Mask正则
+    """Loss function configuration"""
+    # Loss weights
+    alpha_contrast: float = 0.1   # Multi-view contrastive
+    beta_align: float = 0.05       # Entity-Item alignment
+    gamma_mask: float = 0.01       # Mask regularization
 
     # InfoNCE temperature
     temperature_rec: float = 0.2
     temperature_contrast: float = 0.1
 
-    # Mask正则参数
+    # Mask regularization parameters
     lambda_sparse: float = 1.0
     lambda_entropy: float = 0.1
 
-    # 对齐损失负采样
+    # Negative sampling for alignment loss
     num_neg_align: int = 5
 
 
 @dataclass
 class TrainConfig:
-    """训练相关配置"""
+    """Training-related configuration"""
     batch_size: int = 1024
     num_negatives: int = 1
     learning_rate: float = 0.001
@@ -81,11 +81,11 @@ class TrainConfig:
 
 @dataclass
 class ExperimentConfig:
-    """完整实验配置"""
+    """Full experiment configuration"""
     name: str = 'ours_full'
     description: str = 'Full model with all components'
 
-    # 子配置
+    # Sub-configurations
     data: DataConfig = field(default_factory=DataConfig)
     model: ModelConfig = field(default_factory=ModelConfig)
     loss: LossConfig = field(default_factory=LossConfig)

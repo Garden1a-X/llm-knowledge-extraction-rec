@@ -2,7 +2,7 @@
 """
 Knowledge-Enhanced Heterogeneous Graph Recommendation Model
 
-完整模型：集成CF视图、KG视图、Mask机制和融合层。
+Full model: integrates CF view, KG view, Mask mechanism, and fusion layers.
 """
 
 import torch

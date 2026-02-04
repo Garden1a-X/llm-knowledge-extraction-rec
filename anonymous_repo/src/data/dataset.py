@@ -2,7 +2,7 @@
 """
 Dataset and DataLoader for recommendation
 
-提供训练/验证/测试数据集，支持负采样。
+Provides train/validation/test datasets with negative sampling support.
 """
 
 import torch
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class RecDataset(Dataset):
-    """推荐任务的Dataset"""
+    """Dataset for recommendation tasks"""
 
     def __init__(
         self,
@@ -30,11 +30,11 @@ class RecDataset(Dataset):
     ):
         """
         Args:
-            interactions: 交互数据（包含user_id, item_id, rating等）
-            user_id_map: User原始ID → 内部ID映射
-            item_id_map: Item原始ID → 内部ID映射
-            num_negatives: 负采样数量
-            mode: 'train', 'val', 或 'test'
+            interactions: Interaction data (contains user_id, item_id, rating, etc.)
+            user_id_map: Mapping from original user ID to internal ID
+            item_id_map: Mapping from original item ID to internal ID
+            num_negatives: Number of negative samples
+            mode: 'train', 'val', or 'test'
         """
         self.interactions = interactions
         self.user_id_map = user_id_map
@@ -45,14 +45,14 @@ class RecDataset(Dataset):
         self.num_users = len(user_id_map)
         self.num_items = len(item_id_map)
 
-        # 构建用户-物品交互字典（用于负采样）
+        # Build user-item interaction dict (for negative sampling)
         self.user_items = defaultdict(set)
         for _, row in interactions.iterrows():
             user_id = user_id_map[row['user_id:token']]
             item_id = item_id_map[row['item_id:token']]
             self.user_items[user_id].add(item_id)
 
-        # 所有物品集合
+        # Set of all items
         self.all_items = set(range(self.num_items))
 
         logger.info(f"Created {mode} dataset: {len(interactions)} interactions")
@@ -66,7 +66,7 @@ class RecDataset(Dataset):
             {
                 'user_id': int,
                 'pos_item_id': int,
-                'neg_item_ids': List[int] (长度为num_negatives)
+                'neg_item_ids': List[int] (length equals num_negatives)
             }
         """
         row = self.interactions.iloc[idx]
@@ -74,7 +74,7 @@ class RecDataset(Dataset):
         user_id = self.user_id_map[row['user_id:token']]
         pos_item_id = self.item_id_map[row['item_id:token']]
 
-        # 负采样
+        # Negative sampling
         neg_item_ids = self._negative_sampling(user_id, self.num_negatives)
 
         return {
@@ -85,20 +85,20 @@ class RecDataset(Dataset):
 
     def _negative_sampling(self, user_id: int, num_neg: int) -> List[int]:
         """
-        为用户采样负样本
+        Sample negative items for a user
 
         Args:
-            user_id: 用户内部ID
-            num_neg: 负样本数量
+            user_id: Internal user ID
+            num_neg: Number of negative samples
 
         Returns:
-            neg_items: 负样本item IDs
+            neg_items: Negative sample item IDs
         """
         pos_items = self.user_items[user_id]
         neg_candidates = list(self.all_items - pos_items)
 
         if len(neg_candidates) < num_neg:
-            # 如果负候选不够，重复采样
+            # If not enough negative candidates, sample with replacement
             neg_items = np.random.choice(
                 neg_candidates,
                 size=num_neg,

@@ -2,8 +2,8 @@
 """
 Graph Encoders: CF View and KG View
 
-CF编码器：User-Item二部图（GAT）
-KG编码器：User-Entity-Item异构图（HeteroConv + GAT）
+CF Encoder: User-Item bipartite graph (GAT)
+KG Encoder: User-Entity-Item heterogeneous graph (HeteroConv + GAT)
 """
 
 import torch
@@ -19,9 +19,9 @@ logger = logging.getLogger(__name__)
 
 class CFEncoder(nn.Module):
     """
-    CF视图编码器（传统协同过滤图）
+    CF View Encoder (traditional collaborative filtering graph).
 
-    结构：User-Item二部图，使用GAT进行消息传递
+    Structure: User-Item bipartite graph with GAT message passing.
     """
 
     def __init__(
@@ -35,12 +35,12 @@ class CFEncoder(nn.Module):
     ):
         """
         Args:
-            num_users: 用户数量
-            num_items: 物品数量
-            embedding_dim: Embedding维度
-            num_layers: GNN层数
+            num_users: Number of users
+            num_items: Number of items
+            embedding_dim: Embedding dimension
+            num_layers: Number of GNN layers
             heads: GAT attention heads
-            dropout: Dropout概率
+            dropout: Dropout probability
         """
         super().__init__()
 
@@ -48,8 +48,8 @@ class CFEncoder(nn.Module):
         self.num_items = num_items
         self.embedding_dim = embedding_dim
 
-        # User和Item的初始embedding（在完整模型中从外部传入）
-        # 这里只定义GNN layers
+        # Initial embeddings for User and Item (passed in externally in the full model)
+        # Only GNN layers are defined here
 
         # GAT layers
         self.convs = nn.ModuleList()
@@ -91,8 +91,8 @@ class CFEncoder(nn.Module):
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Args:
-            x: [num_users + num_items, dim] - 拼接的User和Item embeddings
-            edge_index: [2, num_edges] - User-Item边（双向）
+            x: [num_users + num_items, dim] - Concatenated User and Item embeddings
+            edge_index: [2, num_edges] - User-Item edges (bidirectional)
 
         Returns:
             user_emb: [num_users, dim]
@@ -117,9 +117,9 @@ class CFEncoder(nn.Module):
 
 class KGEncoder(nn.Module):
     """
-    KG视图编码器（知识增强异构图）
+    KG View Encoder (knowledge-enhanced heterogeneous graph).
 
-    结构：User-Entity-Item异构图，使用HeteroConv + GAT
+    Structure: User-Entity-Item heterogeneous graph using HeteroConv + GAT.
     """
 
     def __init__(
@@ -131,10 +131,10 @@ class KGEncoder(nn.Module):
     ):
         """
         Args:
-            embedding_dim: Embedding维度
-            num_layers: GNN层数
+            embedding_dim: Embedding dimension
+            num_layers: Number of GNN layers
             heads: GAT attention heads
-            dropout: Dropout概率
+            dropout: Dropout probability
         """
         super().__init__()
 
@@ -162,8 +162,8 @@ class KGEncoder(nn.Module):
                 out_channels = embedding_dim
                 concat = False
 
-            # HeteroConv包含多种边类型的GATConv
-            # 注意：异构边不能添加self-loops
+            # HeteroConv wraps GATConv for multiple edge types
+            # Note: heterogeneous edges cannot have self-loops
             hetero_conv = HeteroConv({
                 # Forward edges
                 ('user', 'long_term', 'entity'): GATConv(
