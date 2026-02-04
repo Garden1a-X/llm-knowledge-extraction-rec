@@ -111,27 +111,25 @@ def run_smoke_test(dataset):
     tmp_config.close()
 
     try:
-        result = subprocess.run(
+        process = subprocess.Popen(
             ['python', 'scripts/train_model.py', '--config', tmp_config.name],
-            capture_output=True, text=True, timeout=300
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            universal_newlines=True, bufsize=1
         )
 
-        if result.returncode == 0:
-            # Extract final metrics
-            for line in result.stdout.split('\n'):
-                if 'NDCG@10' in line or 'Recall@10' in line or 'Training Complete' in line:
-                    print(f"  {line.strip()}")
+        for line in process.stdout:
+            print(line, end='', flush=True)
+
+        process.wait()
+
+        if process.returncode == 0:
             print(f"\n  [PASS] {dataset} training completed successfully!")
             return True
         else:
-            print(f"  [FAIL] {dataset} training failed!")
-            # Print last 20 lines of output
-            lines = (result.stdout + result.stderr).strip().split('\n')
-            for line in lines[-20:]:
-                print(f"  {line}")
+            print(f"\n  [FAIL] {dataset} training failed (exit code {process.returncode})")
             return False
-    except subprocess.TimeoutExpired:
-        print(f"  [FAIL] {dataset} timed out (>300s)")
+    except Exception as e:
+        print(f"  [FAIL] {dataset}: {e}")
         return False
     finally:
         os.unlink(tmp_config.name)
