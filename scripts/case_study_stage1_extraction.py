@@ -130,7 +130,7 @@ def main():
     print("-" * 70)
 
     # Configure paths for ML-1M
-    ml1m_poster_dir = Path("/data/xuao/llm-knowledge-extraction-rec/data/recbole/ml-1m/posters")
+    ml1m_poster_dir = Path("/data/xuao/llm-knowledge-extraction-rec/data/raw/ml-1m/posters")
     ml1m_mapping_file = Path("/data/xuao/llm-knowledge-extraction-rec/data/recbole/ml-1m/id_mappings.json")
 
     if ml1m_mapping_file.exists():
