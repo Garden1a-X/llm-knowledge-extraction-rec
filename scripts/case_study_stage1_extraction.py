@@ -23,14 +23,27 @@ import json
 import base64
 from datetime import datetime
 
-# Check for API key
+# Check for API key and base URL
 if not os.environ.get('OPENAI_API_KEY'):
     print("Error: OPENAI_API_KEY environment variable not set")
     print("Please set it: export OPENAI_API_KEY='your-key-here'")
     sys.exit(1)
 
+if not os.environ.get('OPENAI_BASE_URL'):
+    print("Error: OPENAI_BASE_URL environment variable not set")
+    print("Please set it: export OPENAI_BASE_URL='your-base-url-here'")
+    sys.exit(1)
+
 from openai import OpenAI
 from src.extraction.prompts import PromptTemplates
+
+
+def create_client() -> OpenAI:
+    """Create OpenAI client with base_url from environment."""
+    return OpenAI(
+        api_key=os.environ.get('OPENAI_API_KEY'),
+        base_url=os.environ.get('OPENAI_BASE_URL')
+    )
 
 
 def encode_image_base64(image_path: Path) -> str:
@@ -108,7 +121,7 @@ def main():
     print("CASE STUDY: Stage 1 Exploratory Extraction Examples")
     print("=" * 70)
 
-    client = OpenAI()
+    client = create_client()
     results = {}
 
     # ========== ML-1M: Star Wars ==========
