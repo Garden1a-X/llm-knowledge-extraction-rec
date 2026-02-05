@@ -267,7 +267,7 @@ def create_dataloaders(
         mode='test'
     )
 
-    # 创建DataLoader
+    # Create DataLoader
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
@@ -307,10 +307,10 @@ def create_dataloaders(
 
 
 if __name__ == '__main__':
-    # 测试用例
+    # Test case
     logging.basicConfig(level=logging.INFO)
 
-    # 首先需要构建图以获取ID映射
+    # First build graph to get ID mappings
     from graph_builder import KnowledgeGraphBuilder
 
     builder = KnowledgeGraphBuilder(
@@ -321,13 +321,13 @@ if __name__ == '__main__':
 
     _, _, stats = builder.build_hetero_graph()
 
-    # 分割数据
+    # Split data
     train_df, val_df, test_df = split_data(
         'data/ml-1m/ml-1m.inter',
         time_based=True
     )
 
-    # 创建DataLoaders
+    # Create DataLoaders
     train_loader, val_loader, test_loader = create_dataloaders(
         train_df, val_df, test_df,
         stats['user_id_map'],
@@ -336,7 +336,7 @@ if __name__ == '__main__':
         num_negatives=1
     )
 
-    # 测试一个batch
+    # Test one batch
     batch = next(iter(train_loader))
     print(f"\n✓ Sample batch:")
     print(f"  user_id: {batch['user_id'].shape}")

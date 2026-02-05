@@ -224,7 +224,7 @@ def mask_regularization(
 
 
 class RecommendationLoss(nn.Module):
-    """完整的推荐损失（组合所有损失）"""
+    """Combined recommendation loss (all loss components)"""
 
     def __init__(
         self,
@@ -242,17 +242,17 @@ class RecommendationLoss(nn.Module):
     ):
         """
         Args:
-            alpha_contrast: 多视图对比损失权重
-            beta_align: Entity-Item对齐损失权重
-            gamma_mask: Mask正则化权重
-            temperature_rec: InfoNCE推荐损失温度
-            temperature_contrast: 多视图对比损失温度
-            lambda_sparse: Mask稀疏正则权重
-            lambda_entropy: Mask熵正则权重
-            num_neg_align: 对齐损失负采样数
-            use_contrast: 是否使用多视图对比
-            use_align: 是否使用Entity-Item对齐
-            use_mask: 是否使用Mask正则
+            alpha_contrast: multi-view contrastive loss weight
+            beta_align: entity-item alignment loss weight
+            gamma_mask: mask regularization weight
+            temperature_rec: InfoNCE recommendation loss temperature
+            temperature_contrast: multi-view contrastive loss temperature
+            lambda_sparse: mask sparsity regularization weight
+            lambda_entropy: mask entropy regularization weight
+            num_neg_align: number of negatives for alignment loss
+            use_contrast: whether to use multi-view contrastive loss
+            use_align: whether to use entity-item alignment loss
+            use_mask: whether to use mask regularization
         """
         super().__init__()
 
@@ -285,18 +285,18 @@ class RecommendationLoss(nn.Module):
         mask: Optional[torch.Tensor] = None,
     ) -> Dict[str, torch.Tensor]:
         """
-        计算完整损失
+        Compute the combined loss
 
         Args:
-            user_emb_fused: [batch_size, dim] - 融合后的用户embedding
-            pos_item_emb: [batch_size, dim] - 正样本item
-            neg_item_emb: [batch_size, num_neg, dim] - 负样本items
-            user_emb_cf: [num_users or batch_size, dim] - CF视图用户embedding
-            user_emb_kg: [num_users or batch_size, dim] - KG视图用户embedding
+            user_emb_fused: [batch_size, dim] - fused user embeddings
+            pos_item_emb: [batch_size, dim] - positive item embeddings
+            neg_item_emb: [batch_size, num_neg, dim] - negative item embeddings
+            user_emb_cf: [num_users or batch_size, dim] - CF view user embeddings
+            user_emb_kg: [num_users or batch_size, dim] - KG view user embeddings
             entity_emb: [num_entities, dim] - Entity embeddings
-            item_emb_kg: [num_items, dim] - KG视图Item embeddings
-            entity_item_edges: [2, num_edges] - Entity-Item边
-            mask: [num_entities] - 学习的mask
+            item_emb_kg: [num_items, dim] - KG view item embeddings
+            entity_item_edges: [2, num_edges] - entity-item edges
+            mask: [num_entities] - learned mask
 
         Returns:
             loss_dict: {
@@ -309,7 +309,7 @@ class RecommendationLoss(nn.Module):
         """
         loss_dict = {}
 
-        # === 1. 主损失：InfoNCE推荐 ===
+        # === 1. Main loss: InfoNCE recommendation ===
         L_rec = info_nce_loss(
             user_emb_fused,
             pos_item_emb,
@@ -318,20 +318,20 @@ class RecommendationLoss(nn.Module):
         )
         loss_dict['L_rec'] = L_rec
 
-        # === 2. 多视图对比损失 ===
+        # === 2. Multi-view contrastive loss ===
         if self.use_contrast and user_emb_cf is not None and user_emb_kg is not None:
             L_contrast = multiview_contrastive_loss(
                 user_emb_cf,
                 user_emb_kg,
                 temperature=self.temp_contrast,
-                batch_wise=True  # batch内对比（更快）
+                batch_wise=True  # batch-wise contrastive (faster)
             )
             loss_dict['L_contrast'] = L_contrast
         else:
             L_contrast = torch.tensor(0.0, device=L_rec.device)
             loss_dict['L_contrast'] = L_contrast
 
-        # === 3. Entity-Item对齐损失 ===
+        # === 3. Entity-item alignment loss ===
         if self.use_align and entity_emb is not None and item_emb_kg is not None and entity_item_edges is not None:
             L_align = entity_item_alignment_loss(
                 entity_emb,
@@ -344,7 +344,7 @@ class RecommendationLoss(nn.Module):
             L_align = torch.tensor(0.0, device=L_rec.device)
             loss_dict['L_align'] = L_align
 
-        # === 4. Mask正则化 ===
+        # === 4. Mask regularization ===
         if self.use_mask and mask is not None:
             L_mask = mask_regularization(
                 mask,
@@ -356,7 +356,7 @@ class RecommendationLoss(nn.Module):
             L_mask = torch.tensor(0.0, device=L_rec.device)
             loss_dict['L_mask'] = L_mask
 
-        # === 总损失 ===
+        # === Total loss ===
         total_loss = (
             L_rec
             + self.alpha * L_contrast
@@ -369,14 +369,14 @@ class RecommendationLoss(nn.Module):
 
 
 if __name__ == '__main__':
-    # 测试损失函数
+    # 测试Loss function
     torch.manual_seed(42)
 
     batch_size = 64
     dim = 128
     num_neg = 5
 
-    # 测试数据
+    # Test data
     user_emb = torch.randn(batch_size, dim)
     pos_item_emb = torch.randn(batch_size, dim)
     neg_item_emb = torch.randn(batch_size, num_neg, dim)
@@ -385,18 +385,18 @@ if __name__ == '__main__':
     loss_rec = info_nce_loss(user_emb, pos_item_emb, neg_item_emb)
     print(f"InfoNCE loss: {loss_rec.item():.4f}")
 
-    # 2. 多视图对比
+    # 2. Multi-view contrastive
     user_cf = torch.randn(batch_size, dim)
     user_kg = torch.randn(batch_size, dim)
     loss_contrast = multiview_contrastive_loss(user_cf, user_kg)
     print(f"Contrastive loss: {loss_contrast.item():.4f}")
 
-    # 3. Mask正则
+    # 3. Mask regularization
     mask = torch.sigmoid(torch.randn(400))
     loss_mask = mask_regularization(mask)
     print(f"Mask regularization: {loss_mask.item():.4f}")
 
-    # 4. 完整损失
+    # 4. Combined loss
     criterion = RecommendationLoss()
     loss_dict = criterion(
         user_emb_fused=user_emb,

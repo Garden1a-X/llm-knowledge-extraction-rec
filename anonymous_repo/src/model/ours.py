@@ -150,20 +150,20 @@ class KnowledgeEnhancedRecModel(nn.Module):
 
         Returns:
             outputs: {
-                'user_fused': [num_users, dim],   # 推荐用
-                'item_fused': [num_items, dim],   # 推荐用
-                'user_cf': [num_users, dim],       # 多视图对比用
-                'user_kg': [num_users, dim],       # 多视图对比用
-                'entity_emb': [num_entities, dim], # 对齐损失用
-                'item_kg': [num_items, dim],       # 对齐损失用
-                'mask': [num_entities],            # Mask正则用
+                'user_fused': [num_users, dim],   # for recommendation
+                'item_fused': [num_items, dim],   # for recommendation
+                'user_cf': [num_users, dim],       # Multi-view contrastive用
+                'user_kg': [num_users, dim],       # Multi-view contrastive用
+                'entity_emb': [num_entities, dim], # for alignment loss
+                'item_kg': [num_items, dim],       # for alignment loss
+                'mask': [num_entities],            # Mask regularization用
             }
         """
         outputs = {}
 
-        # === 1. CF视图编码 ===
+        # === 1. CF view encoding ===
         if self.use_cf_view:
-            # 拼接User和Item embeddings
+            # Concatenate user and item embeddings
             x_cf = torch.cat([
                 self.user_embed.weight,
                 self.item_embed.weight
@@ -176,9 +176,9 @@ class KnowledgeEnhancedRecModel(nn.Module):
             outputs['user_cf'] = None
             outputs['item_cf'] = None
 
-        # === 2. KG视图编码（带Mask）===
+        # === 2. KG view encoding (with mask)===
         if self.use_kg_view:
-            # 应用Mask到Entity embedding
+            # Apply mask to entity embeddings
             mask = self.get_mask()
             entity_emb_masked = self.entity_embed.weight * mask.unsqueeze(1)
 
@@ -205,9 +205,9 @@ class KnowledgeEnhancedRecModel(nn.Module):
             outputs['item_kg'] = None
             outputs['mask'] = None
 
-        # === 3. 融合 ===
+        # === 3. Fusion ===
         if self.use_cf_view and self.use_kg_view:
-            # 两个视图都有：融合
+            # 两个视图都有：Fusion
             user_emb_fused = self.fusion_user(
                 torch.cat([user_emb_cf, user_emb_kg], dim=-1)
             )
@@ -215,11 +215,11 @@ class KnowledgeEnhancedRecModel(nn.Module):
                 torch.cat([item_emb_cf, item_emb_kg], dim=-1)
             )
         elif self.use_cf_view:
-            # 只用CF视图
+            # CF view only
             user_emb_fused = user_emb_cf
             item_emb_fused = item_emb_cf
         elif self.use_kg_view:
-            # 只用KG视图
+            # KG view only
             user_emb_fused = user_emb_kg
             item_emb_fused = item_emb_kg
         else:
@@ -238,7 +238,7 @@ class KnowledgeEnhancedRecModel(nn.Module):
         item_emb: torch.Tensor
     ) -> torch.Tensor:
         """
-        预测用户对物品的偏好分数
+        Predict user preference scores for items
 
         Args:
             user_ids: [batch_size]
@@ -264,7 +264,7 @@ class KnowledgeEnhancedRecModel(nn.Module):
 
 
 if __name__ == '__main__':
-    # 测试模型
+    # Test model
     torch.manual_seed(42)
 
     num_users = 100
@@ -272,7 +272,7 @@ if __name__ == '__main__':
     num_entities = 30
     dim = 64
 
-    # 创建模拟图
+    # Create mock graph
     from torch_geometric.data import HeteroData
 
     hetero_graph = HeteroData()
@@ -292,7 +292,7 @@ if __name__ == '__main__':
 
     cf_edge_index = torch.randint(0, num_users + num_items, (2, 1000))
 
-    # 创建模型
+    # Create model
     model = KnowledgeEnhancedRecModel(
         num_users=num_users,
         num_items=num_items,
@@ -311,7 +311,7 @@ if __name__ == '__main__':
             else:
                 print(f"  {key}: {value}")
 
-    # 测试预测
+    # Test prediction
     user_ids = torch.randint(0, num_users, (10,))
     item_ids = torch.randint(0, num_items, (10,))
     scores = model.predict(user_ids, item_ids, outputs['user_fused'], outputs['item_fused'])

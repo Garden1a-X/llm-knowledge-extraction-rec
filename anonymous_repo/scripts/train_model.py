@@ -73,7 +73,7 @@ class Trainer:
 
         # Generate run ID (RecBole-like format)
         model_name = config.name
-        dataset_name = "ml-1m"  # 从config中提取
+        dataset_name = "ml-1m"  # extracted from config
         timestamp_str, short_hash, date_str, time_str = generate_run_id(model_name, dataset_name)
 
         self.run_id = f"{model_name}-{dataset_name}-{timestamp_str}-{short_hash}"
@@ -184,7 +184,7 @@ class Trainer:
                 'L_rec': f"{loss_dict['L_rec'].item():.4f}"
             })
 
-        # 平均损失
+        # Average loss
         num_batches = len(train_loader)
         avg_loss = total_loss / num_batches
         avg_components = {k: v / num_batches for k, v in loss_components.items()}
@@ -193,19 +193,19 @@ class Trainer:
 
     @torch.no_grad()
     def evaluate(self, val_loader, hetero_graph, cf_edge_index, test_user_items, train_user_items, val_user_items=None):
-        """评估模型
+        """Evaluate model
 
         Args:
-            val_user_items: 验证集用户物品（评估测试集时必须提供，用于排除）
+            val_user_items: val user items (required for test evaluation, to exclude from negatives)
         """
         self.model.eval()
 
-        # Forward获取所有embeddings
+        # Forward pass to get all embeddings
         outputs = self.model(hetero_graph, cf_edge_index)
         user_emb = outputs['user_fused']
         item_emb = outputs['item_fused']
 
-        # 计算指标
+        # Compute metrics
         eval_mode = self.config.train.eval_mode
         eval_num_neg = self.config.train.eval_num_neg
         random_seed = self.config.train.random_seed
@@ -215,7 +215,7 @@ class Trainer:
             item_emb=item_emb,
             test_user_items=test_user_items,
             train_user_items=train_user_items,
-            val_user_items=val_user_items,  # 添加val排除
+            val_user_items=val_user_items,  # exclude val items
             k_list=[5, 10, 20],
             exclude_train=True,
             mode=eval_mode,
@@ -236,19 +236,19 @@ class Trainer:
         test_user_items,
         train_user_items
     ):
-        """完整训练流程"""
+        """Full training loop"""
         logger.info(f"Starting training for {self.config.name}")
         logger.info(f"  Num epochs: {self.config.train.num_epochs}")
         logger.info(f"  Batch size: {self.config.train.batch_size}")
         logger.info(f"  Learning rate: {self.config.train.learning_rate}")
 
         for epoch in range(1, self.config.train.num_epochs + 1):
-            # 训练
+            # Train
             avg_loss, loss_components = self.train_epoch(
                 train_loader, hetero_graph, cf_edge_index, epoch
             )
 
-            # 记录训练loss
+            # Record training loss
             self.history['train_loss'].append(avg_loss)
             for key, value in loss_components.items():
                 self.history[f'train_{key}'].append(value)
@@ -270,14 +270,14 @@ class Trainer:
                 for key, value in loss_components.items():
                     self.writer.add_scalar(f'Loss/{key}', value, epoch)
 
-            # 评估
+            # Evaluate
             if epoch % self.config.train.eval_every == 0:
                 val_metrics = self.evaluate(
                     val_loader, hetero_graph, cf_edge_index,
                     val_user_items, train_user_items
                 )
 
-                # 记录
+                # Record
                 for key, value in val_metrics.items():
                     self.history[f'val_{key}'].append(value)
                     self.writer.add_scalar(f'Val/{key}', value, epoch)
@@ -292,7 +292,7 @@ class Trainer:
                     self.best_epoch = epoch
                     self.patience_counter = 0
 
-                    # 保存最佳模型
+                    # Save best model
                     self.save_checkpoint(epoch, val_metrics, is_best=True)
                     logger.info(f"  ✓ New best model! NDCG@10={self.best_ndcg:.4f}")
                 else:
@@ -302,27 +302,27 @@ class Trainer:
                         logger.info(f"Early stopping at epoch {epoch}")
                         break
 
-            # 定期保存
+            # Periodic save
             if epoch % self.config.train.save_every == 0:
                 self.save_checkpoint(epoch, {}, is_best=False)
 
-        # 最终测试（必须排除train和val）
+        # Final test (must exclude train and val)
         logger.info("\nFinal Test Evaluation:")
         test_metrics = self.evaluate(
             test_loader, hetero_graph, cf_edge_index,
-            test_user_items, train_user_items, val_user_items  # 添加val排除
+            test_user_items, train_user_items, val_user_items  # exclude val items
         )
 
         for key, value in test_metrics.items():
             logger.info(f"  {key}: {value:.4f}")
 
-        # 保存历史记录
+        # 保存历史Record
         self.save_history(test_metrics)
 
         return test_metrics
 
     def save_checkpoint(self, epoch, metrics, is_best=False):
-        """保存checkpoint（RecBole格式）"""
+        """Save checkpoint"""
         checkpoint = {
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
@@ -345,7 +345,7 @@ class Trainer:
         logger.info(f"  Saved checkpoint: {path}")
 
     def save_history(self, final_test_metrics):
-        """保存训练历史"""
+        """Save training history"""
         history_path = self.output_dir / 'history.json'
 
         history_dict = dict(self.history)
@@ -360,7 +360,7 @@ class Trainer:
 
 
 def prepare_user_items_dict(df, user_id_map, item_id_map):
-    """准备user_items字典（用于评估）"""
+    """准备user_items字典（用于Evaluate）"""
     user_items = defaultdict(list)
 
     for _, row in df.iterrows():
@@ -372,18 +372,18 @@ def prepare_user_items_dict(df, user_id_map, item_id_map):
 
 
 def main(args):
-    # 加载配置
+    # Load config
     config = load_config(args.config)
 
-    # 设置随机种子
+    # Set random seed
     torch.manual_seed(config.train.random_seed)
     np.random.seed(config.train.random_seed)
 
-    # 设置设备
+    # Set device
     device = torch.device(config.train.device if torch.cuda.is_available() else 'cpu')
     logger.info(f"Using device: {device}")
 
-    # === 1. 分割数据（必须先分割，再构建图！）===
+    # === 1. Split data (must split before building graph!)===
     logger.info("\n=== Splitting Data ===")
     train_df, val_df, test_df = split_data(
         config.data.inter_path,
@@ -395,7 +395,7 @@ def main(args):
         per_user_split=config.data.per_user_split
     )
 
-    # === 2. 构建图（只用训练集，避免数据泄露！）===
+    # === 2. Build graph (train-only to avoid data leakage!)===
     logger.info("\n=== Building Knowledge Graph ===")
     graph_builder = KnowledgeGraphBuilder(
         item_kg_path=config.data.item_kg_path,
@@ -404,14 +404,14 @@ def main(args):
         min_rating=config.data.min_rating
     )
 
-    # CRITICAL: 只用训练集构建图（避免test/val数据泄露）
+    # CRITICAL: Build graph using train-only interactions (avoid test/val data leakage)
     hetero_graph, cf_edge_index, stats = graph_builder.build_hetero_graph(train_inter_df=train_df)
 
-    # 移动图到设备
+    # Move graph to device
     hetero_graph = hetero_graph.to(device)
     cf_edge_index = cf_edge_index.to(device)
 
-    # === 3. 计算Mask初始值 ===
+    # === 3. Compute mask initial values ===
     if config.model.use_mask:
         mask_init = compute_frequency_mask(
             stats['entity_frequency'],
@@ -422,7 +422,7 @@ def main(args):
     else:
         mask_init = None
 
-    # === 4. 创建DataLoaders ===
+    # === 4. Create DataLoaders ===
     logger.info("\n=== Creating DataLoaders ===")
     train_loader, val_loader, test_loader = create_dataloaders(
         train_df, val_df, test_df,
@@ -433,12 +433,12 @@ def main(args):
         num_workers=config.train.num_workers
     )
 
-    # 准备评估用的user_items字典
+    # 准备Evaluate用的user_items字典
     train_user_items = prepare_user_items_dict(train_df, stats['user_id_map'], stats['item_id_map'])
     val_user_items = prepare_user_items_dict(val_df, stats['user_id_map'], stats['item_id_map'])
     test_user_items = prepare_user_items_dict(test_df, stats['user_id_map'], stats['item_id_map'])
 
-    # === 5. 创建模型 ===
+    # === 5. Create model ===
     logger.info("\n=== Creating Model ===")
     model = KnowledgeEnhancedRecModel(
         num_users=stats['num_users'],
@@ -456,7 +456,7 @@ def main(args):
 
     logger.info(f"  Total parameters: {sum(p.numel() for p in model.parameters()):,}")
 
-    # === 6. 损失函数 ===
+    # === 6. Loss function ===
     criterion = RecommendationLoss(
         alpha_contrast=config.loss.alpha_contrast,
         beta_align=config.loss.beta_align,
@@ -471,14 +471,14 @@ def main(args):
         use_mask=config.ablation['use_mask']
     )
 
-    # === 7. 优化器 ===
+    # === 7. Optimizer ===
     optimizer = optim.Adam(
         model.parameters(),
         lr=config.train.learning_rate,
         weight_decay=config.train.weight_decay
     )
 
-    # === 8. 训练 ===
+    # === 8. Train ===
     logger.info("\n=== Starting Training ===")
     trainer = Trainer(config, model, criterion, optimizer, device)
 

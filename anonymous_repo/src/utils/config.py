@@ -175,16 +175,16 @@ def load_config(config_path: str) -> ExperimentConfig:
 
 def save_config(config: ExperimentConfig, save_path: str):
     """
-    保存配置到YAML文件
+    Save config to YAML file
 
     Args:
-        config: ExperimentConfig对象
-        save_path: 保存路径
+        config: ExperimentConfig object
+        save_path: save path
     """
     save_path = Path(save_path)
     save_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # 转换为字典
+    # Convert to dict
     config_dict = {
         'name': config.name,
         'description': config.description,
@@ -212,7 +212,7 @@ def save_config(config: ExperimentConfig, save_path: str):
 
 
 def create_default_configs():
-    """创建默认配置文件"""
+    """Create default config files"""
     configs_dir = Path('configs')
     configs_dir.mkdir(exist_ok=True)
 
@@ -271,11 +271,11 @@ def create_default_configs():
 
 
 if __name__ == '__main__':
-    # 创建默认配置
+    # Create default config
     logging.basicConfig(level=logging.INFO)
     create_default_configs()
 
-    # 测试加载
+    # Test loading
     config = load_config('configs/ours_full.yaml')
     print(f"\n✓ Loaded config: {config.name}")
     print(f"  Embedding dim: {config.model.embedding_dim}")
