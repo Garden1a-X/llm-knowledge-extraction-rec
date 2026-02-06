@@ -174,23 +174,31 @@ def run_ours_5trials():
             yaml.dump(config, f)
 
         try:
-            result = subprocess.run(
-                [sys.executable, 'scripts/train_model.py', '--config', temp_config],
-                capture_output=True,
+            # Use Popen for real-time output
+            process = subprocess.Popen(
+                [sys.executable, '-u', 'scripts/train_model.py', '--config', temp_config],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
                 text=True,
-                timeout=7200  # 2 hour timeout
+                bufsize=1
             )
 
-            print(result.stdout[-5000:] if len(result.stdout) > 5000 else result.stdout)
+            output_lines = []
+            for line in process.stdout:
+                print(line, end='')
+                output_lines.append(line)
 
-            if result.returncode != 0:
-                print(f"Error: {result.stderr}")
+            process.wait()
+            output = ''.join(output_lines)
+
+            if process.returncode != 0:
+                print(f"Error: Process exited with code {process.returncode}")
                 continue
 
             # Parse results from output
             ndcg = None
             recall = None
-            for line in result.stdout.split('\n'):
+            for line in output.split('\n'):
                 if 'Test NDCG@10:' in line or 'ndcg@10:' in line.lower():
                     try:
                         ndcg = float(line.split(':')[-1].strip())
