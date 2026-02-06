@@ -22,9 +22,9 @@ model:
   mask_max_freq: 1000
 
 loss:
-  alpha_contrast: 0.01
-  beta_align: 0.01
-  gamma_mask: 0.001
+  alpha_contrast: 0.1
+  beta_align: 0.05
+  gamma_mask: 0.01
   temperature_rec: 0.2
   temperature_contrast: 0.1
   lambda_sparse: 1.0
