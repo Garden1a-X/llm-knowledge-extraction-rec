@@ -9,10 +9,10 @@ Usage:
     # Run specific method
     python scripts/run_ml1m_fullrank_5trials.py --method bpr
     python scripts/run_ml1m_fullrank_5trials.py --method lightgcn
+    python scripts/run_ml1m_fullrank_5trials.py --method kgat
     python scripts/run_ml1m_fullrank_5trials.py --method ours
 
-Note: KGAT is excluded because our LLM-extracted KG uses text tokens
-      but RecBole KGAT requires numeric entity/relation IDs.
+Note: KGAT uses original ML-1M metadata KG from /data/xuao/KG4RecEval/dataset/
 """
 
 import argparse
@@ -22,6 +22,88 @@ import numpy as np
 from pathlib import Path
 
 SEEDS = [42, 123, 456, 789, 2024]
+
+# KGAT uses KG4RecEval's original ML-1M KG (genres + year metadata)
+KGAT_DATA_PATH = '/data/xuao/KG4RecEval/dataset/'
+
+
+def run_kgat_5trials():
+    """Run KGAT with original ML-1M KG (from KG4RecEval) for 5 trials."""
+    print("=" * 70)
+    print("Running KGAT (Full Rank) - 5 Trials")
+    print(f"Using KG from: {KGAT_DATA_PATH}")
+    print("=" * 70)
+
+    from recbole.quick_start import run_recbole
+
+    results = []
+    for i, seed in enumerate(SEEDS):
+        print(f"\n--- Trial {i+1}/5 (seed={seed}) ---")
+
+        config_dict = {
+            # Data - use KG4RecEval's original KG
+            'data_path': KGAT_DATA_PATH,
+            'dataset': 'ml-1m',
+            'load_col': {
+                'inter': ['user_id', 'item_id', 'rating', 'timestamp'],
+                'kg': ['head_id', 'relation_id', 'tail_id'],
+                'link': ['item_id', 'entity_id']
+            },
+
+            # Data split (same as ours) - FULL RANK
+            'eval_args': {
+                'split': {'RS': [0.7, 0.1, 0.2]},
+                'order': 'TO',
+                'group_by': 'user',
+                'mode': 'full'  # Full rank evaluation
+            },
+
+            # Evaluation metrics
+            'metrics': ['Recall', 'NDCG', 'Hit', 'Precision'],
+            'topk': [5, 10, 20],
+            'valid_metric': 'NDCG@10',
+
+            # KGAT parameters
+            'embedding_size': 64,
+            'kg_embedding_size': 64,
+            'reg_weight': 0.0001,
+
+            # Training
+            'epochs': 300,
+            'train_batch_size': 2048,
+            'learning_rate': 0.001,
+            'stopping_step': 10,
+
+            # Random seed
+            'seed': seed,
+            'reproducibility': True,
+            'state': 'INFO',
+            'show_progress': True,
+        }
+
+        try:
+            result = run_recbole(
+                model='KGAT',
+                dataset='ml-1m',
+                config_dict=config_dict,
+                saved=False
+            )
+
+            # Extract metrics from result
+            test_result = result['test_result']
+            ndcg10 = test_result.get('ndcg@10', 0)
+            recall10 = test_result.get('recall@10', 0)
+
+            results.append({'ndcg': ndcg10, 'recall': recall10})
+            print(f"Trial {i+1}: NDCG@10={ndcg10:.4f}, Recall@10={recall10:.4f}")
+
+        except Exception as e:
+            print(f"Error in trial {i+1}: {e}")
+            import traceback
+            traceback.print_exc()
+            continue
+
+    return results
 
 
 def run_recbole_5trials(model_name, config_file):
@@ -158,7 +240,7 @@ def print_summary(method, results):
 def main():
     parser = argparse.ArgumentParser(description='Run ML-1M Full Rank Experiments (5 Trials)')
     parser.add_argument('--method', type=str, default='all',
-                        choices=['all', 'bpr', 'lightgcn', 'ours'],
+                        choices=['all', 'bpr', 'lightgcn', 'kgat', 'ours'],
                         help='Which method to run (default: all)')
     args = parser.parse_args()
 
@@ -173,6 +255,11 @@ def main():
         results = run_recbole_5trials('LightGCN', 'configs/recbole_ml1m_lightgcn_full.yaml')
         all_results['LightGCN'] = results
         print_summary('LightGCN', results)
+
+    if args.method in ['kgat', 'all']:
+        results = run_kgat_5trials()
+        all_results['KGAT'] = results
+        print_summary('KGAT', results)
 
     if args.method in ['ours', 'all']:
         results = run_ours_5trials()
