@@ -215,7 +215,7 @@ def evaluate_ranking_batched(
     mode: str = 'full',
     num_neg: int = 99,
     seed: int = 0,
-    batch_size: int = 256
+    batch_size: int = 1024
 ) -> Dict[str, float]:
     """
     批量并行Ranking评估（GPU加速版，充分利用A800算力）
@@ -363,6 +363,18 @@ def evaluate_ranking_batched(
         if len(user_ids) == 0:
             return {key: 0.0 for key in all_metrics.keys()}
 
+        # 预计算所有用户的排除物品集合（只计算一次）
+        user_excluded_items = {}
+        user_test_items_set = {}
+        for uid in user_ids:
+            excluded = set()
+            if exclude_train and train_user_items is not None:
+                excluded.update(train_user_items.get(uid, []))
+            if val_user_items is not None:
+                excluded.update(val_user_items.get(uid, []))
+            user_excluded_items[uid] = excluded
+            user_test_items_set[uid] = set(test_user_items[uid])
+
         pbar = tqdm(range(0, len(user_ids), batch_size), desc="Evaluating (batched)")
 
         for batch_start in pbar:
@@ -371,32 +383,23 @@ def evaluate_ranking_batched(
             current_batch_size = len(batch_user_ids)
 
             # 批量计算分数 [batch, dim] @ [dim, num_items] -> [batch, num_items]
-            batch_user_emb = user_emb[batch_user_ids]
+            batch_user_idx = torch.tensor(batch_user_ids, dtype=torch.long, device=device)
+            batch_user_emb = user_emb[batch_user_idx]
             batch_scores = batch_user_emb @ item_emb.T  # [batch, num_items]
 
-            # 构建标签和排除mask
-            batch_labels = torch.zeros_like(batch_scores)
+            # 批量构建标签和排除mask
+            batch_labels = torch.zeros(current_batch_size, num_items, device=device)
 
+            # 使用scatter批量设置标签
             for i, user_id in enumerate(batch_user_ids):
-                # 设置正样本标签
-                test_items = test_user_items[user_id]
-                for item_id in test_items:
-                    if item_id < num_items:
-                        batch_labels[i, item_id] = 1
+                test_items = [t for t in user_test_items_set[user_id] if t < num_items]
+                if test_items:
+                    batch_labels[i, test_items] = 1
 
-                # 排除训练集物品
-                if exclude_train and train_user_items is not None:
-                    train_items = train_user_items.get(user_id, [])
-                    for item_id in train_items:
-                        if item_id < num_items:
-                            batch_scores[i, item_id] = float('-inf')
-
-                # 排除验证集物品
-                if val_user_items is not None:
-                    val_items = val_user_items.get(user_id, [])
-                    for item_id in val_items:
-                        if item_id < num_items:
-                            batch_scores[i, item_id] = float('-inf')
+                # 排除物品（批量设置为-inf）
+                excluded = [e for e in user_excluded_items[user_id] if e < num_items]
+                if excluded:
+                    batch_scores[i, excluded] = float('-inf')
 
             # 批量计算指标（完全向量化，无循环）
             for k in k_list:
@@ -456,7 +459,7 @@ def evaluate_ranking(
     return evaluate_ranking_batched(
         user_emb, item_emb, test_user_items, k_list,
         exclude_train, train_user_items, val_user_items,
-        mode, num_neg, seed, batch_size=256
+        mode, num_neg, seed, batch_size=1024
     )
     all_metrics = {f'{metric}@{k}': []
                    for metric in ['NDCG', 'Recall', 'Precision', 'Hit']
