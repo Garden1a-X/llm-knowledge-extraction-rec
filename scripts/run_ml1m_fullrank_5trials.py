@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+"""
+Run ML-1M Full Rank experiments with 5 trials for paper appendix.
+
+Usage:
+    # Run all methods
+    python scripts/run_ml1m_fullrank_5trials.py
+
+    # Run specific method
+    python scripts/run_ml1m_fullrank_5trials.py --method bpr
+    python scripts/run_ml1m_fullrank_5trials.py --method lightgcn
+    python scripts/run_ml1m_fullrank_5trials.py --method ours
+
+Note: KGAT is excluded because our LLM-extracted KG uses text tokens
+      but RecBole KGAT requires numeric entity/relation IDs.
+"""
+
+import argparse
+import subprocess
+import sys
+import numpy as np
+from pathlib import Path
+
+SEEDS = [42, 123, 456, 789, 2024]
+
+
+def run_recbole_5trials(model_name, config_file):
+    """Run RecBole model with 5 trials."""
+    print("=" * 70)
+    print(f"Running {model_name} (Full Rank) - 5 Trials")
+    print("=" * 70)
+
+    from recbole.quick_start import run_recbole
+    import yaml
+
+    results = []
+    for i, seed in enumerate(SEEDS):
+        print(f"\n--- Trial {i+1}/5 (seed={seed}) ---")
+
+        # Load config and update seed
+        with open(config_file, 'r') as f:
+            config = yaml.safe_load(f)
+        config['seed'] = seed
+
+        # Write temp config
+        temp_config = f'/tmp/{model_name}_seed{seed}.yaml'
+        with open(temp_config, 'w') as f:
+            yaml.dump(config, f)
+
+        try:
+            result = run_recbole(
+                model=model_name,
+                dataset='ml-1m',
+                config_file_list=[temp_config]
+            )
+
+            # Extract metrics from result
+            test_result = result['test_result']
+            ndcg10 = test_result.get('ndcg@10', 0)
+            recall10 = test_result.get('recall@10', 0)
+
+            results.append({'ndcg': ndcg10, 'recall': recall10})
+            print(f"Trial {i+1}: NDCG@10={ndcg10:.4f}, Recall@10={recall10:.4f}")
+
+        except Exception as e:
+            print(f"Error in trial {i+1}: {e}")
+            continue
+
+    return results
+
+
+def run_ours_5trials():
+    """Run our method with 5 trials."""
+    print("=" * 70)
+    print("Running Ours (Full Rank) - 5 Trials")
+    print("=" * 70)
+
+    import yaml
+
+    results = []
+    for i, seed in enumerate(SEEDS):
+        print(f"\n--- Trial {i+1}/5 (seed={seed}) ---")
+
+        # Load config and update seed
+        with open('configs/ours_full_ml1m_fullrank.yaml', 'r') as f:
+            config = yaml.safe_load(f)
+        config['train']['random_seed'] = seed
+
+        # Write temp config
+        temp_config = f'/tmp/ours_ml1m_fullrank_seed{seed}.yaml'
+        with open(temp_config, 'w') as f:
+            yaml.dump(config, f)
+
+        try:
+            result = subprocess.run(
+                [sys.executable, 'scripts/train_model.py', '--config', temp_config],
+                capture_output=True,
+                text=True,
+                timeout=7200  # 2 hour timeout
+            )
+
+            print(result.stdout[-5000:] if len(result.stdout) > 5000 else result.stdout)
+
+            if result.returncode != 0:
+                print(f"Error: {result.stderr}")
+                continue
+
+            # Parse results from output
+            ndcg = None
+            recall = None
+            for line in result.stdout.split('\n'):
+                if 'Test NDCG@10:' in line or 'ndcg@10:' in line.lower():
+                    try:
+                        ndcg = float(line.split(':')[-1].strip())
+                    except:
+                        pass
+                if 'Test Recall@10:' in line or 'recall@10:' in line.lower():
+                    try:
+                        recall = float(line.split(':')[-1].strip())
+                    except:
+                        pass
+
+            if ndcg is not None and recall is not None:
+                results.append({'ndcg': ndcg, 'recall': recall})
+                print(f"Trial {i+1}: NDCG@10={ndcg:.4f}, Recall@10={recall:.4f}")
+
+        except subprocess.TimeoutExpired:
+            print(f"Trial {i+1} timed out")
+            continue
+        except Exception as e:
+            print(f"Error in trial {i+1}: {e}")
+            continue
+
+    return results
+
+
+def print_summary(method, results):
+    """Print summary statistics."""
+    if not results:
+        print(f"\n{method}: No results collected")
+        return
+
+    ndcgs = [r['ndcg'] for r in results]
+    recalls = [r['recall'] for r in results]
+
+    print(f"\n{'=' * 70}")
+    print(f"{method} Summary (5 Trials, Full Rank)")
+    print(f"{'=' * 70}")
+    print(f"  NDCG@10:   {np.mean(ndcgs):.4f} ± {np.std(ndcgs):.4f}")
+    print(f"  Recall@10: {np.mean(recalls):.4f} ± {np.std(recalls):.4f}")
+    print(f"{'=' * 70}")
+
+    # Print for easy copy to LaTeX
+    print(f"\nLaTeX format:")
+    print(f"{method} & {np.mean(ndcgs):.4f}$\\pm${np.std(ndcgs):.4f} & {np.mean(recalls):.4f}$\\pm${np.std(recalls):.4f} \\\\")
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Run ML-1M Full Rank Experiments (5 Trials)')
+    parser.add_argument('--method', type=str, default='all',
+                        choices=['all', 'bpr', 'lightgcn', 'ours'],
+                        help='Which method to run (default: all)')
+    args = parser.parse_args()
+
+    all_results = {}
+
+    if args.method in ['bpr', 'all']:
+        results = run_recbole_5trials('BPR', 'configs/recbole_ml1m_bpr_full.yaml')
+        all_results['BPR'] = results
+        print_summary('BPR', results)
+
+    if args.method in ['lightgcn', 'all']:
+        results = run_recbole_5trials('LightGCN', 'configs/recbole_ml1m_lightgcn_full.yaml')
+        all_results['LightGCN'] = results
+        print_summary('LightGCN', results)
+
+    if args.method in ['ours', 'all']:
+        results = run_ours_5trials()
+        all_results['Ours'] = results
+        print_summary('Ours', results)
+
+    # Final summary table
+    if len(all_results) > 1:
+        print("\n" + "=" * 70)
+        print("ML-1M Full Rank Results Summary (5 Trials)")
+        print("=" * 70)
+        print("| Method | NDCG@10 | Recall@10 |")
+        print("|--------|---------|-----------|")
+        for method, results in all_results.items():
+            if results:
+                ndcgs = [r['ndcg'] for r in results]
+                recalls = [r['recall'] for r in results]
+                print(f"| {method} | {np.mean(ndcgs):.4f} ± {np.std(ndcgs):.4f} | {np.mean(recalls):.4f} ± {np.std(recalls):.4f} |")
+
+        print("\nLaTeX Table:")
+        print("\\begin{tabular}{lcc}")
+        print("\\toprule")
+        print("Method & NDCG@10 & Recall@10 \\\\")
+        print("\\midrule")
+        for method, results in all_results.items():
+            if results:
+                ndcgs = [r['ndcg'] for r in results]
+                recalls = [r['recall'] for r in results]
+                print(f"{method} & {np.mean(ndcgs):.4f}$\\pm${np.std(ndcgs):.4f} & {np.mean(recalls):.4f}$\\pm${np.std(recalls):.4f} \\\\")
+        print("\\bottomrule")
+        print("\\end{tabular}")
+
+
+if __name__ == '__main__':
+    main()
