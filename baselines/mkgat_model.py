@@ -1,122 +1,41 @@
 #!/usr/bin/env python3
 """
-MKGAT: Multi-modal Knowledge Graph Attention Network
+MKGAT: Multi-modal Knowledge Graph Attention Network (Simplified Version)
 
-Implementation based on:
-"Multi-modal Knowledge Graphs for Recommender Systems" (CIKM 2020)
-
-Core components:
+Simplified implementation that combines:
 1. Visual features from ResNet50
-2. Knowledge graph with attention-based aggregation
-3. Multi-modal fusion for recommendation
+2. Knowledge graph embeddings with attention
+3. User-item graph convolution
+
+This version uses a simpler interface compatible with the training script.
 """
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-
-
-class Aggregator(nn.Module):
-    """
-    Knowledge Graph Attention Aggregator.
-
-    Aggregates neighbor information with attention mechanism,
-    considering both entities and relations.
-    """
-
-    def __init__(self, in_dim, out_dim, dropout=0.1, aggregator_type='bi-interaction'):
-        """
-        Args:
-            in_dim: Input embedding dimension
-            out_dim: Output embedding dimension
-            dropout: Dropout rate
-            aggregator_type: 'bi-interaction', 'gcn', or 'graphsage'
-        """
-        super().__init__()
-        self.in_dim = in_dim
-        self.out_dim = out_dim
-        self.aggregator_type = aggregator_type
-
-        # Transformation matrices
-        self.W = nn.Linear(in_dim, out_dim, bias=False)
-
-        if aggregator_type == 'bi-interaction':
-            self.W1 = nn.Linear(in_dim, out_dim, bias=False)
-            self.W2 = nn.Linear(in_dim, out_dim, bias=False)
-        elif aggregator_type == 'graphsage':
-            self.W_concat = nn.Linear(in_dim * 2, out_dim, bias=False)
-
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, ego_embed, neighbor_embed, relation_embed):
-        """
-        Aggregate neighbor information with attention.
-
-        Args:
-            ego_embed: (batch_size, in_dim) - center entity embeddings
-            neighbor_embed: (batch_size, n_neighbors, in_dim) - neighbor embeddings
-            relation_embed: (batch_size, n_neighbors, in_dim) - relation embeddings
-
-        Returns:
-            Aggregated embeddings (batch_size, out_dim)
-        """
-        # Attention scores: consider both entity and relation
-        # score = <ego, relation * neighbor>
-        neighbor_relation = neighbor_embed * relation_embed  # Element-wise
-
-        # Compute attention scores
-        ego_expanded = ego_embed.unsqueeze(1)  # (batch_size, 1, in_dim)
-        scores = torch.sum(ego_expanded * neighbor_relation, dim=-1)  # (batch_size, n_neighbors)
-
-        # Attention weights
-        attention = F.softmax(scores, dim=-1)  # (batch_size, n_neighbors)
-        attention = self.dropout(attention)
-
-        # Weighted aggregation
-        attention_expanded = attention.unsqueeze(-1)  # (batch_size, n_neighbors, 1)
-        neighbor_agg = torch.sum(attention_expanded * neighbor_embed, dim=1)  # (batch_size, in_dim)
-
-        # Different aggregation strategies
-        if self.aggregator_type == 'gcn':
-            # GCN-style: mean aggregation
-            output = self.W(ego_embed + neighbor_agg)
-
-        elif self.aggregator_type == 'graphsage':
-            # GraphSAGE-style: concat then transform
-            concat = torch.cat([ego_embed, neighbor_agg], dim=-1)
-            output = self.W_concat(concat)
-
-        elif self.aggregator_type == 'bi-interaction':
-            # Bi-Interaction: element-wise + feature-wise
-            sum_embed = self.W1(ego_embed + neighbor_agg)
-            bi_embed = self.W2(ego_embed * neighbor_agg)
-            output = sum_embed + bi_embed
-
-        else:
-            raise ValueError(f"Unknown aggregator type: {self.aggregator_type}")
-
-        return F.leaky_relu(output)
+from scipy.sparse import coo_matrix, vstack, hstack
+from collections import defaultdict
 
 
 class MKGAT(nn.Module):
     """
-    Multi-modal Knowledge Graph Attention Network.
+    Simplified Multi-modal Knowledge Graph Attention Network.
 
-    Integrates visual features from ResNet50 with knowledge graph embeddings
-    using attention-based aggregation.
+    Combines:
+    - MMGCN-style user-item graph convolution
+    - KG-enhanced item embeddings with attention
+    - Visual feature integration
     """
 
     def __init__(
         self,
         n_users,
         n_items,
-        n_entities,
-        n_relations,
         embedding_dim=64,
         visual_dim=2048,
         n_layers=2,
-        aggregator_type='bi-interaction',
+        n_heads=4,
         dropout=0.1,
         reg_weight=1e-5
     ):
@@ -124,12 +43,10 @@ class MKGAT(nn.Module):
         Args:
             n_users: Number of users
             n_items: Number of items
-            n_entities: Number of entities in KG
-            n_relations: Number of relations in KG
             embedding_dim: Embedding dimension
             visual_dim: Dimension of visual features (ResNet50: 2048)
-            n_layers: Number of aggregation layers
-            aggregator_type: Type of aggregator ('bi-interaction', 'gcn', 'graphsage')
+            n_layers: Number of GCN layers
+            n_heads: Number of attention heads (for KG aggregation)
             dropout: Dropout rate
             reg_weight: L2 regularization weight
         """
@@ -137,21 +54,19 @@ class MKGAT(nn.Module):
 
         self.n_users = n_users
         self.n_items = n_items
-        self.n_entities = n_entities
-        self.n_relations = n_relations
         self.embedding_dim = embedding_dim
         self.visual_dim = visual_dim
         self.n_layers = n_layers
+        self.n_heads = n_heads
         self.reg_weight = reg_weight
 
-        # User and entity embeddings
-        # RecBole uses 1-indexed IDs, so we need n+1 embeddings (index 0 unused)
+        # User embeddings (RecBole 1-indexed)
         self.user_embed = nn.Embedding(n_users + 1, embedding_dim)
-        self.entity_embed = nn.Embedding(n_entities + 1, embedding_dim)
-        self.relation_embed = nn.Embedding(n_relations + 1, embedding_dim)
+
+        # Item embeddings (will be enhanced with KG and visual)
+        self.item_embed = nn.Embedding(n_items + 1, embedding_dim)
 
         # Visual feature projection
-        # Project 2048-dim ResNet features to embedding_dim
         self.visual_proj = nn.Sequential(
             nn.Linear(visual_dim, embedding_dim * 2),
             nn.ReLU(),
@@ -159,209 +74,269 @@ class MKGAT(nn.Module):
             nn.Linear(embedding_dim * 2, embedding_dim)
         )
 
-        # Multi-modal fusion for items
-        # Fuse visual features with entity embeddings
-        self.fusion = nn.Sequential(
-            nn.Linear(embedding_dim * 2, embedding_dim),
-            nn.ReLU(),
-            nn.Dropout(dropout)
+        # Multi-modal fusion gate
+        self.fusion_gate = nn.Sequential(
+            nn.Linear(embedding_dim * 3, embedding_dim),
+            nn.Sigmoid()
         )
-
-        # KG aggregation layers
-        self.aggregators = nn.ModuleList()
-        for _ in range(n_layers):
-            self.aggregators.append(
-                Aggregator(embedding_dim, embedding_dim, dropout, aggregator_type)
-            )
+        self.fusion_proj = nn.Linear(embedding_dim * 3, embedding_dim)
 
         # Initialize embeddings
         nn.init.xavier_uniform_(self.user_embed.weight)
-        nn.init.xavier_uniform_(self.entity_embed.weight)
-        nn.init.xavier_uniform_(self.relation_embed.weight)
+        nn.init.xavier_uniform_(self.item_embed.weight)
+
+        # Placeholders
+        self.visual_features = None
+        self.adj_matrix = None
+        self.kg_embeddings = None  # Pre-computed KG-enhanced embeddings
 
     def load_visual_features(self, visual_features):
-        """
-        Load precomputed visual features.
-
-        Args:
-            visual_features: numpy array of shape (n_items, 2048)
-        """
+        """Load precomputed visual features."""
         self.visual_features = torch.FloatTensor(visual_features)
 
-    def get_item_embeddings(self, item_ids, device):
+    def build_graph(self, interaction_matrix, kg_triplets, device):
         """
-        Get multimodal item embeddings (visual + KG entity).
+        Build graph structures for GCN propagation.
+
+        Args:
+            interaction_matrix: scipy sparse matrix of user-item interactions
+            kg_triplets: list of (item_id, relation, tail) tuples from KG
+            device: torch device
+        """
+        print("Building MKGAT graph structures...")
+
+        # 1. Build user-item adjacency matrix (like MMGCN)
+        self._build_ui_adjacency(interaction_matrix, device)
+
+        # 2. Build KG neighbor structure for items
+        self._build_kg_structure(kg_triplets, device)
+
+        print("✓ MKGAT graph built")
+
+    def _build_ui_adjacency(self, interaction_matrix, device):
+        """Build normalized user-item adjacency matrix."""
+        R = interaction_matrix.tocoo()
+
+        # Bipartite adjacency matrix
+        # A = [[0, R],
+        #      [R^T, 0]]
+        top = hstack([coo_matrix((self.n_users, self.n_users)), R])
+        bottom = hstack([R.T, coo_matrix((self.n_items, self.n_items))])
+        A = vstack([top, bottom])
+
+        # Normalize: D^(-1/2) * A * D^(-1/2)
+        degrees = np.array(A.sum(axis=1)).flatten()
+        degrees[degrees == 0] = 1
+        D_inv_sqrt = np.power(degrees, -0.5)
+        D_inv_sqrt = coo_matrix((D_inv_sqrt, (np.arange(len(D_inv_sqrt)), np.arange(len(D_inv_sqrt)))))
+
+        A_norm = D_inv_sqrt @ A @ D_inv_sqrt
+        A_norm_coo = A_norm.tocoo()
+
+        indices = torch.LongTensor([A_norm_coo.row, A_norm_coo.col])
+        values = torch.FloatTensor(A_norm_coo.data)
+        shape = A_norm_coo.shape
+
+        self.adj_matrix = torch.sparse.FloatTensor(indices, values, torch.Size(shape)).to(device)
+        print(f"  UI adjacency matrix: {shape}")
+
+    def _build_kg_structure(self, kg_triplets, device):
+        """
+        Build KG neighbor structure.
+
+        Stores neighbors for each item to compute KG-enhanced embeddings.
+        """
+        # Build item -> neighbors mapping
+        self.item_neighbors = defaultdict(list)  # item_id -> [(relation_id, tail_id), ...]
+
+        # Build relation and entity vocabularies
+        relations = set()
+        tails = set()
+
+        for head, rel, tail in kg_triplets:
+            relations.add(rel)
+            tails.add(tail)
+
+        self.relation2id = {r: i for i, r in enumerate(sorted(relations))}
+        self.tail2id = {t: i for i, t in enumerate(sorted(tails))}
+        self.n_relations = len(self.relation2id)
+        self.n_tails = len(self.tail2id)
+
+        print(f"  KG: {len(kg_triplets)} triplets, {self.n_relations} relations, {self.n_tails} tail entities")
+
+        # Relation and tail embeddings
+        self.relation_embed = nn.Embedding(self.n_relations + 1, self.embedding_dim).to(device)
+        self.tail_embed = nn.Embedding(self.n_tails + 1, self.embedding_dim).to(device)
+        nn.init.xavier_uniform_(self.relation_embed.weight)
+        nn.init.xavier_uniform_(self.tail_embed.weight)
+
+        # Build neighbor list for each item
+        for head, rel, tail in kg_triplets:
+            if 1 <= head <= self.n_items:
+                rel_id = self.relation2id.get(rel, 0)
+                tail_id = self.tail2id.get(tail, 0)
+                self.item_neighbors[head].append((rel_id, tail_id))
+
+        # Convert to tensors for batch processing
+        max_neighbors = max(len(v) for v in self.item_neighbors.values()) if self.item_neighbors else 1
+        max_neighbors = min(max_neighbors, 32)  # Limit for efficiency
+
+        # Pad neighbor arrays
+        self.neighbor_relations = torch.zeros(self.n_items + 1, max_neighbors, dtype=torch.long, device=device)
+        self.neighbor_tails = torch.zeros(self.n_items + 1, max_neighbors, dtype=torch.long, device=device)
+        self.neighbor_mask = torch.zeros(self.n_items + 1, max_neighbors, device=device)
+
+        for item_id, neighbors in self.item_neighbors.items():
+            if item_id > self.n_items:
+                continue
+            n = min(len(neighbors), max_neighbors)
+            for j, (rel_id, tail_id) in enumerate(neighbors[:n]):
+                self.neighbor_relations[item_id, j] = rel_id
+                self.neighbor_tails[item_id, j] = tail_id
+                self.neighbor_mask[item_id, j] = 1.0
+
+        print(f"  Max neighbors per item: {max_neighbors}")
+
+    def get_kg_enhanced_item_embed(self, item_ids, device):
+        """
+        Get KG-enhanced item embeddings using attention.
 
         Args:
             item_ids: (batch_size,) item IDs
-            device: torch device
 
         Returns:
-            Item embeddings (batch_size, embedding_dim)
+            KG-enhanced embeddings (batch_size, embedding_dim)
         """
-        # Get entity embeddings for items
-        # Assuming item IDs map directly to entity IDs (1-indexed)
-        entity_ids = item_ids
+        batch_size = item_ids.size(0)
 
-        entity_emb = self.entity_embed(entity_ids)
+        # Base item embeddings
+        item_emb = self.item_embed(item_ids)  # (batch, dim)
 
-        # Get visual features
-        # Move item_ids to CPU for indexing, then move result to device
-        # RecBole IDs are 1-indexed, but numpy arrays are 0-indexed
-        visual_feat = self.visual_features[item_ids.cpu() - 1].to(device)
-        visual_emb = self.visual_proj(visual_feat)
+        # Get neighbor info
+        neighbor_rels = self.neighbor_relations[item_ids]  # (batch, max_neighbors)
+        neighbor_tails = self.neighbor_tails[item_ids]  # (batch, max_neighbors)
+        mask = self.neighbor_mask[item_ids]  # (batch, max_neighbors)
 
-        # Fuse visual and entity embeddings
-        multimodal_emb = torch.cat([visual_emb, entity_emb], dim=-1)
-        item_emb = self.fusion(multimodal_emb)
+        # Get embeddings
+        rel_emb = self.relation_embed(neighbor_rels)  # (batch, max_neighbors, dim)
+        tail_emb = self.tail_embed(neighbor_tails)  # (batch, max_neighbors, dim)
 
-        return item_emb
+        # Attention: score = item_emb · (rel_emb * tail_emb)
+        neighbor_emb = rel_emb * tail_emb  # (batch, max_neighbors, dim)
+        item_emb_exp = item_emb.unsqueeze(1)  # (batch, 1, dim)
+        scores = torch.sum(item_emb_exp * neighbor_emb, dim=-1)  # (batch, max_neighbors)
 
-    def get_entity_embeddings_with_visual(self, entity_ids, device):
-        """
-        Get entity embeddings, using visual features for items.
-
-        Args:
-            entity_ids: (batch_size,) or (batch_size, n_neighbors) entity IDs
-            device: torch device
-
-        Returns:
-            Entity embeddings with visual features for items
-        """
-        original_shape = entity_ids.shape
-        entity_ids_flat = entity_ids.flatten()
-
-        # Start with base entity embeddings
-        embeddings = self.entity_embed(entity_ids_flat)
-
-        # Identify which entities are items (1 <= id <= n_items)
-        item_mask = (entity_ids_flat > 0) & (entity_ids_flat <= self.n_items)
-
-        if item_mask.any():
-            # Get visual-enhanced embeddings for items
-            item_ids = entity_ids_flat[item_mask]
-            visual_feat = self.visual_features[item_ids.cpu() - 1].to(device)
-            visual_emb = self.visual_proj(visual_feat)
-
-            # Get entity embeddings for items
-            item_entity_emb = self.entity_embed(item_ids)
-
-            # Fuse visual and entity embeddings
-            multimodal_emb = torch.cat([visual_emb, item_entity_emb], dim=-1)
-            item_emb = self.fusion(multimodal_emb)
-
-            # Replace item embeddings with visual-enhanced ones
-            embeddings[item_mask] = item_emb
-
-        # Reshape back to original shape
-        if len(original_shape) == 2:
-            embeddings = embeddings.view(original_shape[0], original_shape[1], -1)
-
-        return embeddings
-
-    def aggregate_neighbors(self, entity_ids, adj_entity, adj_relation, layer_idx, device):
-        """
-        Aggregate neighbor information for given entities.
-
-        Args:
-            entity_ids: (batch_size,) entity IDs
-            adj_entity: (batch_size, n_neighbors) neighbor entity IDs
-            adj_relation: (batch_size, n_neighbors) relation IDs
-            layer_idx: Which aggregation layer to use
-            device: torch device
-
-        Returns:
-            Aggregated embeddings (batch_size, embedding_dim)
-        """
-        # Get embeddings with visual features for items
-        ego_embed = self.get_entity_embeddings_with_visual(entity_ids, device)
-        neighbor_embed = self.get_entity_embeddings_with_visual(adj_entity, device)
-        relation_embed = self.relation_embed(adj_relation)
+        # Apply mask
+        scores = scores.masked_fill(mask == 0, float('-inf'))
+        attention = F.softmax(scores, dim=-1)  # (batch, max_neighbors)
+        attention = attention.masked_fill(mask == 0, 0)
 
         # Aggregate
-        aggregator = self.aggregators[layer_idx]
-        agg_embed = aggregator(ego_embed, neighbor_embed, relation_embed)
+        attention_exp = attention.unsqueeze(-1)  # (batch, max_neighbors, 1)
+        kg_emb = torch.sum(attention_exp * tail_emb, dim=1)  # (batch, dim)
 
-        return agg_embed
+        return kg_emb
 
-    def forward(self, user_ids, item_ids, adj_entity, adj_relation):
+    def get_all_embeddings(self, device):
+        """
+        Pre-compute all user and item embeddings with GCN propagation.
+
+        Returns:
+            all_user_embed: (n_users, embedding_dim)
+            all_item_embed: (n_items, embedding_dim)
+        """
+        # Get base embeddings
+        user_embed_0 = self.user_embed.weight[1:]  # Skip index 0
+        item_embed_0 = self.item_embed.weight[1:]
+
+        # Get visual embeddings for all items
+        visual_feat = self.visual_features.to(device)
+        visual_emb = self.visual_proj(visual_feat)
+
+        # Get KG embeddings for all items
+        all_item_ids = torch.arange(1, self.n_items + 1, device=device)
+        kg_emb = self.get_kg_enhanced_item_embed(all_item_ids, device)
+
+        # Fuse: CF + Visual + KG
+        concat = torch.cat([item_embed_0, visual_emb, kg_emb], dim=-1)
+        gate = self.fusion_gate(concat)
+        item_fused = gate * self.fusion_proj(concat) + (1 - gate) * item_embed_0
+
+        # Combine for GCN
+        all_embed = torch.cat([user_embed_0, item_fused], dim=0)
+
+        # GCN propagation
+        embed_layers = [all_embed]
+        for _ in range(self.n_layers):
+            all_embed = torch.sparse.mm(self.adj_matrix, all_embed)
+            embed_layers.append(all_embed)
+
+        # Mean pooling
+        all_embed = torch.mean(torch.stack(embed_layers), dim=0)
+
+        user_embed_final = all_embed[:self.n_users]
+        item_embed_final = all_embed[self.n_users:]
+
+        return user_embed_final, item_embed_final
+
+    def forward(self, user_ids, item_ids):
         """
         Forward pass.
 
         Args:
             user_ids: (batch_size,) user IDs
             item_ids: (batch_size,) item IDs
-            adj_entity: (batch_size, n_layers, n_neighbors) neighbor entities
-            adj_relation: (batch_size, n_layers, n_neighbors) relations
 
         Returns:
-            user_embed: (batch_size, embedding_dim)
-            item_embed: (batch_size, embedding_dim)
+            scores: (batch_size,) predicted scores
         """
         device = user_ids.device
 
-        # User embeddings
-        user_embed = self.user_embed(user_ids)
+        # Get all embeddings with GCN
+        all_user_emb, all_item_emb = self.get_all_embeddings(device)
 
-        # Item embeddings with visual features
-        item_embed = self.get_item_embeddings(item_ids, device)
+        # Index for batch
+        user_emb = all_user_emb[user_ids - 1]
+        item_emb = all_item_emb[item_ids - 1]
 
-        # Multi-hop aggregation for items through KG
-        entity_ids = item_ids  # Items are entities in the KG
-        entity_layers = [item_embed]
-
-        for layer in range(self.n_layers):
-            # Get neighbors for this layer
-            layer_adj_entity = adj_entity[:, layer, :]
-            layer_adj_relation = adj_relation[:, layer, :]
-
-            # Aggregate
-            agg_embed = self.aggregate_neighbors(
-                entity_ids, layer_adj_entity, layer_adj_relation, layer, device
-            )
-
-            entity_layers.append(agg_embed)
-
-        # Combine all layers (mean pooling)
-        item_embed_final = torch.mean(torch.stack(entity_layers), dim=0)
-
-        return user_embed, item_embed_final
-
-    def predict(self, user_ids, item_ids, adj_entity, adj_relation):
-        """
-        Predict user-item scores.
-
-        Args:
-            user_ids: (batch_size,) user IDs
-            item_ids: (batch_size,) item IDs
-            adj_entity: (batch_size, n_layers, n_neighbors) neighbor entities
-            adj_relation: (batch_size, n_layers, n_neighbors) relations
-
-        Returns:
-            Predicted scores (batch_size,)
-        """
-        user_embed, item_embed = self.forward(user_ids, item_ids, adj_entity, adj_relation)
-
-        # Dot product for scoring
-        scores = torch.sum(user_embed * item_embed, dim=-1)
-
+        # Score
+        scores = torch.sum(user_emb * item_emb, dim=-1)
         return scores
 
+    def predict(self, user_ids, item_ids):
+        """Predict scores (alias for forward)."""
+        return self.forward(user_ids, item_ids)
+
     def get_reg_loss(self, user_ids, item_ids):
+        """Compute L2 regularization loss."""
+        user_emb = self.user_embed(user_ids)
+        item_emb = self.item_embed(item_ids)
+
+        reg_loss = (torch.norm(user_emb) ** 2 + torch.norm(item_emb) ** 2) / user_ids.shape[0]
+        return self.reg_weight * reg_loss
+
+    def bpr_loss(self, user_ids, pos_item_ids, neg_item_ids):
         """
-        Compute L2 regularization loss.
+        Compute BPR loss.
 
         Args:
             user_ids: (batch_size,) user IDs
-            item_ids: (batch_size,) item IDs
+            pos_item_ids: (batch_size,) positive item IDs
+            neg_item_ids: (batch_size,) negative item IDs
 
         Returns:
-            Regularization loss
+            loss: Total loss
+            bpr_loss: BPR loss
+            reg_loss: Regularization loss
         """
-        user_embed = self.user_embed(user_ids)
-        entity_embed = self.entity_embed(item_ids)
+        pos_scores = self.forward(user_ids, pos_item_ids)
+        neg_scores = self.forward(user_ids, neg_item_ids)
 
-        reg_loss = torch.norm(user_embed) ** 2 + torch.norm(entity_embed) ** 2
-        reg_loss = reg_loss / user_ids.shape[0]
+        bpr_loss = -torch.mean(F.logsigmoid(pos_scores - neg_scores))
 
-        return self.reg_weight * reg_loss
+        reg_loss = self.get_reg_loss(user_ids, pos_item_ids)
+        reg_loss += self.get_reg_loss(user_ids, neg_item_ids)
+
+        total_loss = bpr_loss + reg_loss
+
+        return total_loss, bpr_loss, reg_loss

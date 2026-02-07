@@ -222,6 +222,7 @@ def run_mmgcn_trial(seed, device):
     for _, row in val_df.iterrows():
         val_pos[int(row['user_id:token'])].add(int(row['item_id:token']))
 
+    # train_interactions for BPRDataset (2-tuple)
     train_interactions = [(int(row['user_id:token']), int(row['item_id:token']))
                           for _, row in train_df.iterrows()]
     train_dataset = BPRDataset(train_interactions, n_items, train_pos)
@@ -232,22 +233,14 @@ def run_mmgcn_trial(seed, device):
     test_data = [(int(row['user_id:token']), int(row['item_id:token']))
                  for _, row in test_df.iterrows()]
 
-    # Build interaction matrix for GCN
-    import scipy.sparse as sp
-    rows, cols = [], []
-    for u, items in train_pos.items():
-        for i in items:
-            rows.append(u - 1)
-            cols.append(i - 1)
-    interaction_matrix = sp.csr_matrix(
-        (np.ones(len(rows)), (rows, cols)),
-        shape=(n_users, n_items)
-    )
+    # train_interactions for adjacency matrix (3-tuple: user, item, rating)
+    train_interactions_3tuple = [(int(row['user_id:token']), int(row['item_id:token']), 1)
+                                  for _, row in train_df.iterrows()]
 
     model = MMGCN(n_users=n_users, n_items=n_items, embedding_dim=64,
                   visual_dim=visual_dim, n_layers=2).to(device)
     model.load_visual_features(visual_features)
-    model.build_graph(interaction_matrix, device)
+    model.adj_matrix = model.build_adjacency_matrix(train_interactions_3tuple, device)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     best_val_ndcg = 0
