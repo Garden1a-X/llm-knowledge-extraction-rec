@@ -115,24 +115,25 @@ def evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, k=10,
         test_pos_items.append(pos_item)
         test_candidates.append([pos_item] + neg_items)
 
+    # Convert to tensors for fast indexing
+    test_users_t = torch.LongTensor(test_users)
+    test_candidates_t = torch.LongTensor(test_candidates) - 1  # 0-indexed
+
     # Batch evaluation
     print("Batch evaluating...")
     batch_size = 16384  # A800 can handle large batches
-    recalls = []
-    ndcgs = []
+    all_pos_ranks = []
 
     for i in tqdm(range(0, len(test_users), batch_size), desc="Evaluating", leave=False):
-        batch_users = test_users[i:i+batch_size]
-        batch_candidates = test_candidates[i:i+batch_size]
+        batch_users = test_users_t[i:i+batch_size]
+        batch_candidates = test_candidates_t[i:i+batch_size]  # (batch, 100)
 
         # Get user embeddings: (batch, dim)
-        user_embs = all_user_embeddings[[u - 1 for u in batch_users]]
+        user_embs = all_user_embeddings[batch_users - 1]
 
-        # Get candidate embeddings: (batch, 100, dim)
-        candidate_embs = torch.stack([
-            all_item_embeddings[[c - 1 for c in cands]]
-            for cands in batch_candidates
-        ])
+        # Get candidate embeddings: (batch, 100, dim) - vectorized indexing
+        batch_size_actual = batch_candidates.shape[0]
+        candidate_embs = all_item_embeddings[batch_candidates.flatten()].view(batch_size_actual, 100, -1)
 
         # Compute scores: (batch, 100)
         scores = torch.bmm(user_embs.unsqueeze(1), candidate_embs.transpose(1, 2)).squeeze(1)
@@ -140,10 +141,12 @@ def evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, k=10,
         # Get rankings
         rankings = torch.argsort(scores, dim=1, descending=True)
         pos_ranks = (rankings == 0).nonzero(as_tuple=True)[1]  # Position of pos item (index 0)
+        all_pos_ranks.append(pos_ranks)
 
-        for rank in pos_ranks.numpy():
-            recalls.append(1.0 if rank < k else 0.0)
-            ndcgs.append(1.0 / np.log2(rank + 2) if rank < k else 0.0)
+    # Vectorized metric computation
+    all_pos_ranks = torch.cat(all_pos_ranks).numpy()
+    recalls = (all_pos_ranks < k).astype(float)
+    ndcgs = np.where(all_pos_ranks < k, 1.0 / np.log2(all_pos_ranks + 2), 0.0)
 
     return {'ndcg@10': np.mean(ndcgs), 'recall@10': np.mean(recalls)}
 
