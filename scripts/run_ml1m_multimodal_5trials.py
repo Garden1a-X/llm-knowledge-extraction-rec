@@ -5,10 +5,9 @@ Run ML-1M multimodal baseline experiments with 5 trials.
 Baselines: VBPR, MMGCN, MKGAT
 
 Usage:
-    python scripts/run_ml1m_multimodal_5trials.py --method vbpr
-    python scripts/run_ml1m_multimodal_5trials.py --method mmgcn
-    python scripts/run_ml1m_multimodal_5trials.py --method mkgat
-    python scripts/run_ml1m_multimodal_5trials.py --method all
+    python scripts/run_ml1m_multimodal_5trials.py --method vbpr --mode uni100
+    python scripts/run_ml1m_multimodal_5trials.py --method mmgcn --mode full
+    python scripts/run_ml1m_multimodal_5trials.py --method all --mode full
 """
 
 import sys
@@ -34,6 +33,9 @@ SEEDS = [42, 123, 456, 789, 2024]
 DATA_PATH = '/data/xuao/llm-knowledge-extraction-rec/data/recbole/ml-1m'
 INTER_PATH = f'{DATA_PATH}/ml-1m.inter'
 VISUAL_FEATURES_PATH = f'{DATA_PATH}/visual_features.npy'
+
+# Global eval mode
+EVAL_MODE = 'uni100'
 
 
 def set_seed(seed):
@@ -151,6 +153,100 @@ def evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, k=10,
     return {'ndcg@10': np.mean(ndcgs), 'recall@10': np.mean(recalls)}
 
 
+def evaluate_full_rank(model, test_df, train_pos, val_pos, n_users, n_items, device, k=10, model_type='vbpr'):
+    """Evaluate with full rank mode (all items as candidates)."""
+    model.eval()
+
+    # Build excluded items per user
+    user_excluded = defaultdict(set)
+    for u, items in train_pos.items():
+        user_excluded[int(u)].update(int(i) for i in items)
+    for u, items in val_pos.items():
+        user_excluded[int(u)].update(int(i) for i in items)
+
+    with torch.no_grad():
+        if model_type == 'vbpr':
+            all_item_embeddings = []
+            batch_size = 512
+            for i in range(0, n_items, batch_size):
+                batch_items = list(range(i+1, min(i+batch_size+1, n_items+1)))
+                if not batch_items:
+                    continue
+                batch_items_t = torch.LongTensor(batch_items).to(device)
+                i_embed = model.item_embed(batch_items_t)
+                visual_feat = model.visual_features[batch_items_t.cpu() - 1].to(device)
+                visual_embed = model.visual_embed(visual_feat)
+                item_emb = i_embed + visual_embed
+                all_item_embeddings.append(item_emb.cpu())
+            all_item_embeddings = torch.cat(all_item_embeddings, dim=0)
+            all_user_embeddings = model.user_embed.weight[1:].cpu()
+        else:
+            all_user_embeddings, all_item_embeddings = model.get_all_embeddings(device)
+            all_user_embeddings = all_user_embeddings.cpu()
+            all_item_embeddings = all_item_embeddings.cpu()
+
+    # Group test by user
+    user_test_items = defaultdict(list)
+    for _, row in test_df.iterrows():
+        user_test_items[int(row['user_id:token'])].append(int(row['item_id:token']))
+
+    all_ndcgs = []
+    all_recalls = []
+
+    # Batch users
+    users = list(user_test_items.keys())
+    batch_size = 256
+
+    for i in tqdm(range(0, len(users), batch_size), desc="Full Rank Eval", leave=False):
+        batch_users = users[i:i+batch_size]
+
+        # User embeddings (batch, dim)
+        user_embs = all_user_embeddings[[u - 1 for u in batch_users]]
+
+        # Score all items: (batch, n_items)
+        scores = torch.mm(user_embs, all_item_embeddings.T)
+
+        for j, user in enumerate(batch_users):
+            user_scores = scores[j].clone()
+
+            # Mask excluded items
+            for item in user_excluded[user]:
+                if 1 <= item <= n_items:
+                    user_scores[item - 1] = float('-inf')
+
+            # Get top-k
+            _, topk_indices = torch.topk(user_scores, k)
+            topk_items = set((topk_indices + 1).tolist())
+
+            # Compute metrics
+            test_items = set(user_test_items[user])
+            hits = len(topk_items & test_items)
+
+            # Recall@k
+            recall = hits / len(test_items) if test_items else 0
+
+            # NDCG@k
+            dcg = 0.0
+            for rank, item_idx in enumerate(topk_indices.tolist()):
+                if (item_idx + 1) in test_items:
+                    dcg += 1.0 / np.log2(rank + 2)
+            idcg = sum(1.0 / np.log2(r + 2) for r in range(min(len(test_items), k)))
+            ndcg = dcg / idcg if idcg > 0 else 0
+
+            all_ndcgs.append(ndcg)
+            all_recalls.append(recall)
+
+    return {'ndcg@10': np.mean(all_ndcgs), 'recall@10': np.mean(all_recalls)}
+
+
+def evaluate(model, test_data_or_df, train_pos, val_pos, n_users, n_items, device, model_type='vbpr'):
+    """Wrapper to choose evaluation mode."""
+    if EVAL_MODE == 'full':
+        return evaluate_full_rank(model, test_data_or_df, train_pos, val_pos, n_users, n_items, device, model_type=model_type)
+    else:
+        return evaluate_uni100(model, test_data_or_df, train_pos, val_pos, n_items, device, model_type=model_type)
+
+
 def run_vbpr_trial(seed, device):
     """Run single VBPR trial."""
     from baselines.vbpr_model import VBPR
@@ -223,7 +319,10 @@ def run_vbpr_trial(seed, device):
 
     # Test
     model.load_state_dict(best_state)
-    test_metrics = evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, model_type='vbpr')
+    if EVAL_MODE == 'full':
+        test_metrics = evaluate_full_rank(model, test_df, train_pos, val_pos, n_users, n_items, device, model_type='vbpr')
+    else:
+        test_metrics = evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, model_type='vbpr')
     return test_metrics
 
 
@@ -297,7 +396,10 @@ def run_mmgcn_trial(seed, device):
                 break
 
     model.load_state_dict(best_state)
-    test_metrics = evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, model_type='mmgcn')
+    if EVAL_MODE == 'full':
+        test_metrics = evaluate_full_rank(model, test_df, train_pos, val_pos, n_users, n_items, device, model_type='mmgcn')
+    else:
+        test_metrics = evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, model_type='mmgcn')
     return test_metrics
 
 
@@ -388,7 +490,10 @@ def run_mkgat_trial(seed, device):
                 break
 
     model.load_state_dict(best_state)
-    test_metrics = evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, model_type='mkgat')
+    if EVAL_MODE == 'full':
+        test_metrics = evaluate_full_rank(model, test_df, train_pos, val_pos, n_users, n_items, device, model_type='mkgat')
+    else:
+        test_metrics = evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, model_type='mkgat')
     return test_metrics
 
 
@@ -437,13 +542,20 @@ def print_summary(method, results):
 
 
 def main():
+    global EVAL_MODE
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--method', type=str, default='all',
                         choices=['all', 'vbpr', 'mmgcn', 'mkgat'])
+    parser.add_argument('--mode', type=str, default='uni100',
+                        choices=['uni100', 'full'], help='Evaluation mode: uni100 or full rank')
     args = parser.parse_args()
+
+    EVAL_MODE = args.mode
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Device: {device}")
+    print(f"Eval Mode: {EVAL_MODE}")
 
     all_results = {}
 
