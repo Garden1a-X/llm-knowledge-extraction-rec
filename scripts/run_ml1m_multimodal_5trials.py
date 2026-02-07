@@ -65,7 +65,7 @@ class BPRDataset(Dataset):
 
 
 def evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, k=10, model_type='vbpr'):
-    """Evaluate with uni100 mode."""
+    """Evaluate with uni100 mode (batched for speed)."""
     model.eval()
 
     user_pos_items = defaultdict(set)
@@ -97,26 +97,53 @@ def evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, k=10,
             all_user_embeddings = all_user_embeddings.cpu()
             all_item_embeddings = all_item_embeddings.cpu()
 
+    # Pre-sample negatives for all test samples (vectorized)
+    print("Pre-sampling negatives...")
+    all_items = set(range(1, n_items + 1))
+    test_users = []
+    test_pos_items = []
+    test_candidates = []  # (n_test, 100) - pos at index 0
+
+    for user, pos_item in test_data:
+        excluded = user_pos_items[user] | {pos_item}
+        available = list(all_items - excluded)
+        if len(available) >= 99:
+            neg_items = random.sample(available, 99)
+        else:
+            neg_items = available + [random.randint(1, n_items) for _ in range(99 - len(available))]
+        test_users.append(user)
+        test_pos_items.append(pos_item)
+        test_candidates.append([pos_item] + neg_items)
+
+    # Batch evaluation
+    print("Batch evaluating...")
+    batch_size = 1024
     recalls = []
     ndcgs = []
 
-    for user, pos_item in tqdm(test_data, desc="Evaluating", leave=False):
-        neg_items = []
-        while len(neg_items) < 99:
-            neg = random.randint(1, n_items)
-            if neg not in user_pos_items[user] and neg != pos_item and neg not in neg_items:
-                neg_items.append(neg)
+    for i in tqdm(range(0, len(test_users), batch_size), desc="Evaluating", leave=False):
+        batch_users = test_users[i:i+batch_size]
+        batch_candidates = test_candidates[i:i+batch_size]
 
-        candidates = [pos_item] + neg_items
-        user_emb = all_user_embeddings[user - 1]
-        item_embs = all_item_embeddings[[i - 1 for i in candidates]]
-        scores = (user_emb @ item_embs.T).numpy()
+        # Get user embeddings: (batch, dim)
+        user_embs = all_user_embeddings[[u - 1 for u in batch_users]]
 
-        ranked = np.argsort(-scores)
-        pos_rank = np.where(ranked == 0)[0][0]
+        # Get candidate embeddings: (batch, 100, dim)
+        candidate_embs = torch.stack([
+            all_item_embeddings[[c - 1 for c in cands]]
+            for cands in batch_candidates
+        ])
 
-        recalls.append(1.0 if pos_rank < k else 0.0)
-        ndcgs.append(1.0 / np.log2(pos_rank + 2) if pos_rank < k else 0.0)
+        # Compute scores: (batch, 100)
+        scores = torch.bmm(user_embs.unsqueeze(1), candidate_embs.transpose(1, 2)).squeeze(1)
+
+        # Get rankings
+        rankings = torch.argsort(scores, dim=1, descending=True)
+        pos_ranks = (rankings == 0).nonzero(as_tuple=True)[1]  # Position of pos item (index 0)
+
+        for rank in pos_ranks.numpy():
+            recalls.append(1.0 if rank < k else 0.0)
+            ndcgs.append(1.0 / np.log2(rank + 2) if rank < k else 0.0)
 
     return {'ndcg@10': np.mean(ndcgs), 'recall@10': np.mean(recalls)}
 
