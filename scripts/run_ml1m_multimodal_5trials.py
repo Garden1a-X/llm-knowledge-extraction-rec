@@ -117,7 +117,7 @@ def evaluate_uni100(model, test_data, train_pos, val_pos, n_items, device, k=10,
 
     # Batch evaluation
     print("Batch evaluating...")
-    batch_size = 1024
+    batch_size = 16384  # A800 can handle large batches
     recalls = []
     ndcgs = []
 
@@ -179,7 +179,7 @@ def run_vbpr_trial(seed, device):
     train_interactions = [(int(row['user_id:token']), int(row['item_id:token']))
                           for _, row in train_df.iterrows()]
     train_dataset = BPRDataset(train_interactions, n_items, train_pos)
-    train_loader = DataLoader(train_dataset, batch_size=2048, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=8192, shuffle=True)
 
     val_data = [(int(row['user_id:token']), int(row['item_id:token']))
                 for _, row in val_df.iterrows()]
@@ -253,7 +253,7 @@ def run_mmgcn_trial(seed, device):
     train_interactions = [(int(row['user_id:token']), int(row['item_id:token']))
                           for _, row in train_df.iterrows()]
     train_dataset = BPRDataset(train_interactions, n_items, train_pos)
-    train_loader = DataLoader(train_dataset, batch_size=2048, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=8192, shuffle=True)
 
     val_data = [(int(row['user_id:token']), int(row['item_id:token']))
                 for _, row in val_df.iterrows()]
@@ -326,7 +326,7 @@ def run_mkgat_trial(seed, device):
     train_interactions = [(int(row['user_id:token']), int(row['item_id:token']))
                           for _, row in train_df.iterrows()]
     train_dataset = BPRDataset(train_interactions, n_items, train_pos)
-    train_loader = DataLoader(train_dataset, batch_size=2048, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=8192, shuffle=True)
 
     val_data = [(int(row['user_id:token']), int(row['item_id:token']))
                 for _, row in val_df.iterrows()]
