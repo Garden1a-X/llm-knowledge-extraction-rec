@@ -341,8 +341,12 @@ class Trainer:
             # Regular checkpoint: checkpoint_epoch_{epoch}.pth
             path = self.checkpoint_dir / f'checkpoint_epoch_{epoch}.pth'
 
-        torch.save(checkpoint, path)
-        logger.info(f"  Saved checkpoint: {path}")
+        try:
+            torch.save(checkpoint, path)
+            logger.info(f"  Saved checkpoint: {path}")
+        except Exception as e:
+            logger.warning(f"  Failed to save checkpoint: {e}")
+            logger.warning(f"  Continuing without saving (disk may be full)")
 
     def save_history(self, final_test_metrics):
         """保存训练历史"""
