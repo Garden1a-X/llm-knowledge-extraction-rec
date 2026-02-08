@@ -114,6 +114,9 @@ class Trainer:
         self.best_epoch = 0
         self.patience_counter = 0
 
+        # 保存最佳模型状态的内存副本（用于checkpoint保存失败时恢复）
+        self.best_model_state = None
+
         # 历史记录
         self.history = defaultdict(list)
 
@@ -292,7 +295,11 @@ class Trainer:
                     self.best_epoch = epoch
                     self.patience_counter = 0
 
-                    # 保存最佳模型
+                    # 保存最佳模型状态到内存（防止checkpoint保存失败时丢失）
+                    import copy
+                    self.best_model_state = copy.deepcopy(self.model.state_dict())
+
+                    # 保存最佳模型到磁盘
                     self.save_checkpoint(epoch, val_metrics, is_best=True)
                     logger.info(f"  ✓ New best model! NDCG@10={self.best_ndcg:.4f}")
                 else:
@@ -305,6 +312,13 @@ class Trainer:
             # 定期保存
             if epoch % self.config.train.save_every == 0:
                 self.save_checkpoint(epoch, {}, is_best=False)
+
+        # 恢复最佳模型状态（如果有的话）
+        if self.best_model_state is not None:
+            logger.info(f"\nRestoring best model from epoch {self.best_epoch}")
+            self.model.load_state_dict(self.best_model_state)
+        else:
+            logger.warning("\nNo best model state saved, using final epoch model for testing")
 
         # 最终测试（必须排除train和val）
         logger.info("\nFinal Test Evaluation:")
