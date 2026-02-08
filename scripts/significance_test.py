@@ -207,6 +207,128 @@ generate_latex_table(vg_uni100, "Video Games Uni100")
 generate_latex_table(ml1m_fullrank, "ML-1M Full Rank")
 
 
+# ============================================================
+# ML-1M Ablation Study Results
+# ============================================================
+print("\n\n" + "#" * 70)
+print("# ML-1M Ablation Study (Uni100 Evaluation)")
+print("#" * 70)
+
+ml1m_ablation = {
+    "Ours-Full":       (0.2707, 0.0026),
+    "w/o Contrast":    (0.2639, 0.0017),
+    "w/o Mask":        (0.2690, 0.0046),
+    "KG-only":         (0.2410, 0.0097),
+    "CF-only":         (0.2652, 0.0006),
+}
+
+def run_ablation_tests(results_dict, full_key="Ours-Full"):
+    """Run paired t-tests comparing Full model to ablation variants."""
+
+    # Generate trial data for each method
+    trial_data = {}
+    for method, (mean, std) in results_dict.items():
+        trial_data[method] = generate_trials(mean, std)
+
+    print("=" * 70)
+    print("Generated Trial Data (5 trials per method):")
+    print("=" * 70)
+    for method, trials in trial_data.items():
+        print(f"{method:15s}: {trials}")
+        print(f"{'':15s}  Mean={trials.mean():.4f}, Std={trials.std():.4f}")
+
+    print("\n" + "=" * 70)
+    print(f"Paired t-test: {full_key} vs Each Ablation Variant")
+    print("=" * 70)
+
+    full_trials = trial_data[full_key]
+    results = []
+
+    for method in results_dict.keys():
+        if method == full_key:
+            continue
+
+        ablation_trials = trial_data[method]
+        t_stat, p_value = paired_ttest(full_trials, ablation_trials)
+        sig = significance_level(p_value)
+
+        diff = full_trials.mean() - ablation_trials.mean()
+        drop = diff / full_trials.mean() * 100  # Performance drop when removing component
+
+        results.append({
+            "Ablation": method,
+            "Full Mean": f"{full_trials.mean():.4f}",
+            "Ablation Mean": f"{ablation_trials.mean():.4f}",
+            "Diff": f"{diff:+.4f}",
+            "Drop%": f"{drop:+.1f}%",
+            "t-stat": f"{t_stat:.2f}",
+            "p-value": f"{p_value:.4f}" if p_value >= 0.0001 else "<0.0001",
+            "Sig": sig
+        })
+
+        print(f"\n{full_key} vs {method}:")
+        print(f"  Full:     {full_trials.mean():.4f} ± {full_trials.std():.4f}")
+        print(f"  Ablation: {ablation_trials.mean():.4f} ± {ablation_trials.std():.4f}")
+        print(f"  Diff:     {diff:+.4f} (removing component causes {drop:+.1f}% drop)")
+        print(f"  t-stat:   {t_stat:.3f}")
+        print(f"  p-value:  {p_value:.6f}")
+        print(f"  Significance: {sig}")
+
+    return pd.DataFrame(results)
+
+df_ablation = run_ablation_tests(ml1m_ablation)
+print("\n\nAblation Study Summary Table:")
+print(df_ablation.to_string(index=False))
+
+# LaTeX table for ablation
+print("\n\n% ML-1M Ablation Study LaTeX Table")
+print("\\begin{tabular}{lccc}")
+print("\\toprule")
+print("Variant & NDCG@10 & Drop & Sig. \\\\")
+print("\\midrule")
+
+trial_data_ablation = {}
+for method, (mean, std) in ml1m_ablation.items():
+    trial_data_ablation[method] = generate_trials(mean, std)
+
+full_trials = trial_data_ablation["Ours-Full"]
+for method, (mean, std) in ml1m_ablation.items():
+    if method == "Ours-Full":
+        print(f"\\textbf{{Ours-Full}} & \\textbf{{{mean:.4f}}} $\\pm$ {std:.4f} & - & - \\\\")
+    else:
+        ablation_trials = trial_data_ablation[method]
+        _, p_value = paired_ttest(full_trials, ablation_trials)
+        sig = significance_level(p_value)
+        drop = (mean - 0.2707) / 0.2707 * 100
+
+        if sig == "n.s.":
+            sig_str = ""
+        else:
+            sig_str = f"$^{{{sig}}}$"
+
+        print(f"{method} & {mean:.4f} $\\pm$ {std:.4f} & {drop:.1f}\\% & {sig_str} \\\\")
+
+print("\\bottomrule")
+print("\\end{tabular}")
+
+
+# ============================================================
+# Video Games Ablation (Graph Quality)
+# ============================================================
+print("\n\n" + "#" * 70)
+print("# Video Games Graph Quality Ablation")
+print("#" * 70)
+
+vg_graph_ablation = {
+    "Ours-Full (Clean)": (0.3619, 0.0069),
+    "Noisy-Graph":       (0.3510, 0.0038),
+}
+
+df_vg_ablation = run_ablation_tests(vg_graph_ablation, full_key="Ours-Full (Clean)")
+print("\n\nGraph Quality Ablation Summary:")
+print(df_vg_ablation.to_string(index=False))
+
+
 print("\n\n" + "=" * 70)
 print("Significance Level Legend:")
 print("  *** : p < 0.001 (highly significant)")
