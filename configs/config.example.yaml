@@ -1,0 +1,180 @@
+# Configuration for LLM Knowledge Extraction and Recommendation System
+
+# Data paths
+data:
+  raw_dir: "/data/xuao/llm-knowledge-extraction-rec/data/raw/ml-1m"
+  processed_dir: "data/processed"
+  graph_dir: "data/graphs"
+
+  # MovieLens 1M specific files
+  movies_file: "movies.dat"
+  ratings_file: "ratings.dat"
+  users_file: "users.dat"
+  posters_dir: "posters"
+
+# LLM Configuration
+llm:
+  # Provider: "openai", "anthropic", or "local"
+  provider: "openai"
+
+  # Model name
+  model_name: "gpt-4"
+
+  # API configuration (load from environment variables)
+  api_key_env: "OPENAI_API_KEY"
+
+  # Generation parameters
+  temperature: 0.7
+  max_tokens: 2000
+
+  # For vision models (poster analysis)
+  vision_model: "gpt-4-vision-preview"
+
+# Knowledge Extraction Configuration
+knowledge_extraction:
+  # Movie knowledge point types (10 types)
+  allowed_types:
+    - "Genre & Theme"
+    - "Director & Cast"
+    - "Plot Elements"
+    - "Visual Style"
+    - "Emotional Tone"
+    - "Target Audience"
+    - "Cultural Context"
+    - "Production Quality"
+    - "Narrative Structure"
+    - "Others"
+
+  # Number of knowledge points per type per movie
+  max_points_per_type: 5
+
+  # Use poster for visual knowledge extraction
+  use_poster: true
+
+  # Batch size for LLM calls
+  batch_size: 10
+
+# Clustering Configuration
+clustering:
+  # Embedding model: "bertopic", "bge", "sentence-transformers"
+  embedding_model: "bge"
+
+  # BGE model name
+  bge_model: "BAAI/bge-large-en-v1.5"
+
+  # Clustering algorithm: "hdbscan", "kmeans"
+  algorithm: "hdbscan"
+
+  # HDBSCAN parameters
+  hdbscan:
+    min_cluster_size: 10
+    min_samples: 5
+    metric: "euclidean"
+
+  # K-means parameters
+  kmeans:
+    n_clusters: 20
+    random_state: 42
+
+  # Clustering strategy
+  # "sample_first": cluster on sample then project full data
+  # "direct": cluster on full data directly
+  strategy: "sample_first"
+  sample_ratio: 0.05  # Use 5% of movies for initial clustering
+
+# Graph Construction Configuration
+graph:
+  # Graph storage format: "networkx", "pyg", "neo4j"
+  storage_format: "networkx"
+
+  # Neo4j configuration (if using neo4j)
+  neo4j:
+    uri: "bolt://localhost:7687"
+    user: "neo4j"
+    password_env: "NEO4J_PASSWORD"
+
+  # Edge types
+  edge_types:
+    movie_knowledge: "HAS_ATTRIBUTE"
+    user_interest: "INTERESTED_IN"
+    user_item_positive: "LIKED"
+    user_item_negative: "DISLIKED"
+
+  # Rating threshold for positive/negative edges
+  rating_threshold:
+    positive: 4  # Ratings >= 4 are positive
+    negative: 3  # Ratings <= 3 are negative
+
+# Model Configuration
+model:
+  # Model architecture
+  architecture: "two_stage_gnn"
+
+  # Embedding dimensions
+  embedding_dim: 128
+  hidden_dim: 256
+
+  # GNN parameters
+  gnn:
+    num_layers: 3
+    dropout: 0.1
+    aggregation: "mean"
+
+  # Relation-aware attention
+  relation_aware: true
+  num_attention_heads: 4
+
+  # Contrastive learning
+  contrastive_learning:
+    enabled: true
+    temperature: 0.1
+    negative_samples: 5
+
+  # Training parameters
+  training:
+    epochs: 100
+    batch_size: 256
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    patience: 10  # Early stopping patience
+
+# Evaluation Configuration
+evaluation:
+  # Metrics to compute
+  metrics:
+    - "ndcg@10"
+    - "recall@10"
+    - "precision@10"
+    - "hit_rate@10"
+
+  # Train/validation/test split
+  train_ratio: 0.7
+  val_ratio: 0.1
+  test_ratio: 0.2
+
+  # Random seed
+  random_seed: 42
+
+# Interpretability Configuration
+interpretability:
+  # Enable path-based explanation
+  enable_path_explanation: true
+
+  # Maximum path length for explanation
+  max_path_length: 3
+
+  # Top-k paths to show
+  top_k_paths: 5
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  log_dir: "logs"
+  log_file: "experiment.log"
+
+# Experiment Configuration
+experiment:
+  name: "llm_kg_rec_exp1"
+  output_dir: "outputs"
+  save_checkpoints: true
+  checkpoint_dir: "checkpoints"
