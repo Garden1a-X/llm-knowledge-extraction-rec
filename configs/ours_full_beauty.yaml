@@ -1,0 +1,58 @@
+name: ours_full_beauty
+description: Full model with all components on Amazon Beauty dataset
+
+data:
+  item_kg_path: data/recbole/amazon-beauty/amazon-beauty.item.kg
+  user_kg_path: data/recbole/amazon-beauty/amazon-beauty.user.kg
+  inter_path: data/recbole/amazon-beauty/amazon-beauty.inter
+  train_ratio: 0.7
+  val_ratio: 0.1
+  test_ratio: 0.2
+  time_based_split: true
+  per_user_split: true  # Per-user Random Split（对齐RecBole RS）
+  min_rating: 4.0
+
+model:
+  embedding_dim: 64
+  num_gnn_layers: 2
+  gat_heads: 4
+  dropout: 0.2
+  use_mask: true
+  mask_min_freq: 5
+  mask_max_freq: 1000
+
+loss:
+  alpha_contrast: 0.01  # 降低10倍，原0.1
+  beta_align: 0.01      # 降低5倍，原0.05
+  gamma_mask: 0.001     # 降低10倍，原0.01
+  temperature_rec: 0.2
+  temperature_contrast: 0.1
+  lambda_sparse: 1.0
+  lambda_entropy: 0.1
+  num_neg_align: 5
+
+train:
+  batch_size: 2048  # 对齐RecBole BPR
+  num_negatives: 1
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  num_epochs: 300
+  early_stop_patience: 10  # 对齐RecBole stopping_step
+  eval_every: 1  # 每个epoch都评估（对齐RecBole eval_step=1）
+  eval_mode: uni100  # 评估模式：full 或 uni100（1 positive + 99 negatives）
+  eval_num_neg: 99  # uni100 模式的负样本数
+  log_every: 1
+  save_every: 10
+  num_workers: 4
+  device: cuda
+  random_seed: 42  # Will be overridden for 5-trial runs
+
+ablation:
+  use_contrast: true
+  use_align: true
+  use_mask: true
+  use_cf_view: true
+  use_kg_view: true
+
+output_dir: outputs
+checkpoint_dir: checkpoints

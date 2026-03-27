@@ -1,0 +1,154 @@
+{
+  "dataset": "amazon-beauty",
+  "phase": "vocabulary_standardized",
+  "source": "phase4_extraction_58_products",
+  "vocabulary": {
+    "product_type": {
+      "standard_entities": [
+        "bath_body",
+        "cosmetics",
+        "dental_care",
+        "hair_care",
+        "nail_care",
+        "shaving",
+        "skincare",
+        "tools_accessories"
+      ]
+    },
+    "color": {
+      "standard_entities": [
+        "black",
+        "blue",
+        "brown",
+        "gold",
+        "gray",
+        "green",
+        "neutral",
+        "orange",
+        "pink",
+        "purple",
+        "red",
+        "white",
+        "yellow"
+      ]
+    },
+    "packaging": {
+      "standard_entities": [
+        "bottle",
+        "box",
+        "compact",
+        "jar",
+        "standalone",
+        "tube"
+      ]
+    },
+    "material": {
+      "standard_entities": [
+        "fabric",
+        "glass",
+        "metal",
+        "natural",
+        "paper",
+        "plastic"
+      ]
+    },
+    "texture": {
+      "standard_entities": [
+        "glossy",
+        "matte",
+        "rough",
+        "smooth",
+        "soft"
+      ]
+    },
+    "design_style": {
+      "standard_entities": [
+        "casual",
+        "classic",
+        "decorative",
+        "elegant",
+        "modern",
+        "natural",
+        "playful"
+      ]
+    },
+    "size": {
+      "standard_entities": [
+        "compact",
+        "large",
+        "medium",
+        "small",
+        "standard"
+      ]
+    },
+    "shape": {
+      "standard_entities": [
+        "circular",
+        "curved",
+        "cylindrical",
+        "flat",
+        "geometric",
+        "rectangular"
+      ]
+    },
+    "label_style": {
+      "standard_entities": [
+        "bold",
+        "colorful",
+        "decorative",
+        "minimalistic",
+        "modern",
+        "printed",
+        "vintage"
+      ]
+    },
+    "target_audience": {
+      "standard_entities": [
+        "adult",
+        "children",
+        "men",
+        "women"
+      ]
+    },
+    "product_feature": {
+      "standard_entities": [
+        "anti_aging",
+        "cooling",
+        "exfoliating",
+        "hydrating",
+        "long_lasting",
+        "moisturizing",
+        "natural",
+        "organic",
+        "sensitive_skin",
+        "soothing"
+      ]
+    },
+    "scent": {
+      "standard_entities": [
+        "citrus",
+        "floral",
+        "fresh",
+        "fruity",
+        "herbal",
+        "spicy",
+        "sweet",
+        "unscented",
+        "woody"
+      ]
+    },
+    "brand_element": {
+      "standard_entities": [
+        "graphic",
+        "logo",
+        "minimal"
+      ]
+    }
+  },
+  "statistics": {
+    "num_relations": 13,
+    "num_unique_entities": 97,
+    "num_products": 58,
+    "total_knowledge_points": 668
+  }
+}

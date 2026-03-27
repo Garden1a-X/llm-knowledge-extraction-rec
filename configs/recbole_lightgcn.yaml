@@ -1,0 +1,39 @@
+# LightGCN Baseline Configuration
+# LightGCN: Simplifying and Powering Graph Convolution Network (SIGIR 2020)
+
+# Data
+dataset: ml-1m
+data_path: data/recbole
+
+# Model
+model: LightGCN
+embedding_size: 64
+n_layers: 3  # 3层GCN（论文推荐）
+reg_weight: 0.00001
+
+# Training
+epochs: 300
+train_batch_size: 2048
+eval_batch_size: 4096
+learning_rate: 0.001
+
+# Evaluation
+stopping_step: 10
+eval_step: 1
+metrics: ['Recall', 'NDCG', 'Precision', 'Hit']
+topk: [10, 20]
+valid_metric: NDCG@10
+
+# Data Split (对齐你们的配置)
+eval_args:
+  split:
+    RS: [0.7, 0.1, 0.2]
+  order: TO
+  mode: uni100  # 负采样模式：1 positive + 99 random negatives
+
+# Other
+load_col:
+  inter: ['user_id', 'item_id', 'timestamp']
+
+seed: 42
+gpu_id: '0'

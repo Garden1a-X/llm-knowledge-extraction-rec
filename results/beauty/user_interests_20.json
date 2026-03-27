@@ -1,0 +1,306 @@
+{
+  "dataset": "amazon-beauty",
+  "config": {
+    "short_term_days": 21,
+    "long_term_buckets": 4,
+    "min_rating": 4.0,
+    "short_term_top_k": 10,
+    "long_term_top_k": 5,
+    "model": "gpt-4o-mini",
+    "entity_vocab_file": "results/beauty_entity_vocabulary.json",
+    "num_valid_entities": 95
+  },
+  "stats": {
+    "total_users": 20,
+    "total_llm_calls": 20,
+    "avg_llm_calls_per_user": 1.0,
+    "avg_interactions_per_user": 1.15,
+    "avg_active_days_per_user": 1.05
+  },
+  "results": [
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 167672
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 6117
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 121734
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 18401
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 153160
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 167196
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 189719
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 129418
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 117494
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 156327
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 76884
+    },
+    {
+      "num_interactions": 2,
+      "active_days": 2,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 99271
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 137396
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 202263
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 77467
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 74221
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 141856
+    },
+    {
+      "num_interactions": 1,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [],
+      "long_term_interests": [],
+      "user_id": 70434
+    },
+    {
+      "num_interactions": 2,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [
+        {
+          "relation": "product_type",
+          "entity": "product_other",
+          "count": 2
+        },
+        {
+          "relation": "has_color",
+          "entity": "white",
+          "count": 2
+        },
+        {
+          "relation": "has_color",
+          "entity": "blue",
+          "count": 2
+        },
+        {
+          "relation": "packaging",
+          "entity": "container",
+          "count": 2
+        }
+      ],
+      "long_term_interests": [
+        {
+          "relation": "product_type",
+          "entity": "product_other",
+          "age_days": 84
+        },
+        {
+          "relation": "has_color",
+          "entity": "white",
+          "age_days": 84
+        },
+        {
+          "relation": "has_color",
+          "entity": "blue",
+          "age_days": 84
+        },
+        {
+          "relation": "packaging",
+          "entity": "container",
+          "age_days": 84
+        },
+        {
+          "relation": "has_color",
+          "entity": "blue",
+          "age_days": 84
+        }
+      ],
+      "user_id": 56593
+    },
+    {
+      "num_interactions": 2,
+      "active_days": 1,
+      "num_short_buckets": 1,
+      "num_llm_calls": 1,
+      "short_term_interests": [
+        {
+          "relation": "has_color",
+          "entity": "blue",
+          "count": 2
+        },
+        {
+          "relation": "has_color",
+          "entity": "white",
+          "count": 2
+        },
+        {
+          "relation": "packaging",
+          "entity": "box",
+          "count": 2
+        },
+        {
+          "relation": "brand_aesthetic",
+          "entity": "drugstore",
+          "count": 2
+        },
+        {
+          "relation": "visual_theme",
+          "entity": "minimalist",
+          "count": 2
+        },
+        {
+          "relation": "additional_property",
+          "entity": "full_size",
+          "count": 2
+        }
+      ],
+      "long_term_interests": [
+        {
+          "relation": "has_color",
+          "entity": "blue",
+          "age_days": 84
+        },
+        {
+          "relation": "has_color",
+          "entity": "white",
+          "age_days": 84
+        },
+        {
+          "relation": "packaging",
+          "entity": "box",
+          "age_days": 84
+        },
+        {
+          "relation": "brand_aesthetic",
+          "entity": "drugstore",
+          "age_days": 84
+        },
+        {
+          "relation": "visual_theme",
+          "entity": "minimalist",
+          "age_days": 84
+        }
+      ],
+      "user_id": 111035
+    }
+  ]
+}

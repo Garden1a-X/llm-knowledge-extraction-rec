@@ -1,0 +1,148 @@
+{
+  "domain": "video_games",
+  "version": "1.0",
+  "num_relations": 15,
+  "relations": [
+    {
+      "relation": "has_visual_style",
+      "description": "Visual art style (realistic, cartoon, pixel art, anime, etc.)",
+      "normalized_forms": [
+        "visual_style",
+        "art_style",
+        "graphics_style",
+        "style"
+      ]
+    },
+    {
+      "relation": "features_character",
+      "description": "Character designs, types, clothing, equipment",
+      "normalized_forms": [
+        "character",
+        "characters"
+      ]
+    },
+    {
+      "relation": "set_in_environment",
+      "description": "Environment/setting (urban, fantasy, sci-fi, nature, etc.)",
+      "normalized_forms": [
+        "environment",
+        "setting",
+        "location",
+        "scene"
+      ]
+    },
+    {
+      "relation": "has_color_palette",
+      "description": "Color scheme and palette",
+      "normalized_forms": [
+        "color_palette",
+        "color",
+        "colors"
+      ]
+    },
+    {
+      "relation": "shows_perspective",
+      "description": "Camera perspective (first-person, third-person, top-down, side-scrolling)",
+      "normalized_forms": [
+        "perspective",
+        "viewpoint",
+        "view",
+        "camera_angle"
+      ]
+    },
+    {
+      "relation": "has_ui_elements",
+      "description": "User interface elements visible in game",
+      "normalized_forms": [
+        "ui",
+        "interface",
+        "hud"
+      ]
+    },
+    {
+      "relation": "has_atmosphere",
+      "description": "Mood and atmosphere (dark, bright, gritty, whimsical, etc.)",
+      "normalized_forms": [
+        "atmosphere",
+        "mood",
+        "tone"
+      ]
+    },
+    {
+      "relation": "has_graphics_quality",
+      "description": "Graphics fidelity and quality indicators",
+      "normalized_forms": [
+        "graphics_quality",
+        "graphics",
+        "quality"
+      ]
+    },
+    {
+      "relation": "features_vehicle",
+      "description": "Vehicles, mounts, or transportation",
+      "normalized_forms": [
+        "vehicle",
+        "vehicles",
+        "transportation"
+      ]
+    },
+    {
+      "relation": "features_weapon",
+      "description": "Weapons, combat equipment visible",
+      "normalized_forms": [
+        "weapon",
+        "weapons",
+        "armament",
+        "combat"
+      ]
+    },
+    {
+      "relation": "has_genre_indicator",
+      "description": "Visual indicators of game genre (RPG, FPS, racing, etc.)",
+      "normalized_forms": [
+        "genre",
+        "game_type",
+        "gameplay_type"
+      ]
+    },
+    {
+      "relation": "shows_platform",
+      "description": "Platform or era indicators (console, PC, mobile, retro)",
+      "normalized_forms": [
+        "platform",
+        "platform_era",
+        "era"
+      ]
+    },
+    {
+      "relation": "has_text_element",
+      "description": "Visible text, logos, branding",
+      "normalized_forms": [
+        "text",
+        "logo",
+        "branding",
+        "title"
+      ]
+    },
+    {
+      "relation": "features_creature",
+      "description": "Non-human creatures, monsters, animals",
+      "normalized_forms": [
+        "creature",
+        "creatures",
+        "monster",
+        "animal"
+      ]
+    },
+    {
+      "relation": "has_additional_property",
+      "description": "Other visual properties not covered above",
+      "normalized_forms": [
+        "additional",
+        "other",
+        "property",
+        "misc"
+      ]
+    }
+  ]
+}

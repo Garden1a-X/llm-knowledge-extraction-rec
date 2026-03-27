@@ -1,0 +1,1750 @@
+{
+  "total_new_entities": 318,
+  "corrected_false_new": 142,
+  "true_new_remaining": 176,
+  "correction_rate": 0.44654088050314467,
+  "corrections_by_relation": {
+    "mood": [
+      {
+        "recbole_id": 1564,
+        "original": "NEW_dark",
+        "corrected": "dark"
+      },
+      {
+        "recbole_id": 2575,
+        "original": "NEW_action",
+        "corrected": "action"
+      },
+      {
+        "recbole_id": 3128,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 3096,
+        "original": "NEW_joyful",
+        "corrected": "joyful"
+      },
+      {
+        "recbole_id": 1557,
+        "original": "NEW_dark_humor",
+        "corrected": "dark humor"
+      },
+      {
+        "recbole_id": 3109,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 572,
+        "original": "NEW_humorous",
+        "corrected": "humorous"
+      },
+      {
+        "recbole_id": 1085,
+        "original": "NEW_romantic",
+        "corrected": "romantic"
+      },
+      {
+        "recbole_id": 2620,
+        "original": "NEW_humorous",
+        "corrected": "humorous"
+      },
+      {
+        "recbole_id": 3148,
+        "original": "NEW_dark",
+        "corrected": "dark"
+      },
+      {
+        "recbole_id": 2655,
+        "original": "NEW_serious",
+        "corrected": "serious"
+      },
+      {
+        "recbole_id": 1636,
+        "original": "NEW_romantic",
+        "corrected": "romantic"
+      },
+      {
+        "recbole_id": 627,
+        "original": "NEW_humorous",
+        "corrected": "humorous"
+      },
+      {
+        "recbole_id": 103,
+        "original": "NEW_whimsical",
+        "corrected": "whimsical"
+      },
+      {
+        "recbole_id": 1644,
+        "original": "NEW_dark",
+        "corrected": "dark"
+      },
+      {
+        "recbole_id": 2168,
+        "original": "NEW_suspense",
+        "corrected": "suspense"
+      },
+      {
+        "recbole_id": 132,
+        "original": "NEW_serious",
+        "corrected": "serious"
+      },
+      {
+        "recbole_id": 2685,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 131,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 654,
+        "original": "NEW_eerie",
+        "corrected": "eerie"
+      },
+      {
+        "recbole_id": 2709,
+        "original": "NEW_romantic",
+        "corrected": "romantic"
+      },
+      {
+        "recbole_id": 656,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 178,
+        "original": "NEW_dark",
+        "corrected": "dark"
+      },
+      {
+        "recbole_id": 701,
+        "original": "NEW_joyful",
+        "corrected": "joyful"
+      },
+      {
+        "recbole_id": 2234,
+        "original": "NEW_humorous",
+        "corrected": "humorous"
+      },
+      {
+        "recbole_id": 2746,
+        "original": "NEW_joyful",
+        "corrected": "joyful"
+      },
+      {
+        "recbole_id": 1729,
+        "original": "NEW_dark",
+        "corrected": "dark"
+      },
+      {
+        "recbole_id": 2772,
+        "original": "NEW_romantic",
+        "corrected": "romantic"
+      },
+      {
+        "recbole_id": 2787,
+        "original": "NEW_playful",
+        "corrected": "playful"
+      },
+      {
+        "recbole_id": 188,
+        "original": "NEW_energetic",
+        "corrected": "energetic"
+      },
+      {
+        "recbole_id": 2788,
+        "original": "NEW_suspense",
+        "corrected": "suspense"
+      },
+      {
+        "recbole_id": 2300,
+        "original": "NEW_emotional",
+        "corrected": "emotional"
+      },
+      {
+        "recbole_id": 1293,
+        "original": "NEW_joyful",
+        "corrected": "joyful"
+      },
+      {
+        "recbole_id": 2805,
+        "original": "NEW_humorous",
+        "corrected": "humorous"
+      },
+      {
+        "recbole_id": 261,
+        "original": "NEW_joyful",
+        "corrected": "joyful"
+      },
+      {
+        "recbole_id": 2819,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 815,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 1329,
+        "original": "NEW_playful",
+        "corrected": "playful"
+      },
+      {
+        "recbole_id": 2875,
+        "original": "NEW_romantic",
+        "corrected": "romantic"
+      },
+      {
+        "recbole_id": 323,
+        "original": "NEW_energetic",
+        "corrected": "energetic"
+      },
+      {
+        "recbole_id": 2873,
+        "original": "NEW_dramatic",
+        "corrected": "dramatic"
+      },
+      {
+        "recbole_id": 2873,
+        "original": "NEW_humorous",
+        "corrected": "humorous"
+      },
+      {
+        "recbole_id": 2886,
+        "original": "NEW_humorous",
+        "corrected": "humorous"
+      },
+      {
+        "recbole_id": 3398,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 327,
+        "original": "NEW_dark",
+        "corrected": "dark"
+      },
+      {
+        "recbole_id": 327,
+        "original": "NEW_suspense",
+        "corrected": "suspense"
+      },
+      {
+        "recbole_id": 859,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 2414,
+        "original": "NEW_emotional",
+        "corrected": "emotional"
+      },
+      {
+        "recbole_id": 865,
+        "original": "NEW_whimsical",
+        "corrected": "whimsical"
+      },
+      {
+        "recbole_id": 357,
+        "original": "NEW_serious",
+        "corrected": "serious"
+      },
+      {
+        "recbole_id": 882,
+        "original": "NEW_thoughtful",
+        "corrected": "thoughtful"
+      },
+      {
+        "recbole_id": 2941,
+        "original": "NEW_whimsical",
+        "corrected": "whimsical"
+      },
+      {
+        "recbole_id": 2933,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 384,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 1918,
+        "original": "NEW_energetic",
+        "corrected": "energetic"
+      },
+      {
+        "recbole_id": 1409,
+        "original": "NEW_energetic",
+        "corrected": "energetic"
+      },
+      {
+        "recbole_id": 900,
+        "original": "NEW_joyful",
+        "corrected": "joyful"
+      },
+      {
+        "recbole_id": 903,
+        "original": "NEW_dark",
+        "corrected": "dark"
+      },
+      {
+        "recbole_id": 903,
+        "original": "NEW_romantic",
+        "corrected": "romantic"
+      },
+      {
+        "recbole_id": 2419,
+        "original": "NEW_serious",
+        "corrected": "serious"
+      },
+      {
+        "recbole_id": 915,
+        "original": "NEW_adventurous",
+        "corrected": "adventurous"
+      },
+      {
+        "recbole_id": 414,
+        "original": "NEW_romantic",
+        "corrected": "romantic"
+      },
+      {
+        "recbole_id": 2466,
+        "original": "NEW_humorous",
+        "corrected": "humorous"
+      },
+      {
+        "recbole_id": 420,
+        "original": "NEW_romantic",
+        "corrected": "romantic"
+      },
+      {
+        "recbole_id": 2987,
+        "original": "NEW_emotional",
+        "corrected": "emotional"
+      },
+      {
+        "recbole_id": 939,
+        "original": "NEW_emotional",
+        "corrected": "emotional"
+      },
+      {
+        "recbole_id": 2473,
+        "original": "NEW_romantic",
+        "corrected": "romantic"
+      },
+      {
+        "recbole_id": 1471,
+        "original": "NEW_emotional",
+        "corrected": "emotional"
+      },
+      {
+        "recbole_id": 2989,
+        "original": "NEW_joyful",
+        "corrected": "joyful"
+      },
+      {
+        "recbole_id": 450,
+        "original": "NEW_humorous",
+        "corrected": "humorous"
+      },
+      {
+        "recbole_id": 1495,
+        "original": "NEW_suspense",
+        "corrected": "suspense"
+      },
+      {
+        "recbole_id": 3017,
+        "original": "NEW_serious",
+        "corrected": "serious"
+      },
+      {
+        "recbole_id": 3038,
+        "original": "NEW_playful",
+        "corrected": "playful"
+      },
+      {
+        "recbole_id": 1482,
+        "original": "NEW_eerie",
+        "corrected": "eerie"
+      },
+      {
+        "recbole_id": 954,
+        "original": "NEW_humorous",
+        "corrected": "humorous"
+      },
+      {
+        "recbole_id": 1003,
+        "original": "NEW_whimsical",
+        "corrected": "whimsical"
+      }
+    ],
+    "additional_elements": [
+      {
+        "recbole_id": 3109,
+        "original": "NEW_family",
+        "corrected": "family"
+      },
+      {
+        "recbole_id": 323,
+        "original": "NEW_music",
+        "corrected": "music"
+      },
+      {
+        "recbole_id": 882,
+        "original": "NEW_action",
+        "corrected": "action"
+      }
+    ],
+    "design_element": [
+      {
+        "recbole_id": 3109,
+        "original": "NEW_modern_casual",
+        "corrected": "modern casual"
+      },
+      {
+        "recbole_id": 1085,
+        "original": "NEW_formal_attire",
+        "corrected": "formal_attire"
+      },
+      {
+        "recbole_id": 1621,
+        "original": "NEW_formal_attire",
+        "corrected": "formal_attire"
+      },
+      {
+        "recbole_id": 1636,
+        "original": "NEW_formal_attire",
+        "corrected": "formal_attire"
+      },
+      {
+        "recbole_id": 1140,
+        "original": "NEW_formal_attire",
+        "corrected": "formal_attire"
+      },
+      {
+        "recbole_id": 132,
+        "original": "NEW_formal_attire",
+        "corrected": "formal_attire"
+      },
+      {
+        "recbole_id": 2787,
+        "original": "NEW_modern_casual",
+        "corrected": "modern casual"
+      },
+      {
+        "recbole_id": 188,
+        "original": "NEW_futuristic",
+        "corrected": "futuristic"
+      },
+      {
+        "recbole_id": 1289,
+        "original": "NEW_modern_casual",
+        "corrected": "modern casual"
+      },
+      {
+        "recbole_id": 2365,
+        "original": "NEW_period_costume",
+        "corrected": "period costume"
+      },
+      {
+        "recbole_id": 2414,
+        "original": "NEW_formal_attire",
+        "corrected": "formal_attire"
+      },
+      {
+        "recbole_id": 1409,
+        "original": "NEW_geometric_shapes",
+        "corrected": "geometric shapes"
+      },
+      {
+        "recbole_id": 900,
+        "original": "NEW_formal_attire",
+        "corrected": "formal_attire"
+      },
+      {
+        "recbole_id": 2419,
+        "original": "NEW_formal",
+        "corrected": "formal"
+      },
+      {
+        "recbole_id": 420,
+        "original": "NEW_formal_attire",
+        "corrected": "formal_attire"
+      },
+      {
+        "recbole_id": 1456,
+        "original": "NEW_geometric_shapes",
+        "corrected": "geometric shapes"
+      },
+      {
+        "recbole_id": 1482,
+        "original": "NEW_geometric_shapes",
+        "corrected": "geometric shapes"
+      },
+      {
+        "recbole_id": 1483,
+        "original": "NEW_period_costume",
+        "corrected": "period costume"
+      },
+      {
+        "recbole_id": 1004,
+        "original": "NEW_geometric_shapes",
+        "corrected": "geometric shapes"
+      }
+    ],
+    "visual_theme": [
+      {
+        "recbole_id": 567,
+        "original": "NEW_romantic_outdoors",
+        "corrected": "romantic_outdoors"
+      },
+      {
+        "recbole_id": 2634,
+        "original": "NEW_family",
+        "corrected": "family"
+      },
+      {
+        "recbole_id": 2655,
+        "original": "NEW_education",
+        "corrected": "education"
+      },
+      {
+        "recbole_id": 1106,
+        "original": "NEW_romance",
+        "corrected": "romance"
+      },
+      {
+        "recbole_id": 2709,
+        "original": "NEW_romance",
+        "corrected": "romance"
+      },
+      {
+        "recbole_id": 178,
+        "original": "NEW_drama",
+        "corrected": "drama"
+      },
+      {
+        "recbole_id": 2772,
+        "original": "NEW_romance",
+        "corrected": "romance"
+      },
+      {
+        "recbole_id": 2787,
+        "original": "NEW_romance",
+        "corrected": "romance"
+      },
+      {
+        "recbole_id": 188,
+        "original": "NEW_thriller",
+        "corrected": "thriller"
+      },
+      {
+        "recbole_id": 2819,
+        "original": "NEW_adventure",
+        "corrected": "adventure"
+      },
+      {
+        "recbole_id": 285,
+        "original": "NEW_drama",
+        "corrected": "drama"
+      },
+      {
+        "recbole_id": 293,
+        "original": "NEW_romantic_outdoors",
+        "corrected": "romantic_outdoors"
+      },
+      {
+        "recbole_id": 1329,
+        "original": "NEW_romance",
+        "corrected": "romance"
+      },
+      {
+        "recbole_id": 323,
+        "original": "NEW_adventure",
+        "corrected": "adventure"
+      },
+      {
+        "recbole_id": 2886,
+        "original": "NEW_drama",
+        "corrected": "drama"
+      },
+      {
+        "recbole_id": 2941,
+        "original": "NEW_drama",
+        "corrected": "drama"
+      },
+      {
+        "recbole_id": 384,
+        "original": "NEW_adventure",
+        "corrected": "adventure"
+      },
+      {
+        "recbole_id": 1409,
+        "original": "NEW_drama",
+        "corrected": "drama"
+      },
+      {
+        "recbole_id": 900,
+        "original": "NEW_romance",
+        "corrected": "romance"
+      },
+      {
+        "recbole_id": 420,
+        "original": "NEW_romance",
+        "corrected": "romance"
+      },
+      {
+        "recbole_id": 2473,
+        "original": "NEW_romance",
+        "corrected": "romance"
+      },
+      {
+        "recbole_id": 954,
+        "original": "NEW_adventure",
+        "corrected": "adventure"
+      },
+      {
+        "recbole_id": 1517,
+        "original": "NEW_adventure",
+        "corrected": "adventure"
+      }
+    ],
+    "composition_styles": [
+      {
+        "recbole_id": 572,
+        "original": "NEW_asymmetrical",
+        "corrected": "asymmetrical"
+      },
+      {
+        "recbole_id": 2875,
+        "original": "NEW_group",
+        "corrected": "group"
+      },
+      {
+        "recbole_id": 1409,
+        "original": "NEW_centered",
+        "corrected": "centered"
+      }
+    ],
+    "depicted_subject": [
+      {
+        "recbole_id": 2709,
+        "original": "NEW_romantic_outdoors",
+        "corrected": "romantic outdoors"
+      },
+      {
+        "recbole_id": 1732,
+        "original": "NEW_group_scenes",
+        "corrected": "group scenes"
+      },
+      {
+        "recbole_id": 1293,
+        "original": "NEW_natural_settings",
+        "corrected": "natural settings"
+      },
+      {
+        "recbole_id": 1329,
+        "original": "NEW_romantic_outdoors",
+        "corrected": "romantic outdoors"
+      },
+      {
+        "recbole_id": 1918,
+        "original": "NEW_urban_setting",
+        "corrected": "urban settings"
+      },
+      {
+        "recbole_id": 954,
+        "original": "NEW_whimsical_creatures",
+        "corrected": "whimsical creatures"
+      }
+    ],
+    "action_behaviors": [
+      {
+        "recbole_id": 667,
+        "original": "NEW_action_characters",
+        "corrected": "action characters"
+      },
+      {
+        "recbole_id": 1482,
+        "original": "NEW_dynamic_scenes",
+        "corrected": "dynamic scenes"
+      }
+    ],
+    "lighting": [
+      {
+        "recbole_id": 2819,
+        "original": "NEW_bright_lighting",
+        "corrected": "bright lighting"
+      },
+      {
+        "recbole_id": 3017,
+        "original": "NEW_dramatic_lighting",
+        "corrected": "dramatic_lighting"
+      }
+    ],
+    "color_palette": [
+      {
+        "recbole_id": 2819,
+        "original": "NEW_warm_colors",
+        "corrected": "warm_colors"
+      },
+      {
+        "recbole_id": 2860,
+        "original": "NEW_soft_colors",
+        "corrected": "soft_colors"
+      },
+      {
+        "recbole_id": 2860,
+        "original": "NEW_light_background",
+        "corrected": "light_backgrounds"
+      }
+    ],
+    "texture": [
+      {
+        "recbole_id": 2819,
+        "original": "NEW_clarity_and_detail",
+        "corrected": "clarity_and_detail"
+      },
+      {
+        "recbole_id": 323,
+        "original": "NEW_clarity_and_detail",
+        "corrected": "clarity_and_detail"
+      },
+      {
+        "recbole_id": 2419,
+        "original": "NEW_glossy",
+        "corrected": "glossy"
+      }
+    ],
+    "genre": [
+      {
+        "recbole_id": 1918,
+        "original": "NEW_comedy",
+        "corrected": "comedy"
+      }
+    ],
+    "character_type": [
+      {
+        "recbole_id": 1918,
+        "original": "NEW_authority_hero",
+        "corrected": "authority hero"
+      }
+    ]
+  },
+  "corrections_detail": [
+    {
+      "recbole_id": 1564,
+      "relation": "mood",
+      "original": "NEW_dark",
+      "corrected": "dark"
+    },
+    {
+      "recbole_id": 2575,
+      "relation": "mood",
+      "original": "NEW_action",
+      "corrected": "action"
+    },
+    {
+      "recbole_id": 3128,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 3096,
+      "relation": "mood",
+      "original": "NEW_joyful",
+      "corrected": "joyful"
+    },
+    {
+      "recbole_id": 1557,
+      "relation": "mood",
+      "original": "NEW_dark_humor",
+      "corrected": "dark humor"
+    },
+    {
+      "recbole_id": 3109,
+      "relation": "additional_elements",
+      "original": "NEW_family",
+      "corrected": "family"
+    },
+    {
+      "recbole_id": 3109,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 3109,
+      "relation": "design_element",
+      "original": "NEW_modern_casual",
+      "corrected": "modern casual"
+    },
+    {
+      "recbole_id": 1030,
+      "relation": "visual_theme",
+      "original": "romantic outdoors",
+      "corrected": "romantic_outdoors",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 567,
+      "relation": "visual_theme",
+      "original": "NEW_romantic_outdoors",
+      "corrected": "romantic_outdoors"
+    },
+    {
+      "recbole_id": 572,
+      "relation": "mood",
+      "original": "NEW_humorous",
+      "corrected": "humorous"
+    },
+    {
+      "recbole_id": 572,
+      "relation": "composition_styles",
+      "original": "NEW_asymmetrical",
+      "corrected": "asymmetrical"
+    },
+    {
+      "recbole_id": 1085,
+      "relation": "mood",
+      "original": "NEW_romantic",
+      "corrected": "romantic"
+    },
+    {
+      "recbole_id": 1085,
+      "relation": "design_element",
+      "original": "NEW_formal_attire",
+      "corrected": "formal_attire"
+    },
+    {
+      "recbole_id": 1097,
+      "relation": "color_palette",
+      "original": "dark_background",
+      "corrected": "dark_backgrounds",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 1097,
+      "relation": "lighting",
+      "original": "dramatic lighting",
+      "corrected": "dramatic_lighting",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2620,
+      "relation": "mood",
+      "original": "NEW_humorous",
+      "corrected": "humorous"
+    },
+    {
+      "recbole_id": 2634,
+      "relation": "visual_theme",
+      "original": "NEW_family",
+      "corrected": "family"
+    },
+    {
+      "recbole_id": 3148,
+      "relation": "mood",
+      "original": "NEW_dark",
+      "corrected": "dark"
+    },
+    {
+      "recbole_id": 2655,
+      "relation": "mood",
+      "original": "NEW_serious",
+      "corrected": "serious"
+    },
+    {
+      "recbole_id": 2655,
+      "relation": "visual_theme",
+      "original": "NEW_education",
+      "corrected": "education"
+    },
+    {
+      "recbole_id": 1106,
+      "relation": "visual_theme",
+      "original": "NEW_romance",
+      "corrected": "romance"
+    },
+    {
+      "recbole_id": 1621,
+      "relation": "design_element",
+      "original": "NEW_formal_attire",
+      "corrected": "formal_attire"
+    },
+    {
+      "recbole_id": 1636,
+      "relation": "mood",
+      "original": "NEW_romantic",
+      "corrected": "romantic"
+    },
+    {
+      "recbole_id": 1636,
+      "relation": "design_element",
+      "original": "NEW_formal_attire",
+      "corrected": "formal_attire"
+    },
+    {
+      "recbole_id": 627,
+      "relation": "mood",
+      "original": "NEW_humorous",
+      "corrected": "humorous"
+    },
+    {
+      "recbole_id": 103,
+      "relation": "mood",
+      "original": "NEW_whimsical",
+      "corrected": "whimsical"
+    },
+    {
+      "recbole_id": 1644,
+      "relation": "mood",
+      "original": "NEW_dark",
+      "corrected": "dark"
+    },
+    {
+      "recbole_id": 2168,
+      "relation": "mood",
+      "original": "NEW_suspense",
+      "corrected": "suspense"
+    },
+    {
+      "recbole_id": 2168,
+      "relation": "texture",
+      "original": "fluid_brushstrokes",
+      "corrected": "fluid brushstrokes",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 1140,
+      "relation": "design_element",
+      "original": "NEW_formal_attire",
+      "corrected": "formal_attire"
+    },
+    {
+      "recbole_id": 132,
+      "relation": "design_element",
+      "original": "NEW_formal_attire",
+      "corrected": "formal_attire"
+    },
+    {
+      "recbole_id": 132,
+      "relation": "mood",
+      "original": "NEW_serious",
+      "corrected": "serious"
+    },
+    {
+      "recbole_id": 2685,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 131,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 654,
+      "relation": "mood",
+      "original": "NEW_eerie",
+      "corrected": "eerie"
+    },
+    {
+      "recbole_id": 654,
+      "relation": "additional_elements",
+      "original": "creatures",
+      "corrected": "creature",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2709,
+      "relation": "mood",
+      "original": "NEW_romantic",
+      "corrected": "romantic"
+    },
+    {
+      "recbole_id": 2709,
+      "relation": "depicted_subject",
+      "original": "NEW_romantic_outdoors",
+      "corrected": "romantic outdoors"
+    },
+    {
+      "recbole_id": 2709,
+      "relation": "visual_theme",
+      "original": "NEW_romance",
+      "corrected": "romance"
+    },
+    {
+      "recbole_id": 2208,
+      "relation": "lighting",
+      "original": "dramatic lighting",
+      "corrected": "dramatic_lighting",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 656,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 667,
+      "relation": "action_behaviors",
+      "original": "NEW_action_characters",
+      "corrected": "action characters"
+    },
+    {
+      "recbole_id": 178,
+      "relation": "mood",
+      "original": "NEW_dark",
+      "corrected": "dark"
+    },
+    {
+      "recbole_id": 178,
+      "relation": "visual_theme",
+      "original": "NEW_drama",
+      "corrected": "drama"
+    },
+    {
+      "recbole_id": 701,
+      "relation": "mood",
+      "original": "NEW_joyful",
+      "corrected": "joyful"
+    },
+    {
+      "recbole_id": 2234,
+      "relation": "mood",
+      "original": "NEW_humorous",
+      "corrected": "humorous"
+    },
+    {
+      "recbole_id": 2746,
+      "relation": "mood",
+      "original": "NEW_joyful",
+      "corrected": "joyful"
+    },
+    {
+      "recbole_id": 1732,
+      "relation": "depicted_subject",
+      "original": "NEW_group_scenes",
+      "corrected": "group scenes"
+    },
+    {
+      "recbole_id": 1729,
+      "relation": "mood",
+      "original": "NEW_dark",
+      "corrected": "dark"
+    },
+    {
+      "recbole_id": 1755,
+      "relation": "lighting",
+      "original": "bright_lighting",
+      "corrected": "bright lighting",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2772,
+      "relation": "mood",
+      "original": "NEW_romantic",
+      "corrected": "romantic"
+    },
+    {
+      "recbole_id": 2772,
+      "relation": "visual_theme",
+      "original": "NEW_romance",
+      "corrected": "romance"
+    },
+    {
+      "recbole_id": 2787,
+      "relation": "mood",
+      "original": "NEW_playful",
+      "corrected": "playful"
+    },
+    {
+      "recbole_id": 2787,
+      "relation": "design_element",
+      "original": "NEW_modern_casual",
+      "corrected": "modern casual"
+    },
+    {
+      "recbole_id": 2787,
+      "relation": "visual_theme",
+      "original": "NEW_romance",
+      "corrected": "romance"
+    },
+    {
+      "recbole_id": 188,
+      "relation": "mood",
+      "original": "NEW_energetic",
+      "corrected": "energetic"
+    },
+    {
+      "recbole_id": 188,
+      "relation": "design_element",
+      "original": "NEW_futuristic",
+      "corrected": "futuristic"
+    },
+    {
+      "recbole_id": 188,
+      "relation": "visual_theme",
+      "original": "NEW_thriller",
+      "corrected": "thriller"
+    },
+    {
+      "recbole_id": 2788,
+      "relation": "mood",
+      "original": "NEW_suspense",
+      "corrected": "suspense"
+    },
+    {
+      "recbole_id": 2299,
+      "relation": "color_palette",
+      "original": "dark_background",
+      "corrected": "dark_backgrounds",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2300,
+      "relation": "mood",
+      "original": "NEW_emotional",
+      "corrected": "emotional"
+    },
+    {
+      "recbole_id": 1293,
+      "relation": "depicted_subject",
+      "original": "NEW_natural_settings",
+      "corrected": "natural settings"
+    },
+    {
+      "recbole_id": 1293,
+      "relation": "mood",
+      "original": "NEW_joyful",
+      "corrected": "joyful"
+    },
+    {
+      "recbole_id": 2805,
+      "relation": "mood",
+      "original": "NEW_humorous",
+      "corrected": "humorous"
+    },
+    {
+      "recbole_id": 261,
+      "relation": "mood",
+      "original": "NEW_joyful",
+      "corrected": "joyful"
+    },
+    {
+      "recbole_id": 1289,
+      "relation": "design_element",
+      "original": "NEW_modern_casual",
+      "corrected": "modern casual"
+    },
+    {
+      "recbole_id": 2819,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 2819,
+      "relation": "lighting",
+      "original": "NEW_bright_lighting",
+      "corrected": "bright lighting"
+    },
+    {
+      "recbole_id": 2819,
+      "relation": "visual_theme",
+      "original": "NEW_adventure",
+      "corrected": "adventure"
+    },
+    {
+      "recbole_id": 2819,
+      "relation": "color_palette",
+      "original": "NEW_warm_colors",
+      "corrected": "warm_colors"
+    },
+    {
+      "recbole_id": 2819,
+      "relation": "texture",
+      "original": "NEW_clarity_and_detail",
+      "corrected": "clarity_and_detail"
+    },
+    {
+      "recbole_id": 788,
+      "relation": "visual_theme",
+      "original": "romantic outdoors",
+      "corrected": "romantic_outdoors",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 285,
+      "relation": "visual_theme",
+      "original": "NEW_drama",
+      "corrected": "drama"
+    },
+    {
+      "recbole_id": 293,
+      "relation": "visual_theme",
+      "original": "NEW_romantic_outdoors",
+      "corrected": "romantic_outdoors"
+    },
+    {
+      "recbole_id": 2860,
+      "relation": "color_palette",
+      "original": "NEW_soft_colors",
+      "corrected": "soft_colors"
+    },
+    {
+      "recbole_id": 2860,
+      "relation": "color_palette",
+      "original": "NEW_light_background",
+      "corrected": "light_backgrounds"
+    },
+    {
+      "recbole_id": 815,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 1329,
+      "relation": "mood",
+      "original": "NEW_playful",
+      "corrected": "playful"
+    },
+    {
+      "recbole_id": 1329,
+      "relation": "depicted_subject",
+      "original": "NEW_romantic_outdoors",
+      "corrected": "romantic outdoors"
+    },
+    {
+      "recbole_id": 1329,
+      "relation": "visual_theme",
+      "original": "NEW_romance",
+      "corrected": "romance"
+    },
+    {
+      "recbole_id": 2875,
+      "relation": "mood",
+      "original": "NEW_romantic",
+      "corrected": "romantic"
+    },
+    {
+      "recbole_id": 2875,
+      "relation": "composition_styles",
+      "original": "NEW_group",
+      "corrected": "group"
+    },
+    {
+      "recbole_id": 323,
+      "relation": "mood",
+      "original": "NEW_energetic",
+      "corrected": "energetic"
+    },
+    {
+      "recbole_id": 323,
+      "relation": "texture",
+      "original": "NEW_clarity_and_detail",
+      "corrected": "clarity_and_detail"
+    },
+    {
+      "recbole_id": 323,
+      "relation": "additional_elements",
+      "original": "NEW_music",
+      "corrected": "music"
+    },
+    {
+      "recbole_id": 323,
+      "relation": "visual_theme",
+      "original": "NEW_adventure",
+      "corrected": "adventure"
+    },
+    {
+      "recbole_id": 2873,
+      "relation": "mood",
+      "original": "NEW_dramatic",
+      "corrected": "dramatic"
+    },
+    {
+      "recbole_id": 2873,
+      "relation": "mood",
+      "original": "NEW_humorous",
+      "corrected": "humorous"
+    },
+    {
+      "recbole_id": 2886,
+      "relation": "mood",
+      "original": "NEW_humorous",
+      "corrected": "humorous"
+    },
+    {
+      "recbole_id": 2886,
+      "relation": "visual_theme",
+      "original": "NEW_drama",
+      "corrected": "drama"
+    },
+    {
+      "recbole_id": 3398,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 327,
+      "relation": "mood",
+      "original": "NEW_dark",
+      "corrected": "dark"
+    },
+    {
+      "recbole_id": 327,
+      "relation": "mood",
+      "original": "NEW_suspense",
+      "corrected": "suspense"
+    },
+    {
+      "recbole_id": 2365,
+      "relation": "design_element",
+      "original": "NEW_period_costume",
+      "corrected": "period costume"
+    },
+    {
+      "recbole_id": 859,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 2395,
+      "relation": "color_palette",
+      "original": "dark_background",
+      "corrected": "dark_backgrounds",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2395,
+      "relation": "color_palette",
+      "original": "vibrant contrasts",
+      "corrected": "vibrant_contrasts",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2395,
+      "relation": "lighting",
+      "original": "dramatic lighting",
+      "corrected": "dramatic_lighting",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2414,
+      "relation": "mood",
+      "original": "NEW_emotional",
+      "corrected": "emotional"
+    },
+    {
+      "recbole_id": 2414,
+      "relation": "design_element",
+      "original": "NEW_formal_attire",
+      "corrected": "formal_attire"
+    },
+    {
+      "recbole_id": 865,
+      "relation": "mood",
+      "original": "NEW_whimsical",
+      "corrected": "whimsical"
+    },
+    {
+      "recbole_id": 357,
+      "relation": "mood",
+      "original": "NEW_serious",
+      "corrected": "serious"
+    },
+    {
+      "recbole_id": 882,
+      "relation": "mood",
+      "original": "NEW_thoughtful",
+      "corrected": "thoughtful"
+    },
+    {
+      "recbole_id": 882,
+      "relation": "additional_elements",
+      "original": "NEW_action",
+      "corrected": "action"
+    },
+    {
+      "recbole_id": 2941,
+      "relation": "mood",
+      "original": "NEW_whimsical",
+      "corrected": "whimsical"
+    },
+    {
+      "recbole_id": 2941,
+      "relation": "visual_theme",
+      "original": "NEW_drama",
+      "corrected": "drama"
+    },
+    {
+      "recbole_id": 2933,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 384,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 384,
+      "relation": "visual_theme",
+      "original": "NEW_adventure",
+      "corrected": "adventure"
+    },
+    {
+      "recbole_id": 1918,
+      "relation": "mood",
+      "original": "NEW_energetic",
+      "corrected": "energetic"
+    },
+    {
+      "recbole_id": 1918,
+      "relation": "genre",
+      "original": "NEW_comedy",
+      "corrected": "comedy"
+    },
+    {
+      "recbole_id": 1918,
+      "relation": "depicted_subject",
+      "original": "NEW_urban_setting",
+      "corrected": "urban settings"
+    },
+    {
+      "recbole_id": 1918,
+      "relation": "character_type",
+      "original": "NEW_authority_hero",
+      "corrected": "authority hero"
+    },
+    {
+      "recbole_id": 1409,
+      "relation": "visual_theme",
+      "original": "NEW_drama",
+      "corrected": "drama"
+    },
+    {
+      "recbole_id": 1409,
+      "relation": "mood",
+      "original": "NEW_energetic",
+      "corrected": "energetic"
+    },
+    {
+      "recbole_id": 1409,
+      "relation": "composition_styles",
+      "original": "NEW_centered",
+      "corrected": "centered"
+    },
+    {
+      "recbole_id": 1409,
+      "relation": "design_element",
+      "original": "NEW_geometric_shapes",
+      "corrected": "geometric shapes"
+    },
+    {
+      "recbole_id": 899,
+      "relation": "visual_theme",
+      "original": "romantic outdoors",
+      "corrected": "romantic_outdoors",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 900,
+      "relation": "mood",
+      "original": "NEW_joyful",
+      "corrected": "joyful"
+    },
+    {
+      "recbole_id": 900,
+      "relation": "visual_theme",
+      "original": "NEW_romance",
+      "corrected": "romance"
+    },
+    {
+      "recbole_id": 900,
+      "relation": "design_element",
+      "original": "NEW_formal_attire",
+      "corrected": "formal_attire"
+    },
+    {
+      "recbole_id": 2441,
+      "relation": "visual_theme",
+      "original": "romantic outdoors",
+      "corrected": "romantic_outdoors",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 903,
+      "relation": "mood",
+      "original": "NEW_dark",
+      "corrected": "dark"
+    },
+    {
+      "recbole_id": 903,
+      "relation": "mood",
+      "original": "NEW_romantic",
+      "corrected": "romantic"
+    },
+    {
+      "recbole_id": 2419,
+      "relation": "lighting",
+      "original": "dramatic lighting",
+      "corrected": "dramatic_lighting",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2419,
+      "relation": "mood",
+      "original": "NEW_serious",
+      "corrected": "serious"
+    },
+    {
+      "recbole_id": 2419,
+      "relation": "texture",
+      "original": "NEW_glossy",
+      "corrected": "glossy"
+    },
+    {
+      "recbole_id": 2419,
+      "relation": "design_element",
+      "original": "NEW_formal",
+      "corrected": "formal"
+    },
+    {
+      "recbole_id": 915,
+      "relation": "mood",
+      "original": "NEW_adventurous",
+      "corrected": "adventurous"
+    },
+    {
+      "recbole_id": 414,
+      "relation": "mood",
+      "original": "NEW_romantic",
+      "corrected": "romantic"
+    },
+    {
+      "recbole_id": 2466,
+      "relation": "mood",
+      "original": "NEW_humorous",
+      "corrected": "humorous"
+    },
+    {
+      "recbole_id": 420,
+      "relation": "design_element",
+      "original": "NEW_formal_attire",
+      "corrected": "formal_attire"
+    },
+    {
+      "recbole_id": 420,
+      "relation": "mood",
+      "original": "NEW_romantic",
+      "corrected": "romantic"
+    },
+    {
+      "recbole_id": 420,
+      "relation": "visual_theme",
+      "original": "NEW_romance",
+      "corrected": "romance"
+    },
+    {
+      "recbole_id": 2987,
+      "relation": "mood",
+      "original": "NEW_emotional",
+      "corrected": "emotional"
+    },
+    {
+      "recbole_id": 939,
+      "relation": "mood",
+      "original": "NEW_emotional",
+      "corrected": "emotional"
+    },
+    {
+      "recbole_id": 2473,
+      "relation": "mood",
+      "original": "NEW_romantic",
+      "corrected": "romantic"
+    },
+    {
+      "recbole_id": 2473,
+      "relation": "visual_theme",
+      "original": "NEW_romance",
+      "corrected": "romance"
+    },
+    {
+      "recbole_id": 1471,
+      "relation": "mood",
+      "original": "NEW_emotional",
+      "corrected": "emotional"
+    },
+    {
+      "recbole_id": 1456,
+      "relation": "design_element",
+      "original": "NEW_geometric_shapes",
+      "corrected": "geometric shapes"
+    },
+    {
+      "recbole_id": 457,
+      "relation": "color_palette",
+      "original": "dark_background",
+      "corrected": "dark_backgrounds",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2989,
+      "relation": "mood",
+      "original": "NEW_joyful",
+      "corrected": "joyful"
+    },
+    {
+      "recbole_id": 450,
+      "relation": "mood",
+      "original": "NEW_humorous",
+      "corrected": "humorous"
+    },
+    {
+      "recbole_id": 1495,
+      "relation": "color_palette",
+      "original": "dark_background",
+      "corrected": "dark_backgrounds",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 1495,
+      "relation": "mood",
+      "original": "NEW_suspense",
+      "corrected": "suspense"
+    },
+    {
+      "recbole_id": 3017,
+      "relation": "mood",
+      "original": "NEW_serious",
+      "corrected": "serious"
+    },
+    {
+      "recbole_id": 3017,
+      "relation": "lighting",
+      "original": "NEW_dramatic_lighting",
+      "corrected": "dramatic_lighting"
+    },
+    {
+      "recbole_id": 3038,
+      "relation": "mood",
+      "original": "NEW_playful",
+      "corrected": "playful"
+    },
+    {
+      "recbole_id": 1482,
+      "relation": "mood",
+      "original": "NEW_eerie",
+      "corrected": "eerie"
+    },
+    {
+      "recbole_id": 1482,
+      "relation": "design_element",
+      "original": "NEW_geometric_shapes",
+      "corrected": "geometric shapes"
+    },
+    {
+      "recbole_id": 1482,
+      "relation": "action_behaviors",
+      "original": "NEW_dynamic_scenes",
+      "corrected": "dynamic scenes"
+    },
+    {
+      "recbole_id": 954,
+      "relation": "depicted_subject",
+      "original": "NEW_whimsical_creatures",
+      "corrected": "whimsical creatures"
+    },
+    {
+      "recbole_id": 954,
+      "relation": "visual_theme",
+      "original": "NEW_adventure",
+      "corrected": "adventure"
+    },
+    {
+      "recbole_id": 954,
+      "relation": "mood",
+      "original": "NEW_humorous",
+      "corrected": "humorous"
+    },
+    {
+      "recbole_id": 1483,
+      "relation": "design_element",
+      "original": "NEW_period_costume",
+      "corrected": "period costume"
+    },
+    {
+      "recbole_id": 2534,
+      "relation": "color_palette",
+      "original": "dark_background",
+      "corrected": "dark_backgrounds",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2022,
+      "relation": "visual_theme",
+      "original": "romantic outdoors",
+      "corrected": "romantic_outdoors",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2022,
+      "relation": "color_palette",
+      "original": "soft colors",
+      "corrected": "soft_colors",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2022,
+      "relation": "color_palette",
+      "original": "warm colors",
+      "corrected": "warm_colors",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 2022,
+      "relation": "color_palette",
+      "original": "vibrant contrasts",
+      "corrected": "vibrant_contrasts",
+      "type": "format_fix"
+    },
+    {
+      "recbole_id": 1003,
+      "relation": "mood",
+      "original": "NEW_whimsical",
+      "corrected": "whimsical"
+    },
+    {
+      "recbole_id": 1004,
+      "relation": "design_element",
+      "original": "NEW_geometric_shapes",
+      "corrected": "geometric shapes"
+    },
+    {
+      "recbole_id": 1517,
+      "relation": "visual_theme",
+      "original": "NEW_adventure",
+      "corrected": "adventure"
+    }
+  ]
+}

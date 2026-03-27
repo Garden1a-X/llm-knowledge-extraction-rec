@@ -1,0 +1,1599 @@
+head_id:token	relation_id:token	tail_id:token
+27	additional_elements	character
+27	character_type	ensemble cast
+27	color_palette	warm_colors
+27	composition_styles	group
+27	depicted_subject	group scenes
+27	design_element	formal_attire
+27	lighting	bright lighting
+27	mood	emotional
+27	visual_theme	family
+48	action_behaviors	intimate moments
+48	additional_elements	character
+48	artistic_styles	dramatic
+48	color_palette	warm_colors
+48	composition_styles	centered
+48	depicted_subject	romantic outdoors
+48	mood	emotional
+48	texture	smooth
+48	visual_theme	romance
+103	additional_elements	action poses
+103	artistic_styles	illustrated
+103	character	NEW_character_kermit_the_frog
+103	character	NEW_character_pirate
+103	character	diverse ensembles
+103	depicted_subject	NEW_pirate_ship
+103	depicted_subject	NEW_treasure_gold_coins
+103	lighting	bright lighting
+103	mood	whimsical
+103	visual_theme	adventure
+109	action_behaviors	action poses
+109	action_behaviors	emotional moments
+109	action_behaviors	intimate moments
+109	artistic_styles	vintage
+109	character_type	character interaction
+109	color_palette	black_and_white
+109	color_palette	soft_colors
+109	depicted_subject	group scenes
+109	lighting	indoor
+109	mood	playful
+123	action_behaviors	action poses
+123	action_behaviors	emotional moments
+123	additional_elements	NEW_artist_style
+123	additional_elements	NEW_mysterious_atmosphere
+123	color_palette	dark_backgrounds
+123	color_palette	soft_colors
+123	composition_styles	close-up
+123	depicted_subject	character
+123	lighting	dramatic_lighting
+123	text_style	centered
+131	action_behaviors	action characters
+131	additional_elements	action
+131	character_type	youthful character
+131	color_palette	earthy_palette
+131	composition_styles	dynamic
+131	depicted_subject	human-creature interactions
+131	emotional moments	NEW_playful_interaction
+131	environment interactions	NEW_nature_setting
+131	lighting	natural light
+131	mood	adventurous
+132	action_behaviors	emotional moments
+132	color_palette	dark_backgrounds
+132	design_element	formal_attire
+132	lighting	low light
+132	mood	serious
+132	text_style	bold
+132	text_style	centered
+178	action_behaviors	emotional moments
+178	additional_elements	action
+178	artistic_styles	realistic
+178	character_type	authority hero
+178	color_palette	dark_backgrounds
+178	depicted_subject	group scenes
+178	depicted_subject	urban settings
+178	lighting	low light
+178	mood	dark
+178	visual_theme	drama
+188	action_behaviors	action characters
+188	action_behaviors	dynamic scenes
+188	additional_elements	NEW_fire
+188	additional_elements	weapon
+188	color_palette	dark_backgrounds
+188	composition_styles	diagonal
+188	depicted_subject	action scenes
+188	design_element	futuristic
+188	mood	energetic
+188	visual_theme	thriller
+193	action_behaviors	action characters
+193	action_behaviors	emotional moments
+193	additional_elements	abstract
+193	color_palette	dark_backgrounds
+193	composition_styles	close-up
+193	depicted_subject	human characters
+193	design_element	formal_attire
+193	lighting	dramatic_lighting
+193	mood	serious
+193	visual_theme	social
+230	action_behaviors	action characters
+230	depicted_subject	animals
+230	mood	NEW_comedic
+261	action_behaviors	emotional moments
+261	additional_elements	casual
+261	artistic_styles	realistic
+261	character_type	ensemble cast
+261	color_palette	soft_colors
+261	composition_styles	centered
+261	depicted_subject	group scenes
+261	lighting	natural light
+261	mood	joyful
+261	visual_theme	family
+272	color_palette	NEW_muted_tones
+272	color_palette	dark_backgrounds
+272	composition_styles	centered
+272	depicted_subject	urban settings
+272	mood	dramatic
+272	text_style	bold
+285	action_behaviors	emotional moments
+285	action_behaviors	intimate moments
+285	artistic_styles	NEW_dramatic
+285	character_type	youthful character
+285	color_palette	red_tones
+285	composition_styles	centered
+285	depicted_subject	close-up
+285	lighting	low light
+285	mood	dark
+285	visual_theme	drama
+293	action_behaviors	action poses
+293	action_behaviors	emotional moments
+293	additional_elements	action
+293	character_type	character interaction
+293	color_palette	vibrant_contrasts
+293	color_palette	warm_colors
+293	composition_styles	group
+293	design_element	NEW_unique_outfit_styles
+293	lighting	dramatic_lighting
+293	visual_theme	romantic_outdoors
+323	action_characters	action characters
+323	action_poses	action poses
+323	additional_elements	music
+323	character	character
+323	color_palette	colorful_tones
+323	environment_interactions	environment interactions
+323	mood	energetic
+323	texture	clarity_and_detail
+323	visual_theme	adventure
+327	action_behaviors	action poses
+327	action_behaviors	emotional moments
+327	additional_elements	NEW_focused_hands
+327	additional_elements	NEW_vehicle
+327	additional_elements	character
+327	composition_styles	close-up
+327	depicted_subject	human-creature interactions
+327	lighting	dramatic_lighting
+327	mood	dark
+327	mood	suspense
+357	action_behaviors	action poses
+357	action_behaviors	emotional moments
+357	additional_elements	character
+357	additional_elements	weapon
+357	color_palette	warm_colors
+357	composition_styles	close-up
+357	depicted_subject	urban settings
+357	lighting	dramatic_lighting
+357	mood	serious
+357	text_style	bold
+373	action_behaviors	action characters
+373	action_behaviors	dynamic scenes
+373	action_behaviors	emotional moments
+373	additional_elements	abstract
+373	character_type	authority figure
+373	character_type	hero
+373	color_palette	light_backgrounds
+373	color_palette	vibrant_contrasts
+373	depicted_subject	fantasy landscapes
+373	lighting	dramatic_lighting
+380	action_behaviors	intimate moments
+380	additional_elements	character
+380	color_palette	warm_colors
+380	composition_styles	centered
+380	depicted_subject	romantic outdoors
+380	genre	drama
+380	lighting	natural light
+380	mood	romantic
+380	texture	smooth
+380	visual_theme	romance
+384	action_behaviors	dynamic scenes
+384	additional_elements	weapon
+384	artistic_styles	vintage
+384	character_type	ensemble cast
+384	color_palette	warm_colors
+384	depicted_subject	action scenes
+384	design_element	period costume
+384	lighting	natural light
+384	mood	adventurous
+384	visual_theme	adventure
+397	additional_elements	NEW_clouds
+397	additional_elements	NEW_fish
+397	additional_elements	NEW_fishing_hook
+397	additional_elements	NEW_ocean
+397	artistic_styles	illustrated
+397	color_palette	blue_tones
+397	color_palette	warm_colors
+397	depicted_subject	aquatic scenes
+397	mood	whimsical
+397	visual_theme	adventure
+414	action_characters	character
+414	action_poses	relaxed posture
+414	additional_elements	formal attire
+414	color_palette	warm_colors
+414	composition_styles	asymmetrical
+414	depicted_subject	intimate moments
+414	lighting	NEW_soft_lighting
+414	mood	romantic
+414	texture	smooth
+419	action_behaviors	intimate moments
+419	character_type	ensemble cast
+419	color_palette	soft_colors
+419	depicted_subject	romantic outdoors
+419	design_element	formal_attire
+419	genre	drama
+419	lighting	natural light
+419	mood	whimsical
+419	visual_theme	family
+420	action_behaviors	emotional moments
+420	additional_elements	character
+420	additional_elements	connection
+420	composition_styles	centered
+420	design_element	formal_attire
+420	genre	comedy
+420	lighting	natural light
+420	mood	romantic
+420	texture	smooth
+420	visual_theme	romance
+450	action_behaviors	emotional moments
+450	depicted_subject	educational environments
+450	depicted_subject	family stories
+450	design_element	formal_attire
+450	mood	humorous
+450	text_style	asymmetrical
+457	action_behaviors	action poses
+457	action_behaviors	emotional moments
+457	additional_elements	connection
+457	artistic_styles	minimal
+457	color_palette	dark_backgrounds
+457	color_palette	vivid_colors
+457	composition_styles	close-up
+457	genre	thriller
+457	lighting	dramatic_lighting
+457	mood	serious
+512	action_behaviors	walking moments
+512	additional_elements	urban
+512	character_type	ensemble cast
+512	color_palette	earthy_palette
+512	composition_styles	dynamic
+512	depicted_subject	action scenes
+512	design_element	period costume
+512	genre	thriller
+512	lighting	low light
+512	mood	dark
+567	action_behaviors	action poses
+567	action_behaviors	emotional moments
+567	additional_elements	NEW_background_elements
+567	additional_elements	character
+567	artistic_styles	vintage
+567	color_palette	NEW_gray_tones
+567	composition_styles	close-up
+567	depicted_subject	NEW_medieval_architecture
+567	lighting	dramatic_lighting
+567	visual_theme	romantic_outdoors
+572	action_behaviors	action characters
+572	additional_elements	connection
+572	character_type	ensemble cast
+572	color_palette	vibrant_contrasts
+572	composition_styles	asymmetrical
+572	depicted_subject	family stories
+572	design_element	formal_attire
+572	lighting	bright lighting
+572	mood	humorous
+572	visual_theme	comedy
+586	action_behaviors	emotional moments
+586	additional_elements	weapon
+586	character_type	authority figure
+586	color_palette	dark_backgrounds
+586	composition_styles	centered
+586	depicted_subject	NEW_water_element
+586	design_element	NEW_glossy
+586	lighting	low light
+586	mood	dark
+586	visual_theme	thriller
+627	action_behaviors	emotional moments
+627	additional_elements	sports
+627	character_type	ensemble cast
+627	color_palette	colorful_tones
+627	depicted_subject	group scenes
+627	design_element	formal_attire
+627	lighting	bright lighting
+627	mood	humorous
+627	text_style	bold
+627	visual_theme	family
+637	action_behaviors	action poses
+637	additional_elements	NEW_boxing_gloves
+637	additional_elements	NEW_relationship_dynamic
+637	additional_elements	NEW_text_element
+637	color_palette	blue_tones
+637	color_palette	warm_colors
+637	composition_styles	centered
+637	depicted_subject	urban settings
+637	design_element	casual
+637	lighting	dramatic_lighting
+654	additional_elements	creature
+654	artistic_style	surreal
+654	color_palette	dark_backgrounds
+654	composition_style	asymmetrical
+654	depicted_subject	group scenes
+654	depicted_subject	snowy landscape
+654	genre	psychological horror
+654	lighting	low light
+654	mood	eerie
+654	text_style	bold
+656	action_behaviors	walking moments
+656	additional_elements	NEW_urban_settings
+656	artistic_styles	illustrated
+656	character_type	youthful character
+656	color_palette	colorful_tones
+656	composition_styles	centered
+656	depicted_subject	fantasy landscapes
+656	lighting	natural light
+656	mood	adventurous
+656	visual_theme	adventure
+667	action_behaviors	action characters
+667	action_behaviors	emotional moments
+667	character_type	NEW_vintage_female_character
+667	character_type	NEW_vintage_male_character
+667	color_palette	warm_colors
+667	depicted_subject	group scenes
+667	depicted_subject	urban settings
+667	design_element	period costume
+667	lighting	natural light
+667	mood	NEW_romantic_mood
+670	action_behaviors	intimate moments
+670	additional_elements	casual
+670	character_type	youthful character
+670	color_palette	warm_colors
+670	composition_styles	centered
+670	depicted_subject	family stories
+670	design_element	NEW_casual_clothing
+670	lighting	natural light
+670	mood	romantic
+670	visual_theme	romance
+701	action_behaviors	walking moments
+701	additional_elements	dynamic
+701	artistic_styles	retro
+701	character_type	ensemble cast
+701	color_palette	vibrant_contrasts
+701	composition_styles	group
+701	depicted_subject	urban outdoor scenes
+701	mood	joyful
+788	action_behaviors	action characters
+788	action_behaviors	emotional moments
+788	additional_elements	NEW_vintage_style
+788	artistic_styles	candid
+788	artistic_styles	illustrated
+788	character_type	character interaction
+788	color_palette	colorful_tones
+788	color_palette	vibrant_contrasts
+788	depicted_subject	group scenes
+788	visual_theme	romantic_outdoors
+815	action_behaviors	walking moments
+815	additional_elements	action
+815	artistic_styles	vintage
+815	color_palette	warm_colors
+815	composition_styles	centered
+815	depicted_subject	group scenes
+815	depicted_subject	natural settings
+815	lighting	natural light
+815	mood	adventurous
+815	visual_theme	military
+859	action_behaviors	action characters
+859	additional_elements	NEW_diving_gears
+859	additional_elements	creature
+859	artistic_styles	illustrated
+859	character_type	youthful character
+859	color_palette	vibrant_contrasts
+859	depicted_subject	aquatic scenes
+859	lighting	bright lighting
+859	mood	adventurous
+859	visual_theme	adventure
+865	additional_elements	action
+865	artistic_styles	animated
+865	character_type	youthful character
+865	color_palette	colorful_tones
+865	composition_styles	asymmetrical
+865	depicted_subject	fantasy creatures
+865	depicted_subject	group scenes
+865	lighting	bright lighting
+865	mood	whimsical
+865	visual_theme	fantasy
+871	action_behaviors	action characters
+871	action_behaviors	action poses
+871	action_behaviors	environment interactions
+871	additional_elements	character
+871	artistic_styles	illustrated
+871	color_palette	colorful_tones
+871	depicted_subject	fantasy landscapes
+871	lighting	bright lighting
+871	mood	whimsical
+871	visual_theme	fantasy
+882	action_behaviors	walking moments
+882	additional_elements	action
+882	character_type	youthful character
+882	color_palette	soft_colors
+882	composition_styles	asymmetrical
+882	depicted_subject	group scenes
+882	depicted_subject	natural settings
+882	lighting	natural light
+882	mood	thoughtful
+882	visual_theme	romance
+896	action_behaviors	NEW_character_holding_cocktail
+896	additional_elements	drink
+896	color_palette	warm_colors
+896	composition_styles	centered
+896	depicted_subject	NEW_action_character_scene
+896	design_element	formal_attire
+896	lighting	bright lighting
+896	mood	playful
+896	text_style	bold
+896	visual_theme	NEW_social_theme
+899	action_behaviors	action poses
+899	additional_elements	character
+899	artistic_styles	animated
+899	character_type	villain
+899	color_palette	colorful_tones
+899	depicted_subject	fantasy landscapes
+899	depicted_subject	group scenes
+899	depicted_subject	whimsical creatures
+899	lighting	dramatic_lighting
+899	visual_theme	romantic_outdoors
+900	action_characters	couple dancing
+900	action_poses	elegant dance pose
+900	additional_elements	NEW_vintage_attire
+900	character_type	ensemble cast
+900	color_palette	vibrant_contrasts
+900	depicted_subject	group scenes
+900	design_element	formal_attire
+900	dynamic_scenes	movement in dance
+900	mood	joyful
+900	visual_theme	romance
+903	action_behaviors	intimate moments
+903	additional_elements	NEW_romantic_backdrops
+903	artistic_styles	vintage
+903	character	authority figure
+903	character	youthful character
+903	color_palette	warm_colors
+903	composition_styles	centered
+903	depicted_subject	romantic outdoors
+903	mood	dark
+903	mood	romantic
+915	action_behaviors	action characters
+915	artistic_styles	illustrated
+915	color_palette	vibrant_contrasts
+915	depicted_subject	aquatic scenes
+915	depicted_subject	fantasy landscapes
+915	design_element	geometric shapes
+915	mood	adventurous
+915	visual_theme	adventure
+934	action_behaviors	action poses
+934	additional_elements	weapon
+934	character_type	villain
+934	color_palette	dark_backgrounds
+934	composition_styles	centered
+934	depicted_subject	horror elements
+934	lighting	low light
+934	mood	eerie
+934	texture	grainy
+934	visual_theme	horror
+939	action_behaviors	walking moments
+939	additional_elements	character
+939	artistic_styles	contemporary
+939	color_palette	vibrant_contrasts
+939	composition_styles	asymmetrical
+939	depicted_subject	urban outdoor scenes
+939	design_element	modern casual
+939	lighting	natural light
+939	mood	emotional
+953	action_behaviors	intimate moments
+953	additional_elements	casual
+953	artistic_styles	vintage
+953	character_type	youthful character
+953	color_palette	earthy_palette
+953	composition_styles	centered
+953	depicted_subject	natural settings
+953	lighting	natural light
+953	mood	thoughtful
+953	visual_theme	family
+954	action_behaviors	action poses
+954	action_behaviors	emotional moments
+954	additional_elements	NEW_vibrant_contrasts
+954	additional_elements	layered
+954	character_type	character
+954	composition_styles	close-up
+954	depicted_subject	whimsical creatures
+954	lighting	dramatic_lighting
+954	mood	humorous
+954	visual_theme	adventure
+1003	action_behaviors	action characters
+1003	color_palette	earthy_palette
+1003	depicted_subject	dartboard
+1003	design_element	NEW_collage_effect
+1003	mood	whimsical
+1004	action_behaviors	emotional moments
+1004	additional_elements	weapon
+1004	character_type	ensemble cast
+1004	color_palette	yellow_tones
+1004	composition_styles	centered
+1004	depicted_subject	group scenes
+1004	design_element	geometric shapes
+1004	genre	drama
+1004	lighting	bright lighting
+1004	mood	serious
+1011	action_behaviors	action characters
+1011	action_behaviors	action poses
+1011	action_behaviors	environment interactions
+1011	additional_elements	abstract
+1011	color_palette	vibrant_contrasts
+1011	depicted_subject	fantasy creatures
+1011	depicted_subject	group scenes
+1011	depicted_subject	whimsical creatures
+1011	lighting	dramatic_lighting
+1011	visual_theme	adventure
+1030	additional_elements	NEW_whimsical_elements
+1030	artistic_styles	vintage
+1030	character_type	NEW_action_characters
+1030	character_type	character interaction
+1030	color_palette	black_and_white
+1030	composition_styles	close-up
+1030	design_element	NEW_casual
+1030	mood	dramatic
+1030	text_style	asymmetrical
+1030	visual_theme	romantic_outdoors
+1077	action_behaviors	emotional moments
+1077	additional_elements	action
+1077	additional_elements	creature
+1077	artistic_styles	theatrical
+1077	character_type	villain
+1077	color_palette	dark_backgrounds
+1077	composition_styles	centered
+1077	depicted_subject	fantasy creatures
+1077	mood	humorous
+1077	visual_theme	fantasy
+1084	action_characters	a couple embracing
+1084	action_poses	one character is holding the other
+1084	additional_elements	chalkboard background with text
+1084	character_type	youthful character
+1084	color_palette	vibrant_contrasts
+1084	composition_styles	centered
+1084	design_element	formal_attire
+1084	emotional_moments	the couple appears intimate
+1084	mood	romantic
+1084	visual_theme	romance
+1085	action_behaviors	intimate moments
+1085	additional_elements	character
+1085	artistic_styles	vintage
+1085	color_palette	soft_colors
+1085	composition_styles	centered
+1085	depicted_subject	urban settings
+1085	design_element	formal_attire
+1085	lighting	NEW_soft_lighting
+1085	mood	romantic
+1085	visual_theme	romance
+1094	additional_elements	abstract
+1094	color_palette	dark_backgrounds
+1094	composition_styles	centered
+1094	depicted_subject	NEW_human_interaction
+1094	depicted_subject	close-up
+1094	design_element	NEW_diffused_light
+1094	mood	dramatic
+1094	mood	emotional
+1097	action_behaviors	action poses
+1097	action_behaviors	emotional moments
+1097	additional_elements	NEW_vibrant_colors
+1097	artistic_styles	NEW_expressive_painting_style
+1097	character_type	character interaction
+1097	color_palette	dark_backgrounds
+1097	composition_styles	close-up
+1097	depicted_subject	NEW_surreal_elements
+1097	lighting	dramatic_lighting
+1097	text_style	bold
+1106	action_behaviors	NEW_standing_characters
+1106	action_behaviors	intimate moments
+1106	additional_elements	NEW_two_main_characters
+1106	color_palette	warm_colors
+1106	depicted_subject	urban settings
+1106	design_element	formal_attire
+1106	genre	NEW_romantic
+1106	lighting	natural light
+1106	mood	romantic
+1106	visual_theme	romance
+1127	action_poses	NEW_action_pose_reaching_out
+1127	additional_elements	NEW_blood_on_the_sand
+1127	character_type	youthful character
+1127	color_palette	warm_colors
+1127	depicted_subject	disaster scenes
+1127	environment_interactions	NEW_beach_setting
+1127	lighting	dramatic_lighting
+1127	mood	NEW_suspenseful
+1127	visual_theme	horror
+1139	additional_elements	abstract
+1139	character_type	villain
+1139	color_palette	black_and_white
+1139	composition_styles	asymmetrical
+1139	depicted_subject	horror elements
+1139	lighting	dramatic_lighting
+1139	mood	eerie
+1139	visual_theme	NEW_horror
+1140	action_behaviors	emotional moments
+1140	additional_elements	weapon
+1140	artistic_styles	vintage
+1140	character_type	authority figure
+1140	color_palette	dark_backgrounds
+1140	depicted_subject	urban settings
+1140	design_element	formal_attire
+1140	lighting	low light
+1140	mood	dark
+1186	character_type	ensemble cast
+1186	color_palette	warm_colors
+1186	depicted_subject	close-up
+1186	design_element	formal_attire
+1186	lighting	NEW_soft
+1186	mood	emotional
+1186	visual_theme	family
+1201	action_behaviors	intimate moments
+1201	artistic_styles	vintage
+1201	character	NEW_formal
+1201	color_palette	black_and_white
+1201	composition_styles	centered
+1201	depicted_subject	family stories
+1201	design_element	period costume
+1201	lighting	low light
+1201	mood	emotional
+1201	visual_theme	drama
+1289	action_behaviors	emotional moments
+1289	action_behaviors	intimate moments
+1289	additional_elements	action
+1289	additional_elements	character
+1289	artistic_styles	surreal
+1289	color_palette	vivid_colors
+1289	depicted_subject	urban settings
+1289	depicted_subject	whimsical creatures
+1289	design_element	modern casual
+1289	text_style	bold
+1293	additional_elements	NEW_sunflower
+1293	color_palette	yellow_tones
+1293	depicted_subject	family stories
+1293	depicted_subject	natural settings
+1293	mood	joyful
+1329	action_behaviors	intimate moments
+1329	additional_elements	casual
+1329	character_type	youthful character
+1329	color_palette	soft_colors
+1329	depicted_subject	romantic outdoors
+1329	design_element	formal_attire
+1329	lighting	bright lighting
+1329	mood	playful
+1329	text_style	bold
+1329	visual_theme	romance
+1379	action_behaviors	action characters
+1379	action_behaviors	emotional moments
+1379	character_type	character interaction
+1379	color_palette	vivid_colors
+1379	composition_styles	close-up
+1379	depicted_subject	blurred backgrounds
+1379	design_element	casual
+1379	lighting	dramatic_lighting
+1379	text_style	bold
+1394	action_behaviors	action poses
+1394	action_behaviors	emotional moments
+1394	action_behaviors	intimate moments
+1394	additional_elements	NEW_blurred_background_effect
+1394	additional_elements	NEW_dynamic_color_gradient
+1394	additional_elements	character
+1394	color_palette	colorful_tones
+1394	composition_styles	close-up
+1394	lighting	NEW_smooth_lighting
+1409	action_behaviors	action characters
+1409	artistic_styles	retro
+1409	color_palette	vibrant_contrasts
+1409	composition_styles	centered
+1409	depicted_subject	group scenes
+1409	design_element	geometric shapes
+1409	mood	energetic
+1409	visual_theme	drama
+1456	action_behaviors	NEW_standing_pose
+1456	additional_elements	NEW_abstract_background
+1456	artistic_styles	illustrated
+1456	character_type	NEW_silhouette_of_child
+1456	color_palette	vibrant_contrasts
+1456	depicted_subject	close-up
+1456	design_element	geometric shapes
+1456	lighting	bright lighting
+1456	mood	whimsical
+1456	visual_theme	family
+1471	action_behaviors	action poses
+1471	additional_elements	abstract
+1471	color_palette	blue_tones
+1471	color_palette	dark_backgrounds
+1471	depicted_subject	NEW_character_silhouette
+1471	depicted_subject	urban settings
+1471	lighting	dramatic_lighting
+1471	mood	emotional
+1471	text_style	bold
+1482	action_behaviors	dynamic scenes
+1482	color_palette	blue_tones
+1482	composition_styles	centered
+1482	depicted_subject	abstract art
+1482	design_element	geometric shapes
+1482	genre	sci-fi
+1482	lighting	dramatic_lighting
+1482	mood	eerie
+1482	texture	glossy
+1482	visual_theme	mystery
+1483	action_behaviors	emotional moments
+1483	additional_elements	NEW_film_reel
+1483	character_type	authority figure
+1483	color_palette	black_and_white
+1483	composition_styles	centered
+1483	depicted_subject	urban settings
+1483	design_element	period costume
+1483	genre	drama
+1483	lighting	dramatic_lighting
+1483	mood	serious
+1495	additional_elements	NEW_textual_elements_present
+1495	additional_elements	action
+1495	artistic_styles	minimal
+1495	character_type	character interaction
+1495	color_palette	dark_backgrounds
+1495	color_palette	high contrast
+1495	composition_styles	close-up
+1495	lighting	dramatic_lighting
+1495	mood	emotional
+1495	mood	suspense
+1517	action_behaviors	action poses
+1517	action_behaviors	dynamic scenes
+1517	action_behaviors	emotional moments
+1517	additional_elements	NEW_vibrant_contrasts
+1517	character_type	authority hero
+1517	color_palette	dark_backgrounds
+1517	composition_styles	close-up
+1517	genre	thriller
+1517	lighting	dramatic_lighting
+1517	visual_theme	adventure
+1551	action_behaviors	emotional moments
+1551	action_behaviors	walking moments
+1551	additional_elements	urban
+1551	character_type	authority hero
+1551	color_palette	warm_colors
+1551	depicted_subject	disaster scenes
+1551	lighting	dramatic_lighting
+1551	mood	dramatic
+1551	text_style	bold
+1551	visual_theme	thriller
+1555	action_behaviors	emotional moments
+1555	action_behaviors	intimate moments
+1555	additional_elements	creature
+1555	character_type	hero
+1555	character_type	youthful character
+1555	color_palette	vibrant_contrasts
+1555	depicted_subject	fantasy creatures
+1555	depicted_subject	fantasy landscapes
+1555	mood	whimsical
+1555	visual_theme	fantasy
+1557	action_behaviors	emotional moments
+1557	additional_elements	NEW_exaggerated_features
+1557	artistic_styles	exaggerated
+1557	character_type	authority figure
+1557	color_palette	vibrant_contrasts
+1557	composition_styles	centered
+1557	depicted_subject	action scenes
+1557	mood	dark humor
+1557	texture	smooth
+1557	visual_theme	NEW_political_themes
+1564	action_behaviors	emotional moments
+1564	additional_elements	blood_splatter
+1564	color_palette	black_and_white
+1564	color_palette	red_tones
+1564	composition_styles	centered
+1564	depicted_subject	horror elements
+1564	design_element	NEW_cracked_texture
+1564	lighting	dramatic_lighting
+1564	mood	dark
+1564	visual_theme	NEW_psychological_horror
+1577	action_behaviors	emotional moments
+1577	additional_elements	comedy
+1577	artistic_styles	illustrated
+1577	character_type	ensemble cast
+1577	color_palette	colorful_tones
+1577	composition_styles	asymmetrical
+1577	depicted_subject	group scenes
+1577	design_element	NEW_vintage_style
+1577	mood	humorous
+1577	visual_theme	NEW_comedy
+1621	action_behaviors	character interaction
+1621	action_behaviors	walking moments
+1621	additional_elements	NEW_instrument
+1621	color_palette	colorful_tones
+1621	depicted_subject	group scenes
+1621	depicted_subject	youth themes
+1621	design_element	formal_attire
+1621	genre	musical
+1621	mood	joyful
+1621	visual_theme	family
+1636	additional_elements	NEW_artistic
+1636	character_type	ensemble cast
+1636	color_palette	black_and_white
+1636	depicted_subject	group scenes
+1636	design_element	formal_attire
+1636	genre	drama
+1636	mood	romantic
+1644	additional_elements	NEW_nature_scenes
+1644	additional_elements	weapon
+1644	artistic_styles	illustrated
+1644	character_type	villain
+1644	color_palette	dark_backgrounds
+1644	composition_styles	centered
+1644	depicted_subject	horror elements
+1644	lighting	night scene
+1644	mood	dark
+1644	visual_theme	thriller
+1719	action_behaviors	action poses
+1719	action_behaviors	dynamic scenes
+1719	additional_elements	NEW_character_as_an_anthropomorphic_car
+1719	additional_elements	NEW_emotional_excitement_of_race
+1719	additional_elements	connection
+1719	color_palette	colorful_tones
+1719	depicted_subject	group scenes
+1719	depicted_subject	whimsical creatures
+1719	lighting	dramatic_lighting
+1719	visual_theme	adventure
+1729	action_behaviors	action poses
+1729	additional_elements	drink
+1729	artistic_styles	dramatic
+1729	character_type	authority hero
+1729	color_palette	warm_colors
+1729	composition_styles	diagonal
+1729	depicted_subject	group scenes
+1729	lighting	low light
+1729	mood	dark
+1729	mood	serious
+1730	action_behaviors	intimate moments
+1730	additional_elements	family
+1730	character_type	ensemble cast
+1730	depicted_subject	NEW_warm_colors
+1730	depicted_subject	close-up
+1730	design_element	candles
+1730	lighting	low light
+1730	mood	dark
+1730	visual_theme	family
+1732	action_behaviors	emotional moments
+1732	additional_elements	NEW_action_characters
+1732	additional_elements	NEW_informal
+1732	additional_elements	NEW_whimsical_creatures
+1732	color_palette	black_and_white
+1732	composition_styles	close-up
+1732	depicted_subject	character
+1732	depicted_subject	group scenes
+1732	lighting	dramatic_lighting
+1732	mood	humorous
+1755	action_poses	Peter Pan flying
+1755	additional_elements	NEW_whimsical_landscapes
+1755	character	hero
+1755	character_interaction	character interaction
+1755	color_palette	vibrant_colors
+1755	depicted_subject	fantasy creatures
+1755	design_element	vintage
+1755	genre	fantasy
+1755	lighting	bright lighting
+1755	mood	NEW_whimsical_mood
+1840	action_behaviors	action characters
+1840	action_behaviors	action poses
+1840	action_behaviors	environment interactions
+1840	additional_elements	NEW_colorful_tones
+1840	additional_elements	NEW_formal_attire
+1840	character_type	NEW_character
+1840	depicted_subject	fantasy creatures
+1840	lighting	night scene
+1840	mood	whimsical
+1858	action_characters	woman and child
+1858	action_poses	relaxed pose of the woman
+1858	additional_elements	NEW_summer_dress
+1858	color_palette	warm_colors
+1858	depicted_subject	family stories
+1858	design_element	casual attire
+1858	emotional_moments	intimate moment between the woman and child
+1858	lighting	natural light
+1858	mood	emotional
+1858	visual_theme	family
+1880	action_behaviors	action characters
+1880	artistic_styles	vintage
+1880	color_palette	black_and_white
+1880	depicted_subject	urban settings
+1880	design_element	geometric shapes
+1880	lighting	low light
+1880	mood	dark
+1882	action_behaviors	emotional moments
+1882	additional_elements	abstract
+1882	character_type	authority hero
+1882	color_palette	dark_backgrounds
+1882	depicted_subject	urban settings
+1882	design_element	geometric shapes
+1882	lighting	dramatic_lighting
+1882	mood	NEW_suspenseful
+1882	mood	NEW_tense
+1882	visual_theme	thriller
+1894	action_behaviors	action characters
+1894	additional_elements	casual
+1894	additional_elements	character
+1894	color_palette	soft_colors
+1894	color_palette	vibrant_contrasts
+1894	composition_styles	centered
+1894	depicted_subject	group scenes
+1894	design_element	NEW_professional_attire
+1894	mood	dramatic
+1894	mood	emotional
+1918	action_characters	action characters
+1918	action_poses	action poses
+1918	additional_elements	NEW_yellow_police_tape
+1918	character_type	authority hero
+1918	color_palette	colorful_tones
+1918	depicted_subject	urban settings
+1918	genre	comedy
+1918	mood	energetic
+2022	action_behaviors	NEW_candid_pose
+2022	action_behaviors	emotional moments
+2022	additional_elements	NEW_whimsical_colors
+2022	character_type	NEW_action_characters
+2022	character_type	character interaction
+2022	color_palette	soft_colors
+2022	color_palette	vibrant_contrasts
+2022	color_palette	warm_colors
+2022	composition_styles	close-up
+2022	visual_theme	romantic_outdoors
+2045	action_behaviors	emotional moments
+2045	color_palette	warm_colors
+2045	depicted_subject	fantasy landscapes
+2045	mood	NEW_inspiring
+2070	additional_elements	abstract
+2070	character_type	authority figure
+2070	color_palette	black_and_white
+2070	composition_styles	centered
+2070	depicted_subject	urban settings
+2070	design_element	formal_attire
+2070	lighting	low light
+2070	mood	serious
+2070	visual_theme	drama
+2088	action_behaviors	action characters
+2088	action_behaviors	environment interactions
+2088	action_behaviors	intimate moments
+2088	additional_elements	NEW_mysterious_box
+2088	depicted_subject	close-up
+2088	design_element	candles
+2088	lighting	bright lighting
+2088	mood	NEW_curious
+2088	texture	glossy
+2168	action_behaviors	dynamic scenes
+2168	additional_elements	NEW_water
+2168	character_type	ensemble cast
+2168	color_palette	dark_backgrounds
+2168	depicted_subject	aquatic scenes
+2168	depicted_subject	disaster scenes
+2168	lighting	dramatic_lighting
+2168	mood	suspense
+2168	texture	fluid brushstrokes
+2168	visual_theme	adventure
+2188	action_behaviors	emotional moments
+2188	additional_elements	abstract
+2188	artistic_styles	surreal
+2188	color_palette	dark_backgrounds
+2188	depicted_subject	horror elements
+2188	design_element	NEW_texture_contrast
+2188	lighting	low light
+2188	mood	eerie
+2197	action_behaviors	action poses
+2197	action_behaviors	environment interactions
+2197	character_type	authority hero
+2197	character_type	ensemble cast
+2197	color_palette	green_tones
+2197	depicted_subject	urban settings
+2197	genre	sci-fi
+2197	lighting	dramatic_lighting
+2197	mood	dark
+2197	text_style	bold
+2208	action_behaviors	emotional moments
+2208	action_behaviors	environment interactions
+2208	artistic_styles	contemporary
+2208	character_type	youthful character
+2208	color_palette	soft_colors
+2208	color_palette	vibrant_contrasts
+2208	composition_styles	centered
+2208	depicted_subject	abstract art
+2208	depicted_subject	romantic outdoors
+2208	lighting	dramatic_lighting
+2233	action_behaviors	dynamic scenes
+2233	additional_elements	weapon
+2233	artistic_styles	surreal
+2233	color_palette	warm_colors
+2233	composition_styles	centered
+2233	depicted_subject	fantasy landscapes
+2233	mood	dark
+2233	visual_theme	adventure
+2234	action_pose	NEW_standing_moments
+2234	additional_elements	NEW_house
+2234	character	authority hero
+2234	color_palette	colorful_tones
+2234	composition_styles	centered
+2234	depicted_subject	urban settings
+2234	design_element	NEW_casual
+2234	genre	comedy
+2234	lighting	natural light
+2234	mood	humorous
+2262	action_behaviors	emotional moments
+2262	additional_elements	creature
+2262	artistic_styles	vintage
+2262	character_type	villain
+2262	color_palette	dark_backgrounds
+2262	depicted_subject	horror elements
+2262	design_element	NEW_medical_equipment
+2262	mood	eerie
+2262	visual_theme	thriller
+2267	action_behaviors	emotional moments
+2267	additional_elements	dynamic
+2267	artistic_styles	vintage
+2267	character	villain
+2267	color_palette	green_tones
+2267	depicted_subject	horror elements
+2267	design_element	formal_attire
+2267	mood	dark
+2267	texture	high_contrast
+2282	action_behaviors	action characters
+2282	action_behaviors	environment interactions
+2282	additional_elements	character
+2282	additional_elements	romantic interaction
+2282	artistic_styles	illustrated
+2282	color_palette	earthy_palette
+2282	depicted_subject	fantasy creatures
+2282	design_element	NEW_vintage_influence
+2282	lighting	dark_backgrounds
+2282	mood	NEW_intense
+2299	action_behaviors	action characters
+2299	action_behaviors	emotional moments
+2299	character_type	authority figure
+2299	color_palette	dark_backgrounds
+2299	color_palette	vivid_colors
+2299	composition_styles	close-up
+2299	depicted_subject	urban settings
+2299	lighting	dramatic_lighting
+2299	text_style	bold
+2299	visual_theme	NEW_military_theme
+2300	action_behaviors	action characters
+2300	additional_elements	NEW_humorous
+2300	additional_elements	character
+2300	color_palette	colorful_tones
+2300	composition_styles	centered
+2300	depicted_subject	group scenes
+2300	design_element	casual
+2300	mood	emotional
+2300	text_style	bold
+2300	visual_theme	comedy
+2324	action_behaviors	intimate moments
+2324	additional_elements	connection
+2324	character_type	authority hero
+2324	color_palette	soft_colors
+2324	composition_styles	close-up
+2324	depicted_subject	family stories
+2324	design_element	formal_attire
+2324	lighting	natural light
+2324	mood	emotional
+2324	visual_theme	family
+2365	action_behaviors	intimate moments
+2365	additional_elements	NEW_film_reel
+2365	additional_elements	character
+2365	color_palette	light_backgrounds
+2365	composition_styles	centered
+2365	depicted_subject	close-up
+2365	design_element	period costume
+2365	mood	emotional
+2365	text_style	dramatic
+2365	visual_theme	NEW_drama_theme
+2391	action_behaviors	emotional moments
+2391	additional_elements	creature
+2391	artistic_styles	vintage
+2391	character_type	villain
+2391	color_palette	dark_backgrounds
+2391	depicted_subject	animals
+2391	depicted_subject	horror elements
+2391	mood	eerie
+2391	text_style	bold
+2391	visual_theme	mystery
+2395	action_behaviors	emotional moments
+2395	additional_elements	NEW_futuristic_elements
+2395	character_type	NEW_action_hero
+2395	character_type	character interaction
+2395	character_type	fantasy creature
+2395	color_palette	dark_backgrounds
+2395	color_palette	vibrant_contrasts
+2395	depicted_subject	whimsical creatures
+2395	lighting	dramatic_lighting
+2395	visual_theme	adventure
+2414	additional_elements	NEW_apple
+2414	character_type	authority figure
+2414	color_palette	black_and_white
+2414	depicted_subject	group scenes
+2414	design_element	formal_attire
+2414	mood	emotional
+2419	action_behaviors	action poses
+2419	action_behaviors	emotional moments
+2419	additional_elements	character
+2419	character_type	authority hero
+2419	color_palette	colorful_tones
+2419	depicted_subject	urban settings
+2419	design_element	formal
+2419	lighting	dramatic_lighting
+2419	mood	serious
+2419	texture	glossy
+2441	action_characters	action characters
+2441	additional_elements	NEW_colorful_tones
+2441	additional_elements	NEW_vibrant_contrasts
+2441	artistic_styles	candid
+2441	artistic_styles	retro
+2441	character_type	youthful character
+2441	depicted_subject	family stories
+2441	depicted_subject	group scenes
+2441	emotion_moments	emotional moments
+2441	visual_theme	romantic_outdoors
+2443	additional_elements	action
+2443	artistic_styles	vintage
+2443	color_palette	dark_backgrounds
+2443	depicted_subject	abstract art
+2443	depicted_subject	blurred backgrounds
+2443	depicted_subject	human-creature interactions
+2443	genre	mystery
+2443	lighting	dramatic_lighting
+2443	mood	eerie
+2443	mood	emotional
+2466	additional_elements	NEW_lighthearted_moments
+2466	additional_elements	NEW_sunny_environment
+2466	additional_elements	casual
+2466	color_palette	vivid_colors
+2466	composition_styles	centered
+2466	depicted_subject	group scenes
+2466	lighting	bright lighting
+2466	mood	humorous
+2473	action_behaviors	intimate moments
+2473	additional_elements	abstract
+2473	additional_elements	black_and_white
+2473	character_type	youthful character
+2473	composition_styles	centered
+2473	lighting	low light
+2473	mood	emotional
+2473	mood	romantic
+2473	text_style	bold
+2473	visual_theme	romance
+2496	additional_elements	abstract
+2496	artistic_styles	surreal
+2496	color_palette	NEW_purple_tones
+2496	composition_styles	centered
+2496	depicted_subject	close-up
+2496	depicted_subject	human-creature interactions
+2496	design_element	NEW_tree_patterns
+2496	mood	dark
+2534	action_behaviors	action poses
+2534	action_behaviors	emotional moments
+2534	action_behaviors	intimate moments
+2534	additional_elements	NEW_abstract_light_effects
+2534	additional_elements	NEW_light_beams
+2534	character_type	character interaction
+2534	color_palette	dark_backgrounds
+2534	depicted_subject	realistic characters
+2534	depicted_subject	urban settings
+2534	mood	serious
+2571	additional_elements	urban
+2571	artistic_styles	vintage
+2571	color_palette	dark_backgrounds
+2571	depicted_subject	NEW_great_depression_elements
+2571	lighting	low light
+2571	mood	serious
+2571	text_style	dramatic
+2575	action_behaviors	action characters
+2575	additional_elements	urban
+2575	artistic_styles	retro
+2575	character_type	authority hero
+2575	color_palette	vibrant_contrasts
+2575	composition_styles	centered
+2575	depicted_subject	law enforcement vehicles
+2575	mood	action
+2575	symbolism	weapon
+2575	texture	glossy
+2601	additional_elements	action
+2601	artistic_styles	vintage
+2601	character_type	authority hero
+2601	color_palette	dark_backgrounds
+2601	depicted_subject	action scenes
+2601	depicted_subject	close-up
+2601	design_element	formal_attire
+2601	lighting	dramatic_lighting
+2601	mood	eerie
+2601	visual_theme	horror
+2604	additional_elements	NEW_horror_elements
+2604	artistic_styles	vintage
+2604	color_palette	dark_backgrounds
+2604	composition_styles	centered
+2604	depicted_subject	NEW_skeleton_figure
+2604	genre	horror
+2604	lighting	low light
+2604	mood	eerie
+2604	text_style	bold
+2604	visual_theme	thriller
+2620	action_behaviors	NEW_vehicle_flying
+2620	additional_elements	NEW_laser_trail
+2620	additional_elements	NEW_space_vehicle
+2620	character_type	hero
+2620	color_palette	dark_backgrounds
+2620	environment interactions	NEW_space_background
+2620	lighting	bright lighting
+2620	mood	humorous
+2620	visual_theme	sci-fi
+2622	action_behaviors	action characters
+2622	action_behaviors	dynamic scenes
+2622	additional_elements	NEW_textual_elements
+2622	additional_elements	NEW_war_elements
+2622	character_type	authority hero
+2622	character_type	ensemble cast
+2622	color_palette	light_backgrounds
+2622	color_palette	vibrant_contrasts
+2622	depicted_subject	whimsical creatures
+2622	lighting	dramatic_lighting
+2634	action_behaviors	intimate moments
+2634	additional_elements	casual
+2634	character_type	ensemble cast
+2634	color_palette	black_and_white
+2634	composition_styles	centered
+2634	depicted_subject	family stories
+2634	design_element	formal_attire
+2634	lighting	bright lighting
+2634	mood	joyful
+2634	visual_theme	family
+2655	action_behaviors	NEW_classroom_elements
+2655	action_behaviors	NEW_classroom_setting
+2655	action_behaviors	NEW_student_interaction
+2655	character_type	authority figure
+2655	color_palette	warm_colors
+2655	depicted_subject	educational environments
+2655	design_element	formal_attire
+2655	mood	serious
+2655	texture	clarity_and_detail
+2655	visual_theme	education
+2662	action_behaviors	action characters
+2662	action_behaviors	emotional moments
+2662	additional_elements	casual
+2662	artistic_styles	retro
+2662	character_type	youthful character
+2662	color_palette	colorful_tones
+2662	color_palette	vibrant_contrasts
+2662	depicted_subject	group scenes
+2662	depicted_subject	urban settings
+2662	lighting	dramatic_lighting
+2685	action_behaviors	NEW_action_urgency_pose
+2685	action_behaviors	action characters
+2685	additional_elements	casual
+2685	character_type	authority hero
+2685	color_palette	warm_colors
+2685	composition_styles	centered
+2685	depicted_subject	urban settings
+2685	genre	comedy
+2685	lighting	natural light
+2685	mood	adventurous
+2709	action_behaviors	intimate moments
+2709	artistic_styles	vintage
+2709	character_type	youthful character
+2709	color_palette	soft_colors
+2709	composition_styles	centered
+2709	depicted_subject	romantic outdoors
+2709	design_element	period costume
+2709	lighting	natural light
+2709	mood	romantic
+2709	visual_theme	romance
+2746	action_behaviors	character
+2746	additional_elements	NEW_letter_blocks
+2746	additional_elements	abstract
+2746	color_palette	blue_tones
+2746	composition_styles	centered
+2746	depicted_subject	urban settings
+2746	genre	comedy
+2746	lighting	bright lighting
+2746	mood	joyful
+2746	mood	whimsical
+2772	action_behaviors	NEW_connection
+2772	action_behaviors	intimate moments
+2772	additional_elements	warm_colors
+2772	character_type	hero
+2772	character_type	youthful character
+2772	depicted_subject	romantic outdoors
+2772	lighting	natural light
+2772	mood	emotional
+2772	mood	romantic
+2772	visual_theme	romance
+2787	action_characters	romantic couple
+2787	action_poses	embracing pose
+2787	additional_elements	urban setting
+2787	color_palette	vibrant_contrasts
+2787	depicted_subject	close-up
+2787	design_element	modern casual
+2787	emotional_moments	romantic interaction
+2787	lighting	bright lighting
+2787	mood	playful
+2787	visual_theme	romance
+2788	action_behaviors	action poses
+2788	additional_elements	weapon
+2788	artistic_styles	vintage
+2788	character_type	authority hero
+2788	color_palette	dark_backgrounds
+2788	depicted_subject	group scenes
+2788	depicted_subject	urban settings
+2788	lighting	dramatic_lighting
+2788	mood	suspense
+2788	texture	grainy
+2800	action_behaviors	action characters
+2800	action_behaviors	walking moments
+2800	additional_elements	high heels
+2800	character_type	youthful character
+2800	color_palette	black_and_white
+2800	depicted_subject	urban settings
+2800	design_element	formal_attire
+2800	lighting	bright lighting
+2800	mood	joyful
+2800	visual_theme	NEW_musical
+2805	action_behaviors	action poses
+2805	additional_elements	character
+2805	artistic_styles	illustrated
+2805	color_palette	colorful_tones
+2805	composition_styles	centered
+2805	depicted_subject	group scenes
+2805	design_element	casual
+2805	lighting	bright lighting
+2805	mood	humorous
+2805	visual_theme	comedy
+2819	action_poses	action poses
+2819	additional_elements	additional_elements: gun
+2819	character	character
+2819	color_palette	warm_colors
+2819	depicted_subject	depicted_subject: urban outdoor scenes
+2819	environment_interactions	environment interactions
+2819	lighting	bright lighting
+2819	mood	adventurous
+2819	texture	clarity_and_detail
+2819	visual_theme	adventure
+2860	action_behaviors	NEW_relationship_between_characters
+2860	action_behaviors	emotional moments
+2860	additional_elements	NEW_textual_element
+2860	character_type	character interaction
+2860	color_palette	light_backgrounds
+2860	color_palette	soft_colors
+2860	composition_styles	centered
+2860	depicted_subject	NEW_indoor_setting
+2860	design_element	NEW_casual_attire
+2860	mood	NEW_humorous_tone
+2873	additional_elements	action
+2873	additional_elements	casual
+2873	additional_elements	character
+2873	artistic_styles	vintage
+2873	character_type	NEW_action_characters
+2873	color_palette	colorful_tones
+2873	color_palette	vibrant_contrasts
+2873	composition_styles	centered
+2873	mood	dramatic
+2873	mood	humorous
+2875	action_behaviors	walking moments
+2875	additional_elements	character
+2875	character_type	youthful character
+2875	color_palette	earthy_palette
+2875	composition_styles	group
+2875	depicted_subject	group scenes
+2875	design_element	formal_attire
+2875	lighting	natural light
+2875	mood	romantic
+2875	visual_theme	family
+2886	action_behaviors	walking moments
+2886	additional_elements	NEW_billboard
+2886	artistic_styles	minimal
+2886	character_type	ensemble cast
+2886	color_palette	light_backgrounds
+2886	depicted_subject	urban settings
+2886	design_element	formal_attire
+2886	lighting	bright lighting
+2886	mood	humorous
+2886	visual_theme	drama
+2933	action_behaviors	action poses
+2933	additional_elements	action
+2933	additional_elements	character
+2933	character_type	hero
+2933	color_palette	vibrant_contrasts
+2933	composition_styles	dynamic
+2933	depicted_subject	action scenes
+2933	mood	adventurous
+2933	text_style	bold
+2933	visual_theme	adventure
+2941	action_characters	group of characters
+2941	action_poses	characters in dynamic poses
+2941	additional_elements	music
+2941	character_type	ensemble cast
+2941	color_palette	vibrant_contrasts
+2941	depicted_subject	urban settings
+2941	design_element	formal_attire
+2941	lighting	bright lighting
+2941	mood	whimsical
+2941	visual_theme	drama
+2987	action_behaviors	intimate moments
+2987	color_palette	black_and_white
+2987	composition_styles	centered
+2987	depicted_subject	close-up
+2987	design_element	formal_attire
+2987	mood	emotional
+2987	visual_theme	romance
+2989	additional_elements	character
+2989	character_type	ensemble cast
+2989	color_palette	colorful_tones
+2989	composition_styles	centered
+2989	depicted_subject	group scenes
+2989	design_element	casual
+2989	lighting	bright lighting
+2989	mood	joyful
+2989	visual_theme	NEW_music
+3017	action_behaviors	action poses
+3017	action_behaviors	dynamic scenes
+3017	action_behaviors	emotional moments
+3017	additional_elements	NEW_warm_colors
+3017	additional_elements	character
+3017	additional_elements	weapon
+3017	depicted_subject	action scenes
+3017	depicted_subject	group scenes
+3017	lighting	dramatic_lighting
+3017	mood	serious
+3034	action_behaviors	action characters
+3034	action_behaviors	action poses
+3034	action_behaviors	dynamic scenes
+3034	additional_elements	weapon
+3034	character_type	hero
+3034	color_palette	colorful_tones
+3034	composition_styles	centered
+3034	depicted_subject	urban settings
+3034	lighting	dramatic_lighting
+3034	mood	NEW_intense
+3038	additional_elements	action
+3038	artistic_styles	vintage
+3038	color_palette	black_and_white
+3038	depicted_subject	group scenes
+3038	design_element	geometric shapes
+3038	mood	playful
+3038	text_style	bold
+3052	action_behaviors	character interaction
+3052	additional_elements	colorful_tones
+3052	character_type	ensemble cast
+3052	depicted_subject	group scenes
+3052	design_element	formal_attire
+3052	genre	comedy
+3052	lighting	bright lighting
+3052	mood	joyful
+3052	text_style	bold
+3052	visual_theme	family
+3060	action_behaviors	emotional moments
+3060	artistic_styles	vintage
+3060	color_palette	light_backgrounds
+3060	color_palette	soft_colors
+3060	composition_styles	NEW_artistic_composition
+3060	depicted_subject	close-up
+3060	design_element	NEW_casual_attire
+3060	lighting	dramatic_lighting
+3060	mood	NEW_serene_expression
+3060	visual_theme	romantic_outdoors
+3096	action_behaviors	action characters
+3096	action_behaviors	dynamic scenes
+3096	additional_elements	NEW_casual_attire
+3096	artistic_styles	vintage
+3096	color_palette	vibrant_contrasts
+3096	depicted_subject	urban outdoor scenes
+3096	design_element	formal_attire
+3096	mood	joyful
+3096	texture	NEW_smooth_texture
+3096	visual_theme	romance
+3109	action_behaviors	character interaction
+3109	additional_elements	casual
+3109	additional_elements	family
+3109	color_palette	colorful_tones
+3109	depicted_subject	group scenes
+3109	design_element	modern casual
+3109	lighting	natural light
+3109	mood	adventurous
+3109	mood	joyful
+3109	visual_theme	adventure
+3128	action_behaviors	action poses
+3128	additional_elements	weapon
+3128	artistic_styles	illustrated
+3128	character_type	authority hero
+3128	color_palette	vivid_colors
+3128	composition_styles	asymmetrical
+3128	depicted_subject	action scenes
+3128	lighting	bright lighting
+3128	mood	adventurous
+3128	visual_theme	thriller
+3148	action_behaviors	action characters
+3148	additional_elements	weapon
+3148	artistic_styles	illustrated
+3148	color_palette	colorful_tones
+3148	composition_styles	centered
+3148	depicted_subject	fantasy creatures
+3148	depicted_subject	group scenes
+3148	lighting	dramatic_lighting
+3148	mood	dark
+3148	visual_theme	horror
+3167	action_behaviors	action characters
+3167	action_behaviors	action poses
+3167	additional_elements	weapon
+3167	character_type	authority hero
+3167	color_palette	black_and_white
+3167	composition_styles	centered
+3167	design_element	formal_attire
+3167	genre	thriller
+3167	lighting	high contrast
+3167	mood	dramatic
+3179	action_characters	hero
+3179	action_characters	villain
+3179	action_poses	dynamic
+3179	character_type	hero
+3179	character_type	villain
+3179	color_palette	colorful_tones
+3179	depicted_subject	action scenes
+3179	lighting	bright lighting
+3179	mood	humorous
+3179	visual_theme	adventure
+3245	additional_elements	NEW_action_character_with_cigarette
+3245	color_palette	vibrant_contrasts
+3245	composition_styles	NEW_centered_focus
+3245	depicted_subject	urban outdoor scenes
+3245	design_element	NEW_modern_casual_aesthetic
+3245	lighting	NEW_bright_sun_lighting
+3245	mood	NEW_dramatic_atmosphere
+3245	text_style	NEW_bold_text_for_title
+3245	visual_theme	NEW_thriller_elements
+3298	additional_elements	NEW_dramatic
+3298	character_type	character interaction
+3298	color_palette	black_and_white
+3298	depicted_subject	urban settings
+3298	lighting	low light
+3298	mood	dark
+3301	additional_elements	action
+3301	artistic_styles	contemporary
+3301	character_type	youthful character
+3301	color_palette	vibrant_contrasts
+3301	depicted_subject	group scenes
+3301	design_element	casual
+3301	lighting	low light
+3301	mood	energetic
+3301	texture	glossy
+3301	visual_theme	NEW_nightlife
+3306	additional_elements	NEW_film_poster_style
+3306	additional_elements	abstract
+3306	artistic_styles	vintage
+3306	character_type	villain
+3306	color_palette	vibrant_contrasts
+3306	composition_styles	asymmetrical
+3306	depicted_subject	action scenes
+3306	lighting	dramatic_lighting
+3306	mood	eerie
+3306	visual_theme	horror
+3316	action_behaviors	NEW_sneaker_blood
+3316	additional_elements	NEW_note_paper
+3316	color_palette	red_tones
+3316	depicted_subject	horror elements
+3316	design_element	NEW_sneaker_blood
+3316	lighting	dark_background
+3316	mood	NEW_eerie_atmosphere
+3316	visual_theme	thriller
+3367	action_behaviors	NEW_character_interaction
+3367	additional_elements	NEW_microphone
+3367	artistic_styles	minimal
+3367	color_palette	black_and_white
+3367	composition_styles	centered
+3367	depicted_subject	NEW_music_theme
+3367	design_element	retro
+3367	genre	musical
+3367	mood	joyful
+3367	visual_theme	NEW_musical_theme
+3398	action_behaviors	character interaction
+3398	additional_elements	urban
+3398	artistic_styles	vintage
+3398	character_type	authority hero
+3398	color_palette	colorful_tones
+3398	composition_styles	group
+3398	depicted_subject	NEW_futuristic_elements
+3398	genre	sci-fi
+3398	lighting	bright lighting
+3398	mood	adventurous

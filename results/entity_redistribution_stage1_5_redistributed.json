@@ -1,0 +1,2059 @@
+{
+  "metadata": {
+    "stage": "stage1_5_redistributed",
+    "total_redistributed": 192,
+    "total_skipped": 54
+  },
+  "results": {
+    "action_behaviors": {
+      "relation": "action_behaviors",
+      "stage1_kept": [
+        "intimate_interaction",
+        "intimate_moment",
+        "walking_scene"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "interaction_with_environment",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "dance_scene",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "dynamic_stance",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "dynamic_postures",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "human_interaction",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "human_embrace",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "action_sequence",
+          "from_relation": "lighting"
+        },
+        {
+          "entity": "dynamic_action",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "dynamic_pose",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "characters_in_action",
+          "from_relation": "texture"
+        }
+      ],
+      "final_entities": [
+        "intimate_interaction",
+        "intimate_moment",
+        "walking_scene",
+        "interaction_with_environment",
+        "dance_scene",
+        "dynamic_stance",
+        "dynamic_postures",
+        "human_interaction",
+        "human_embrace",
+        "action_sequence",
+        "dynamic_action",
+        "dynamic_pose",
+        "characters_in_action"
+      ]
+    },
+    "additional_elements": {
+      "relation": "additional_elements",
+      "stage1_kept": [
+        "stormy_skies"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "face_to_face",
+          "from_relation": "action_behaviors"
+        },
+        {
+          "entity": "weapons",
+          "from_relation": "action_behaviors"
+        },
+        {
+          "entity": "sports_gear",
+          "from_relation": "additional_elements"
+        },
+        {
+          "entity": "business_attire",
+          "from_relation": "artistic_styles"
+        },
+        {
+          "entity": "blurred",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "plain",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "floral_pattern",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "illustrated",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "creature_feature",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "abstract_background",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "formal_attire",
+          "from_relation": "design_element"
+        },
+        {
+          "entity": "casual_wear",
+          "from_relation": "design_element"
+        },
+        {
+          "entity": "animal_presence",
+          "from_relation": "design_element"
+        },
+        {
+          "entity": "racing",
+          "from_relation": "genre"
+        },
+        {
+          "entity": "transportation_location",
+          "from_relation": "lighting"
+        },
+        {
+          "entity": "laboratory",
+          "from_relation": "lighting"
+        },
+        {
+          "entity": "urban_environment",
+          "from_relation": "lighting"
+        },
+        {
+          "entity": "professional",
+          "from_relation": "mood"
+        },
+        {
+          "entity": "darts_target",
+          "from_relation": "symbolism"
+        },
+        {
+          "entity": "home_and_family",
+          "from_relation": "symbolism"
+        },
+        {
+          "entity": "musical_instrument",
+          "from_relation": "symbolism"
+        },
+        {
+          "entity": "weapon_focus",
+          "from_relation": "symbolism"
+        },
+        {
+          "entity": "text_and_image_combination",
+          "from_relation": "text_style"
+        },
+        {
+          "entity": "multi_character_scene",
+          "from_relation": "text_style"
+        },
+        {
+          "entity": "character_focus",
+          "from_relation": "text_style"
+        },
+        {
+          "entity": "character_interaction",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "lightning",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "beverage",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "glowing_elements",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "dynamic_effects",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "intricate_details",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "action_focus",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "layered_elements",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "human_connection",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "exaggerated_expression",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "weapon",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "family_friendly",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "familial_bonding",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "hunt",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "musical_elements",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "music_performance",
+          "from_relation": "visual_theme"
+        }
+      ],
+      "final_entities": [
+        "stormy_skies",
+        "face_to_face",
+        "weapons",
+        "sports_gear",
+        "business_attire",
+        "blurred",
+        "plain",
+        "floral_pattern",
+        "illustrated",
+        "creature_feature",
+        "abstract_background",
+        "formal_attire",
+        "casual_wear",
+        "animal_presence",
+        "racing",
+        "transportation_location",
+        "laboratory",
+        "urban_environment",
+        "professional",
+        "darts_target",
+        "home_and_family",
+        "musical_instrument",
+        "weapon_focus",
+        "text_and_image_combination",
+        "multi_character_scene",
+        "character_focus",
+        "character_interaction",
+        "lightning",
+        "beverage",
+        "glowing_elements",
+        "dynamic_effects",
+        "intricate_details",
+        "action_focus",
+        "layered_elements",
+        "human_connection",
+        "exaggerated_expression",
+        "weapon",
+        "family_friendly",
+        "familial_bonding",
+        "hunt",
+        "musical_elements",
+        "music_performance"
+      ]
+    },
+    "artistic_styles": {
+      "relation": "artistic_styles",
+      "stage1_kept": [
+        "photographic",
+        "cartoonish",
+        "vintage",
+        "minimalist",
+        "realistic",
+        "dramatic",
+        "classic",
+        "cartoon",
+        "modern",
+        "surreal",
+        "contemporary",
+        "retro",
+        "eclectic",
+        "animated",
+        "formal_attire",
+        "illustrative",
+        "illustrated",
+        "retro_fashion",
+        "watercolor",
+        "expressionist",
+        "gothic",
+        "psychedelic",
+        "soft_focus",
+        "whimsical",
+        "caricature",
+        "grunge",
+        "collage",
+        "vintage_animation",
+        "minimalism",
+        "cyberpunk",
+        "abstract",
+        "surrealistic",
+        "retro_futuristic",
+        "traditional_with_modern_twist",
+        "casual",
+        "theatrical"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "candid",
+          "from_relation": "composition_styles"
+        },
+        {
+          "entity": "architectural",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "minimalistic",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "minimal",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "layered",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "candid_photography",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "hand_drawn_art",
+          "from_relation": "design_element"
+        },
+        {
+          "entity": "collage_style",
+          "from_relation": "text_style"
+        },
+        {
+          "entity": "fragmented",
+          "from_relation": "text_style"
+        },
+        {
+          "entity": "painterly",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "painterly_effect",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "mixed_media",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "dramatic_perspective",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "exaggerated_features",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "surreal_elements",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "illustrated_style",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "exaggerated_proportions",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "vintage_filter",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "linear_perspective",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "graphic",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "shadow_play",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "dynamic_composition",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "surrealism",
+          "from_relation": "visual_theme"
+        }
+      ],
+      "final_entities": [
+        "photographic",
+        "cartoonish",
+        "vintage",
+        "minimalist",
+        "realistic",
+        "dramatic",
+        "classic",
+        "cartoon",
+        "modern",
+        "surreal",
+        "contemporary",
+        "retro",
+        "eclectic",
+        "animated",
+        "formal_attire",
+        "illustrative",
+        "illustrated",
+        "retro_fashion",
+        "watercolor",
+        "expressionist",
+        "gothic",
+        "psychedelic",
+        "soft_focus",
+        "whimsical",
+        "caricature",
+        "grunge",
+        "collage",
+        "vintage_animation",
+        "minimalism",
+        "cyberpunk",
+        "abstract",
+        "surrealistic",
+        "retro_futuristic",
+        "traditional_with_modern_twist",
+        "casual",
+        "theatrical",
+        "candid",
+        "architectural",
+        "minimalistic",
+        "minimal",
+        "layered",
+        "candid_photography",
+        "hand_drawn_art",
+        "collage_style",
+        "fragmented",
+        "painterly",
+        "painterly_effect",
+        "mixed_media",
+        "dramatic_perspective",
+        "exaggerated_features",
+        "surreal_elements",
+        "illustrated_style",
+        "exaggerated_proportions",
+        "vintage_filter",
+        "linear_perspective",
+        "graphic",
+        "shadow_play",
+        "dynamic_composition",
+        "surrealism"
+      ]
+    },
+    "character_type": {
+      "relation": "character_type",
+      "stage1_kept": [
+        "ensemble_cast",
+        "couple",
+        "anthropomorphic",
+        "childlike_hero",
+        "heroic_protagonist",
+        "human_portrait",
+        "musician",
+        "action_hero",
+        "female_protagonists",
+        "adventurous_hero",
+        "relatable_character",
+        "survivalist",
+        "sports_fan",
+        "familial",
+        "group_of_characters",
+        "comedic_figure",
+        "whimsical_character",
+        "mentor_student",
+        "whimsical_characters",
+        "group_interaction",
+        "romantic_pair",
+        "detective",
+        "solitary_hero",
+        "heroic_figures",
+        "romantic_leads",
+        "monster",
+        "distressed_character",
+        "antagonist",
+        "mysterious_figure",
+        "youthful_characters",
+        "intimate_pair",
+        "politician",
+        "child_character",
+        "supernatural_being",
+        "scientist",
+        "villain",
+        "romantic_pose",
+        "authoritative_figure",
+        "comedic_character",
+        "parental_figures",
+        "law_enforcement",
+        "group_of_people",
+        "intimate_relationship",
+        "contemplative_character",
+        "determined",
+        "horror_icon",
+        "female_character",
+        "student",
+        "teacher",
+        "duo",
+        "intimate_pose",
+        "determined_hero",
+        "religious_figure",
+        "everyday_heroes",
+        "protagonist",
+        "dynamic_pose",
+        "gunslinger",
+        "couple_interaction",
+        "spy",
+        "supernatural_entities",
+        "grotesque_figure",
+        "enigmatic_figure",
+        "youthful_female"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "human_characters",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "human_family",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "supernatural_character",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "superhero",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "friendship",
+          "from_relation": "depicted_subject"
+        }
+      ],
+      "final_entities": [
+        "ensemble_cast",
+        "couple",
+        "anthropomorphic",
+        "childlike_hero",
+        "heroic_protagonist",
+        "human_portrait",
+        "musician",
+        "action_hero",
+        "female_protagonists",
+        "adventurous_hero",
+        "relatable_character",
+        "survivalist",
+        "sports_fan",
+        "familial",
+        "group_of_characters",
+        "comedic_figure",
+        "whimsical_character",
+        "mentor_student",
+        "whimsical_characters",
+        "group_interaction",
+        "romantic_pair",
+        "detective",
+        "solitary_hero",
+        "heroic_figures",
+        "romantic_leads",
+        "monster",
+        "distressed_character",
+        "antagonist",
+        "mysterious_figure",
+        "youthful_characters",
+        "intimate_pair",
+        "politician",
+        "child_character",
+        "supernatural_being",
+        "scientist",
+        "villain",
+        "romantic_pose",
+        "authoritative_figure",
+        "comedic_character",
+        "parental_figures",
+        "law_enforcement",
+        "group_of_people",
+        "intimate_relationship",
+        "contemplative_character",
+        "determined",
+        "horror_icon",
+        "female_character",
+        "student",
+        "teacher",
+        "duo",
+        "intimate_pose",
+        "determined_hero",
+        "religious_figure",
+        "everyday_heroes",
+        "protagonist",
+        "dynamic_pose",
+        "gunslinger",
+        "couple_interaction",
+        "spy",
+        "supernatural_entities",
+        "grotesque_figure",
+        "enigmatic_figure",
+        "youthful_female",
+        "human_characters",
+        "human_family",
+        "supernatural_character",
+        "superhero",
+        "friendship"
+      ]
+    },
+    "color_palette": {
+      "relation": "color_palette",
+      "stage1_kept": [
+        "warm_tones",
+        "monochrome",
+        "monochromatic",
+        "muted_colors",
+        "neutral_tones",
+        "cool_tones",
+        "red_and_black",
+        "complementary_colors",
+        "vibrant_colors",
+        "pastel_colors",
+        "earth_tones",
+        "vibrant_yellow",
+        "mixed_colors",
+        "bright",
+        "bold_colors",
+        "contrasting_colors",
+        "yellow",
+        "metallic_shades",
+        "earthy_colors"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "flat_color",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "gradient",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "solid_color",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "red",
+          "from_relation": "text_style"
+        },
+        {
+          "entity": "white",
+          "from_relation": "text_style"
+        },
+        {
+          "entity": "gradient_background",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "dark_tones",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "blue_tones",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "dark_palette",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "vibrant_hues",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "bright_colors",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "vibrant_palette",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "muted_tones",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "yellow_blue_contrast",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "black_and_white",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "bright_green",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "blue",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "dark_red",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "black",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "vibrant_green",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "green_tones",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "soft_tones",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "purple",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "dark_background",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "pastel_tones",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "light_background",
+          "from_relation": "visual_theme"
+        }
+      ],
+      "final_entities": [
+        "warm_tones",
+        "monochrome",
+        "monochromatic",
+        "muted_colors",
+        "neutral_tones",
+        "cool_tones",
+        "red_and_black",
+        "complementary_colors",
+        "vibrant_colors",
+        "pastel_colors",
+        "earth_tones",
+        "vibrant_yellow",
+        "mixed_colors",
+        "bright",
+        "bold_colors",
+        "contrasting_colors",
+        "yellow",
+        "metallic_shades",
+        "earthy_colors",
+        "flat_color",
+        "gradient",
+        "solid_color",
+        "red",
+        "white",
+        "gradient_background",
+        "dark_tones",
+        "blue_tones",
+        "dark_palette",
+        "vibrant_hues",
+        "bright_colors",
+        "vibrant_palette",
+        "muted_tones",
+        "yellow_blue_contrast",
+        "black_and_white",
+        "bright_green",
+        "blue",
+        "dark_red",
+        "black",
+        "vibrant_green",
+        "green_tones",
+        "soft_tones",
+        "purple",
+        "dark_background",
+        "pastel_tones",
+        "light_background"
+      ]
+    },
+    "composition_styles": {
+      "relation": "composition_styles",
+      "stage1_kept": [
+        "close_up",
+        "dynamic_perspective",
+        "two_subject_interaction",
+        "layered_elements",
+        "centered_subject",
+        "central_focus",
+        "diagonal_elements",
+        "layered_depth",
+        "character_grouping",
+        "two_figures",
+        "dynamic_layout",
+        "centered_focus",
+        "asymmetrical_layout",
+        "balanced_layout",
+        "group_scene"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "central_figures",
+          "from_relation": "text_style"
+        },
+        {
+          "entity": "dynamic_composition",
+          "from_relation": "text_style"
+        },
+        {
+          "entity": "asymmetrical_composition",
+          "from_relation": "text_style"
+        },
+        {
+          "entity": "circular_composition",
+          "from_relation": "text_style"
+        },
+        {
+          "entity": "central_element",
+          "from_relation": "texture"
+        }
+      ],
+      "final_entities": [
+        "close_up",
+        "dynamic_perspective",
+        "two_subject_interaction",
+        "layered_elements",
+        "centered_subject",
+        "central_focus",
+        "diagonal_elements",
+        "layered_depth",
+        "character_grouping",
+        "two_figures",
+        "dynamic_layout",
+        "centered_focus",
+        "asymmetrical_layout",
+        "balanced_layout",
+        "group_scene",
+        "central_figures",
+        "dynamic_composition",
+        "asymmetrical_composition",
+        "circular_composition",
+        "central_element"
+      ]
+    },
+    "depicted_subject": {
+      "relation": "depicted_subject",
+      "stage1_kept": [
+        "human_portrait",
+        "simple_background",
+        "puppet_characters",
+        "human_form",
+        "human_animal_interaction",
+        "mountainous",
+        "animal",
+        "urban_environment",
+        "action_scene",
+        "outdoor_setting",
+        "family_portrait",
+        "floral_elements",
+        "human_figure",
+        "clock",
+        "romantic_scene",
+        "desert_landscape",
+        "ocean_wave",
+        "fishing_hook",
+        "human_figures",
+        "indoor_setting",
+        "group_portrait",
+        "natural_landscape",
+        "natural_setting",
+        "underwater_scene",
+        "diver_equipment",
+        "marine_life",
+        "magical_elements",
+        "fantasy_elements",
+        "lush_landscape",
+        "fantasy_landscape",
+        "seascape",
+        "rural_landscape",
+        "outdoor_landscape",
+        "abstract_figures",
+        "group_of_people",
+        "urban_landscape",
+        "gothic_landscape",
+        "educational_setting",
+        "overlapping_elements",
+        "beach_scene",
+        "human_silhouette",
+        "interior",
+        "group_scene",
+        "cloudy_sky",
+        "abstract_shapes",
+        "human_hand",
+        "natural_disaster",
+        "fantasy_creatures",
+        "enchanted_forest",
+        "human_face",
+        "vehicles",
+        "scenic_landscape",
+        "whimsical_character",
+        "fantastical_landscape",
+        "haunted_house",
+        "water_surface",
+        "blurred_background",
+        "indoor_environment",
+        "disaster_scene",
+        "explosion",
+        "water",
+        "abstract_face",
+        "gradient_sky",
+        "abstract_elements",
+        "animal_portrait",
+        "large_animal",
+        "outdoor_scene",
+        "organic_patterns",
+        "humanoid_robot",
+        "human_skull",
+        "spaceship",
+        "illustrated_scene",
+        "neutral_background",
+        "classroom_setting",
+        "automobile",
+        "urban_setting",
+        "natural_scene",
+        "celestial_body",
+        "natural_elements",
+        "cloudscape",
+        "decorative_patterns",
+        "tropical_landscape",
+        "scenic",
+        "puppets",
+        "flags",
+        "human_group",
+        "footwear",
+        "simplistic_background",
+        "musical_instruments",
+        "domestic_dog",
+        "magical_transportation",
+        "police_car"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "turbulent_waves",
+          "from_relation": "additional_elements"
+        },
+        {
+          "entity": "close-up",
+          "from_relation": "additional_elements"
+        },
+        {
+          "entity": "adult_audience",
+          "from_relation": "additional_elements"
+        },
+        {
+          "entity": "youth",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "everyday_people",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "ambiguous_figures",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "athletic_figure",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "enigmatic_figures",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "two_human_figures",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "fantastical_creature",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "military_uniform",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "human_representations",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "diverse_men",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "young_adults",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "solitary_figure",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "adult_and_children",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "youthful",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "diverse_cast",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "child",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "mixed_genders",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "anthropomorphic_vehicle",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "male_figures",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "collaborative",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "everyday_person",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "mixed_gender",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "female_form",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "ambiguous_character",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "ensemble_cast",
+          "from_relation": "composition_styles"
+        },
+        {
+          "entity": "treasure_hunt",
+          "from_relation": "genre"
+        },
+        {
+          "entity": "creature_human_interaction",
+          "from_relation": "genre"
+        },
+        {
+          "entity": "central_figures",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "dual_subject",
+          "from_relation": "texture"
+        }
+      ],
+      "final_entities": [
+        "human_portrait",
+        "simple_background",
+        "puppet_characters",
+        "human_form",
+        "human_animal_interaction",
+        "mountainous",
+        "animal",
+        "urban_environment",
+        "action_scene",
+        "outdoor_setting",
+        "family_portrait",
+        "floral_elements",
+        "human_figure",
+        "clock",
+        "romantic_scene",
+        "desert_landscape",
+        "ocean_wave",
+        "fishing_hook",
+        "human_figures",
+        "indoor_setting",
+        "group_portrait",
+        "natural_landscape",
+        "natural_setting",
+        "underwater_scene",
+        "diver_equipment",
+        "marine_life",
+        "magical_elements",
+        "fantasy_elements",
+        "lush_landscape",
+        "fantasy_landscape",
+        "seascape",
+        "rural_landscape",
+        "outdoor_landscape",
+        "abstract_figures",
+        "group_of_people",
+        "urban_landscape",
+        "gothic_landscape",
+        "educational_setting",
+        "overlapping_elements",
+        "beach_scene",
+        "human_silhouette",
+        "interior",
+        "group_scene",
+        "cloudy_sky",
+        "abstract_shapes",
+        "human_hand",
+        "natural_disaster",
+        "fantasy_creatures",
+        "enchanted_forest",
+        "human_face",
+        "vehicles",
+        "scenic_landscape",
+        "whimsical_character",
+        "fantastical_landscape",
+        "haunted_house",
+        "water_surface",
+        "blurred_background",
+        "indoor_environment",
+        "disaster_scene",
+        "explosion",
+        "water",
+        "abstract_face",
+        "gradient_sky",
+        "abstract_elements",
+        "animal_portrait",
+        "large_animal",
+        "outdoor_scene",
+        "organic_patterns",
+        "humanoid_robot",
+        "human_skull",
+        "spaceship",
+        "illustrated_scene",
+        "neutral_background",
+        "classroom_setting",
+        "automobile",
+        "urban_setting",
+        "natural_scene",
+        "celestial_body",
+        "natural_elements",
+        "cloudscape",
+        "decorative_patterns",
+        "tropical_landscape",
+        "scenic",
+        "puppets",
+        "flags",
+        "human_group",
+        "footwear",
+        "simplistic_background",
+        "musical_instruments",
+        "domestic_dog",
+        "magical_transportation",
+        "police_car",
+        "turbulent_waves",
+        "close-up",
+        "adult_audience",
+        "youth",
+        "everyday_people",
+        "ambiguous_figures",
+        "athletic_figure",
+        "enigmatic_figures",
+        "two_human_figures",
+        "fantastical_creature",
+        "military_uniform",
+        "human_representations",
+        "diverse_men",
+        "young_adults",
+        "solitary_figure",
+        "adult_and_children",
+        "youthful",
+        "diverse_cast",
+        "child",
+        "mixed_genders",
+        "anthropomorphic_vehicle",
+        "male_figures",
+        "collaborative",
+        "everyday_person",
+        "mixed_gender",
+        "female_form",
+        "ambiguous_character",
+        "ensemble_cast",
+        "treasure_hunt",
+        "creature_human_interaction",
+        "central_figures",
+        "dual_subject"
+      ]
+    },
+    "design_element": {
+      "relation": "design_element",
+      "stage1_kept": [
+        "modern_casual",
+        "diagonal_lines",
+        "collage",
+        "minimalistic_background",
+        "abstract_pattern",
+        "iconic_shape",
+        "historical_costume",
+        "sharp_angles",
+        "candles",
+        "futuristic",
+        "badge_iconography",
+        "neon_effects",
+        "curtain",
+        "period_costume",
+        "high_heels",
+        "prominent_title",
+        "circular_target",
+        "geometric_shapes",
+        "central_figure"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "agricultural_tool",
+          "from_relation": "additional_elements"
+        },
+        {
+          "entity": "apple",
+          "from_relation": "additional_elements"
+        },
+        {
+          "entity": "star_shape",
+          "from_relation": "texture"
+        }
+      ],
+      "final_entities": [
+        "modern_casual",
+        "diagonal_lines",
+        "collage",
+        "minimalistic_background",
+        "abstract_pattern",
+        "iconic_shape",
+        "historical_costume",
+        "sharp_angles",
+        "candles",
+        "futuristic",
+        "badge_iconography",
+        "neon_effects",
+        "curtain",
+        "period_costume",
+        "high_heels",
+        "prominent_title",
+        "circular_target",
+        "geometric_shapes",
+        "central_figure",
+        "agricultural_tool",
+        "apple",
+        "star_shape"
+      ]
+    },
+    "genre": {
+      "relation": "genre",
+      "stage1_kept": [
+        "romantic_comedy",
+        "thriller",
+        "comedy",
+        "comedy_action",
+        "action_comedy"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "action_thriller",
+          "from_relation": "artistic_styles"
+        },
+        {
+          "entity": "comedic",
+          "from_relation": "artistic_styles"
+        },
+        {
+          "entity": "western",
+          "from_relation": "artistic_styles"
+        },
+        {
+          "entity": "cinematic",
+          "from_relation": "artistic_styles"
+        },
+        {
+          "entity": "thriller_aesthetic",
+          "from_relation": "artistic_styles"
+        },
+        {
+          "entity": "horror",
+          "from_relation": "artistic_styles"
+        },
+        {
+          "entity": "sci-fi",
+          "from_relation": "artistic_styles"
+        },
+        {
+          "entity": "psychological_thriller",
+          "from_relation": "artistic_styles"
+        },
+        {
+          "entity": "science_fiction_theme",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "legal_drama",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "mystery",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "fantasy",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "science_fiction",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "psychological_horror",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "horror_comedy",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "science_fiction_parody",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "romantic_drama",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "crime_thriller",
+          "from_relation": "visual_theme"
+        }
+      ],
+      "final_entities": [
+        "romantic_comedy",
+        "thriller",
+        "comedy",
+        "comedy_action",
+        "action_comedy",
+        "action_thriller",
+        "comedic",
+        "western",
+        "cinematic",
+        "thriller_aesthetic",
+        "horror",
+        "sci-fi",
+        "psychological_thriller",
+        "science_fiction_theme",
+        "legal_drama",
+        "mystery",
+        "fantasy",
+        "science_fiction",
+        "psychological_horror",
+        "horror_comedy",
+        "science_fiction_parody",
+        "romantic_drama",
+        "crime_thriller"
+      ]
+    },
+    "lighting": {
+      "relation": "lighting",
+      "stage1_kept": [
+        "soft_lighting",
+        "bright",
+        "indoor_environment",
+        "dramatic_lighting",
+        "high_contrast",
+        "low_key",
+        "flat_lighting",
+        "low_light",
+        "bright_lighting",
+        "backlighting",
+        "vibrant_lighting",
+        "long_shadows",
+        "ambient_lighting",
+        "natural_light",
+        "soft_glow",
+        "dramatic",
+        "outdoor_night",
+        "indoor_setting",
+        "indoor",
+        "night_scene",
+        "natural_lighting",
+        "suburban_environment",
+        "cosmic_lighting",
+        "outdoor_scene",
+        "outdoor_environment"
+      ],
+      "redistributed_in": [],
+      "final_entities": [
+        "soft_lighting",
+        "bright",
+        "indoor_environment",
+        "dramatic_lighting",
+        "high_contrast",
+        "low_key",
+        "flat_lighting",
+        "low_light",
+        "bright_lighting",
+        "backlighting",
+        "vibrant_lighting",
+        "long_shadows",
+        "ambient_lighting",
+        "natural_light",
+        "soft_glow",
+        "dramatic",
+        "outdoor_night",
+        "indoor_setting",
+        "indoor",
+        "night_scene",
+        "natural_lighting",
+        "suburban_environment",
+        "cosmic_lighting",
+        "outdoor_scene",
+        "outdoor_environment"
+      ]
+    },
+    "mood": {
+      "relation": "mood",
+      "stage1_kept": [
+        "nostalgic",
+        "joyful",
+        "emotional",
+        "whimsical",
+        "romantic",
+        "mysterious",
+        "suspenseful",
+        "adventurous",
+        "introspective",
+        "contemplative",
+        "tense",
+        "serious",
+        "lighthearted",
+        "celebratory",
+        "dramatic",
+        "intense",
+        "neutral",
+        "intimate",
+        "intrigue",
+        "playful",
+        "humorous",
+        "flirtatious_posture",
+        "ominous",
+        "happiness",
+        "melancholic",
+        "serene",
+        "reflective",
+        "comedic",
+        "sentimental",
+        "eerie",
+        "dreamy",
+        "apocalyptic",
+        "surreal",
+        "confrontational",
+        "cheerful",
+        "sophisticated",
+        "tension",
+        "unsettling",
+        "confident_expression",
+        "lightheartedness",
+        "uplifting",
+        "intrigued",
+        "joyful_expression",
+        "tender_moment",
+        "youthful_energy",
+        "somber",
+        "action_oriented",
+        "inspirational",
+        "humor",
+        "affectionate",
+        "passionate",
+        "energetic",
+        "youthful",
+        "intensity",
+        "seductive"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "vibrant",
+          "from_relation": "artistic_styles"
+        },
+        {
+          "entity": "distressed",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "exaggerated_emotion",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "human_intimacy",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "human_emotion",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "casual",
+          "from_relation": "design_element"
+        },
+        {
+          "entity": "emotional_expression",
+          "from_relation": "genre"
+        },
+        {
+          "entity": "danger",
+          "from_relation": "symbolism"
+        },
+        {
+          "entity": "facial_expressions",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "atmospheric",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "playful_pose",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "nostalgia",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "suspense",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "psychological_tension",
+          "from_relation": "visual_theme"
+        },
+        {
+          "entity": "dark_humor",
+          "from_relation": "visual_theme"
+        }
+      ],
+      "final_entities": [
+        "nostalgic",
+        "joyful",
+        "emotional",
+        "whimsical",
+        "romantic",
+        "mysterious",
+        "suspenseful",
+        "adventurous",
+        "introspective",
+        "contemplative",
+        "tense",
+        "serious",
+        "lighthearted",
+        "celebratory",
+        "dramatic",
+        "intense",
+        "neutral",
+        "intimate",
+        "intrigue",
+        "playful",
+        "humorous",
+        "flirtatious_posture",
+        "ominous",
+        "happiness",
+        "melancholic",
+        "serene",
+        "reflective",
+        "comedic",
+        "sentimental",
+        "eerie",
+        "dreamy",
+        "apocalyptic",
+        "surreal",
+        "confrontational",
+        "cheerful",
+        "sophisticated",
+        "tension",
+        "unsettling",
+        "confident_expression",
+        "lightheartedness",
+        "uplifting",
+        "intrigued",
+        "joyful_expression",
+        "tender_moment",
+        "youthful_energy",
+        "somber",
+        "action_oriented",
+        "inspirational",
+        "humor",
+        "affectionate",
+        "passionate",
+        "energetic",
+        "youthful",
+        "intensity",
+        "seductive",
+        "vibrant",
+        "distressed",
+        "exaggerated_emotion",
+        "human_intimacy",
+        "human_emotion",
+        "casual",
+        "emotional_expression",
+        "danger",
+        "facial_expressions",
+        "atmospheric",
+        "playful_pose",
+        "nostalgia",
+        "suspense",
+        "psychological_tension",
+        "dark_humor"
+      ]
+    },
+    "symbolism": {
+      "relation": "symbolism",
+      "stage1_kept": [
+        "hidden_elements",
+        "abstract_shapes",
+        "weapon_representation",
+        "patriotic_imagery",
+        "afterlife_concept"
+      ],
+      "redistributed_in": [],
+      "final_entities": [
+        "hidden_elements",
+        "abstract_shapes",
+        "weapon_representation",
+        "patriotic_imagery",
+        "afterlife_concept"
+      ]
+    },
+    "text_style": {
+      "relation": "text_style",
+      "stage1_kept": [
+        "grid_format",
+        "serif_font",
+        "centered_composition",
+        "minimalistic",
+        "bold_font",
+        "vertical_orientation",
+        "dramatic_font",
+        "bold_typography",
+        "group_composition",
+        "high_contrast",
+        "bold",
+        "layered_composition",
+        "multi_character_display",
+        "centered_title",
+        "symmetrical",
+        "decorative_font",
+        "casual_font",
+        "playful_font",
+        "bold_fonts",
+        "vertical_arrangement",
+        "handwritten_font",
+        "centralized_composition",
+        "bold_title",
+        "sans_serif",
+        "handwritten",
+        "vintage_font",
+        "horizontal",
+        "light_on_dark",
+        "centered_focus",
+        "central_focus",
+        "grid",
+        "contrasting",
+        "circular_arrangement",
+        "elegant_typography",
+        "bold_lettering",
+        "playful_typography",
+        "stylized_font",
+        "mixed_typography",
+        "geometric_shapes",
+        "centered_text",
+        "centered",
+        "centered_subject",
+        "bold_typeface",
+        "asymmetrical",
+        "theatrical",
+        "classic_font",
+        "vertical_composition",
+        "collage_text",
+        "dramatic_typography",
+        "asymmetric",
+        "retro_typography",
+        "informal_typography",
+        "subtle_typography",
+        "bold_text",
+        "vintage_typography",
+        "horizontal_composition"
+      ],
+      "redistributed_in": [],
+      "final_entities": [
+        "grid_format",
+        "serif_font",
+        "centered_composition",
+        "minimalistic",
+        "bold_font",
+        "vertical_orientation",
+        "dramatic_font",
+        "bold_typography",
+        "group_composition",
+        "high_contrast",
+        "bold",
+        "layered_composition",
+        "multi_character_display",
+        "centered_title",
+        "symmetrical",
+        "decorative_font",
+        "casual_font",
+        "playful_font",
+        "bold_fonts",
+        "vertical_arrangement",
+        "handwritten_font",
+        "centralized_composition",
+        "bold_title",
+        "sans_serif",
+        "handwritten",
+        "vintage_font",
+        "horizontal",
+        "light_on_dark",
+        "centered_focus",
+        "central_focus",
+        "grid",
+        "contrasting",
+        "circular_arrangement",
+        "elegant_typography",
+        "bold_lettering",
+        "playful_typography",
+        "stylized_font",
+        "mixed_typography",
+        "geometric_shapes",
+        "centered_text",
+        "centered",
+        "centered_subject",
+        "bold_typeface",
+        "asymmetrical",
+        "theatrical",
+        "classic_font",
+        "vertical_composition",
+        "collage_text",
+        "dramatic_typography",
+        "asymmetric",
+        "retro_typography",
+        "informal_typography",
+        "subtle_typography",
+        "bold_text",
+        "vintage_typography",
+        "horizontal_composition"
+      ]
+    },
+    "texture": {
+      "relation": "texture",
+      "stage1_kept": [
+        "high_contrast",
+        "grainy_texture",
+        "smooth_surface",
+        "smooth",
+        "motion_blur",
+        "smoke_or_fire",
+        "dark_and_light",
+        "low_contrast",
+        "glossy_finish",
+        "minimal_background",
+        "gritty",
+        "dramatic_contrast",
+        "soft_edges",
+        "photographic",
+        "soft",
+        "fluid_brushstrokes",
+        "stark",
+        "grainy",
+        "close_up",
+        "blurred_background",
+        "distressed",
+        "blood_splatter",
+        "soft_focus",
+        "fabric",
+        "flat",
+        "metallic",
+        "radiant_light",
+        "blurred_edges",
+        "sleek",
+        "strong_contrast",
+        "organic_surface",
+        "soft_fabric",
+        "fur_pattern",
+        "light_beams",
+        "aged",
+        "motion_trail",
+        "tactile_elements",
+        "glossy",
+        "blood_drips"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "abstract_texture",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "blurred_effect",
+          "from_relation": "depicted_subject"
+        }
+      ],
+      "final_entities": [
+        "high_contrast",
+        "grainy_texture",
+        "smooth_surface",
+        "smooth",
+        "motion_blur",
+        "smoke_or_fire",
+        "dark_and_light",
+        "low_contrast",
+        "glossy_finish",
+        "minimal_background",
+        "gritty",
+        "dramatic_contrast",
+        "soft_edges",
+        "photographic",
+        "soft",
+        "fluid_brushstrokes",
+        "stark",
+        "grainy",
+        "close_up",
+        "blurred_background",
+        "distressed",
+        "blood_splatter",
+        "soft_focus",
+        "fabric",
+        "flat",
+        "metallic",
+        "radiant_light",
+        "blurred_edges",
+        "sleek",
+        "strong_contrast",
+        "organic_surface",
+        "soft_fabric",
+        "fur_pattern",
+        "light_beams",
+        "aged",
+        "motion_trail",
+        "tactile_elements",
+        "glossy",
+        "blood_drips",
+        "abstract_texture",
+        "blurred_effect"
+      ]
+    },
+    "visual_theme": {
+      "relation": "visual_theme",
+      "stage1_kept": [
+        "friendship",
+        "adventure",
+        "sensuality",
+        "coming_of_age",
+        "social_issue",
+        "music_culture",
+        "espionage",
+        "time_travel",
+        "love_story",
+        "family_and_identity",
+        "historical",
+        "competition",
+        "military",
+        "exploration",
+        "nightlife",
+        "supernatural",
+        "personal_growth",
+        "justice",
+        "romance",
+        "existential_crisis",
+        "autumn",
+        "intimacy",
+        "family_bonding",
+        "romantic",
+        "identity_exploration",
+        "philosophical",
+        "survival",
+        "quest_journey",
+        "social_commentary",
+        "social_interaction",
+        "empowerment",
+        "cannibalism",
+        "dystopian",
+        "family_humor",
+        "biographical",
+        "fantasy_elements",
+        "education",
+        "cybernetic",
+        "nautical",
+        "urban_setting",
+        "contrast_between_religion_and_fun",
+        "journey",
+        "existential_reflection",
+        "piracy",
+        "satire",
+        "summer_camp"
+      ],
+      "redistributed_in": [
+        {
+          "entity": "candles",
+          "from_relation": "additional_elements"
+        },
+        {
+          "entity": "emotional_portrayal",
+          "from_relation": "character_type"
+        },
+        {
+          "entity": "nautical_theme",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "military_theme",
+          "from_relation": "depicted_subject"
+        },
+        {
+          "entity": "thriller_aesthetic",
+          "from_relation": "genre"
+        },
+        {
+          "entity": "unconventional_storytelling",
+          "from_relation": "genre"
+        },
+        {
+          "entity": "silhouette",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "natural_elements",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "glowing_light",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "glow_effect",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "mystical_enviroment",
+          "from_relation": "texture"
+        },
+        {
+          "entity": "dual_elements",
+          "from_relation": "texture"
+        }
+      ],
+      "final_entities": [
+        "friendship",
+        "adventure",
+        "sensuality",
+        "coming_of_age",
+        "social_issue",
+        "music_culture",
+        "espionage",
+        "time_travel",
+        "love_story",
+        "family_and_identity",
+        "historical",
+        "competition",
+        "military",
+        "exploration",
+        "nightlife",
+        "supernatural",
+        "personal_growth",
+        "justice",
+        "romance",
+        "existential_crisis",
+        "autumn",
+        "intimacy",
+        "family_bonding",
+        "romantic",
+        "identity_exploration",
+        "philosophical",
+        "survival",
+        "quest_journey",
+        "social_commentary",
+        "social_interaction",
+        "empowerment",
+        "cannibalism",
+        "dystopian",
+        "family_humor",
+        "biographical",
+        "fantasy_elements",
+        "education",
+        "cybernetic",
+        "nautical",
+        "urban_setting",
+        "contrast_between_religion_and_fun",
+        "journey",
+        "existential_reflection",
+        "piracy",
+        "satire",
+        "summer_camp",
+        "candles",
+        "emotional_portrayal",
+        "nautical_theme",
+        "military_theme",
+        "thriller_aesthetic",
+        "unconventional_storytelling",
+        "silhouette",
+        "natural_elements",
+        "glowing_light",
+        "glow_effect",
+        "mystical_enviroment",
+        "dual_elements"
+      ]
+    }
+  }
+}

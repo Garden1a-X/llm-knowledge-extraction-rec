@@ -1,0 +1,38 @@
+# BPR Baseline Configuration for ML-1M (Full Rank)
+# BPR: Bayesian Personalized Ranking (UAI 2009)
+
+# Data
+dataset: ml-1m
+data_path: data/recbole
+
+# Model
+model: BPR
+embedding_size: 64
+reg_weight: 0.00001
+
+# Training
+epochs: 300
+train_batch_size: 2048
+eval_batch_size: 100000
+learning_rate: 0.001
+
+# Evaluation
+stopping_step: 10
+eval_step: 1
+metrics: ['Recall', 'NDCG', 'Precision', 'Hit']
+topk: [10, 20]
+valid_metric: NDCG@10
+
+# Data Split
+eval_args:
+  split:
+    RS: [0.7, 0.1, 0.2]
+  order: TO
+  mode: full  # Full rank evaluation
+
+# Other
+load_col:
+  inter: ['user_id', 'item_id', 'timestamp']
+
+seed: 42
+gpu_id: '0'

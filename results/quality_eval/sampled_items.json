@@ -1,0 +1,4090 @@
+[
+  {
+    "dataset": "ML-1M",
+    "item_id": 3245,
+    "title": "Hot Spot, The (1990)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "vintage"
+    },
+    "stage3_knowledge": {
+      "relation": "action_behaviors",
+      "entity": "dynamic_scenes"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 567,
+    "title": "Jane Eyre (1996)",
+    "stage1_knowledge": {
+      "relation": "lighting_style",
+      "entity": "soft_lighting"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "romantic_outdoors"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 132,
+    "title": "Basketball Diaries, The (1995)",
+    "stage1_knowledge": {
+      "relation": "mood",
+      "entity": "introspective"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "centered"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1329,
+    "title": "Love Serenade (1996)",
+    "stage1_knowledge": {
+      "relation": "visual_effect",
+      "entity": "high_contrast"
+    },
+    "stage3_knowledge": {
+      "relation": "character_type",
+      "entity": "youthful_character"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1106,
+    "title": "When Harry Met Sally... (1989)",
+    "stage1_knowledge": {
+      "relation": "clothing_style",
+      "entity": "casual_wear"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "romance"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1077,
+    "title": "Young Frankenstein (1974)",
+    "stage1_knowledge": {
+      "relation": "character_type",
+      "entity": "monster"
+    },
+    "stage3_knowledge": {
+      "relation": "artistic_styles",
+      "entity": "theatrical"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 667,
+    "title": "Vie est belle, La (Life is Rosey) (1987)",
+    "stage1_knowledge": {
+      "relation": "action_type",
+      "entity": "intimate_moment"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "urban_settings"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 457,
+    "title": "Malice (1993)",
+    "stage1_knowledge": {
+      "relation": "dominant_color",
+      "entity": "dark_tones"
+    },
+    "stage3_knowledge": {
+      "relation": "color_palette",
+      "entity": "dark_backgrounds"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2787,
+    "title": "Down to You (2000)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "contemporary"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "centered"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 414,
+    "title": "Favor, The (1994)",
+    "stage1_knowledge": {
+      "relation": "lighting_style",
+      "entity": "soft_lighting"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "romance"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2989,
+    "title": "Empire Records (1995)",
+    "stage1_knowledge": {
+      "relation": "visual_element",
+      "entity": "animal_presence"
+    },
+    "stage3_knowledge": {
+      "relation": "character_type",
+      "entity": "ensemble_cast"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2234,
+    "title": "Castle, The (1997)",
+    "stage1_knowledge": {
+      "relation": "lighting",
+      "entity": "natural_lighting"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "urban_settings"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 188,
+    "title": "Under Siege 2: Dark Territory (1995)",
+    "stage1_knowledge": {
+      "relation": "character_type",
+      "entity": "heroic_protagonist"
+    },
+    "stage3_knowledge": {
+      "relation": "design_element",
+      "entity": "futuristic"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 178,
+    "title": "Smoke (1995)",
+    "stage1_knowledge": {
+      "relation": "background_type",
+      "entity": "urban_environment"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "drama"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 419,
+    "title": "Widows' Peak (1994)",
+    "stage1_knowledge": {
+      "relation": "character_expression",
+      "entity": "contemplative"
+    },
+    "stage3_knowledge": {
+      "relation": "lighting",
+      "entity": "natural_light"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1011,
+    "title": "Star Wars: Episode VI - Return of the Jedi (1983)",
+    "stage1_knowledge": {
+      "relation": "dominant_color",
+      "entity": "cool_tones"
+    },
+    "stage3_knowledge": {
+      "relation": "character_type",
+      "entity": "hero"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1085,
+    "title": "Somewhere in Time (1980)",
+    "stage1_knowledge": {
+      "relation": "character_type",
+      "entity": "solitary_figure"
+    },
+    "stage3_knowledge": {
+      "relation": "mood",
+      "entity": "romantic"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2604,
+    "title": "Creepshow (1982)",
+    "stage1_knowledge": {
+      "relation": "lighting",
+      "entity": "dramatic"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "horror_elements"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3316,
+    "title": "Sleepaway Camp (1983)",
+    "stage1_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "footwear"
+    },
+    "stage3_knowledge": {
+      "relation": "design_element",
+      "entity": "modern_casual"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2819,
+    "title": "Mariachi, El (1992)",
+    "stage1_knowledge": {
+      "relation": "lighting",
+      "entity": "natural_lighting"
+    },
+    "stage3_knowledge": {
+      "relation": "character_type",
+      "entity": "gunslinger"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 939,
+    "title": "Single Girl, A (La Fille Seule) (1995)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "contemporary"
+    },
+    "stage3_knowledge": {
+      "relation": "text_style",
+      "entity": "bold"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3167,
+    "title": "Magnum Force (1973)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "minimalist"
+    },
+    "stage3_knowledge": {
+      "relation": "design_element",
+      "entity": "modern_casual"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2233,
+    "title": "Mummy, The (1999)",
+    "stage1_knowledge": {
+      "relation": "background_type",
+      "entity": "desert_landscape"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "smooth"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1030,
+    "title": "Annie Hall (1977)",
+    "stage1_knowledge": {
+      "relation": "mood",
+      "entity": "nostalgic"
+    },
+    "stage3_knowledge": {
+      "relation": "action_behaviors",
+      "entity": "intimate_moments"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2324,
+    "title": "Velocity of Gary, The (1998)",
+    "stage1_knowledge": {
+      "relation": "visual_focus",
+      "entity": "human_connection"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "smooth"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1379,
+    "title": "Indian Summer (a.k.a. Alive & Kicking) (1996)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "contemporary"
+    },
+    "stage3_knowledge": {
+      "relation": "lighting",
+      "entity": "natural_light"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 48,
+    "title": "When Night Is Falling (1995)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "romantic"
+    },
+    "stage3_knowledge": {
+      "relation": "mood",
+      "entity": "romantic"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 859,
+    "title": "20,000 Leagues Under the Sea (1954)",
+    "stage1_knowledge": {
+      "relation": "mood",
+      "entity": "adventurous"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "clarity_and_detail"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3109,
+    "title": "Road Trip (2000)",
+    "stage1_knowledge": {
+      "relation": "theme",
+      "entity": "adventure"
+    },
+    "stage3_knowledge": {
+      "relation": "lighting",
+      "entity": "bright_lighting"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1644,
+    "title": "Friday the 13th (1980)",
+    "stage1_knowledge": {
+      "relation": "symbolism",
+      "entity": "weapon_representation"
+    },
+    "stage3_knowledge": {
+      "relation": "color_palette",
+      "entity": "dark_backgrounds"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2860,
+    "title": "Next Best Thing, The (2000)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "contemporary"
+    },
+    "stage3_knowledge": {
+      "relation": "color_palette",
+      "entity": "soft_colors"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 815,
+    "title": "Walk in the Sun, A (1945)",
+    "stage1_knowledge": {
+      "relation": "action_type",
+      "entity": "walking_scene"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "group_scenes"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3038,
+    "title": "Freedom for Us (À nous la liberté ) (1931)",
+    "stage1_knowledge": {
+      "relation": "text_style",
+      "entity": "bold_typography"
+    },
+    "stage3_knowledge": {
+      "relation": "character_type",
+      "entity": "ensemble_cast"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1636,
+    "title": "Metropolitan (1990)",
+    "stage1_knowledge": {
+      "relation": "mood",
+      "entity": "sophisticated"
+    },
+    "stage3_knowledge": {
+      "relation": "character_type",
+      "entity": "ensemble_cast"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3179,
+    "title": "Toxic Avenger Part III: The Last Temptation of Toxie, The (1989)",
+    "stage1_knowledge": {
+      "relation": "background_element",
+      "entity": "flags"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "action_scenes"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3052,
+    "title": "Auntie Mame (1958)",
+    "stage1_knowledge": {
+      "relation": "lighting_type",
+      "entity": "bright_lighting"
+    },
+    "stage3_knowledge": {
+      "relation": "genre",
+      "entity": "comedy"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1894,
+    "title": "Working Girl (1988)",
+    "stage1_knowledge": {
+      "relation": "character_type",
+      "entity": "human_portrait"
+    },
+    "stage3_knowledge": {
+      "relation": "mood",
+      "entity": "dramatic"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 420,
+    "title": "For Love or Money (1993)",
+    "stage1_knowledge": {
+      "relation": "layout",
+      "entity": "centered_composition"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "centered"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1732,
+    "title": "Roger & Me (1989)",
+    "stage1_knowledge": {
+      "relation": "text_style",
+      "entity": "bold_typography"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "social"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1719,
+    "title": "Herbie Goes to Monte Carlo (1977)",
+    "stage1_knowledge": {
+      "relation": "theme",
+      "entity": "adventure"
+    },
+    "stage3_knowledge": {
+      "relation": "artistic_styles",
+      "entity": "animated"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1201,
+    "title": "Portrait of a Lady, The (1996)",
+    "stage1_knowledge": {
+      "relation": "contrast",
+      "entity": "high_contrast"
+    },
+    "stage3_knowledge": {
+      "relation": "color_palette",
+      "entity": "black_and_white"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 261,
+    "title": "My Family (1995)",
+    "stage1_knowledge": {
+      "relation": "background",
+      "entity": "floral_elements"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "centered"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2395,
+    "title": "Cat's Eye (1985)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "realistic"
+    },
+    "stage3_knowledge": {
+      "relation": "lighting",
+      "entity": "dramatic_lighting"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1289,
+    "title": "Nowhere (1997)",
+    "stage1_knowledge": {
+      "relation": "lighting",
+      "entity": "high_contrast"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "asymmetrical"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 323,
+    "title": "Backbeat (1993)",
+    "stage1_knowledge": {
+      "relation": "theme",
+      "entity": "music_culture"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "asymmetrical"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2496,
+    "title": "Dark Half, The (1993)",
+    "stage1_knowledge": {
+      "relation": "theme",
+      "entity": "psychological_horror"
+    },
+    "stage3_knowledge": {
+      "relation": "text_style",
+      "entity": "bold"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2414,
+    "title": "Teaching Mrs. Tingle (1999)",
+    "stage1_knowledge": {
+      "relation": "dominant_color",
+      "entity": "monochrome"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "fantasy_creatures"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 915,
+    "title": "Old Man and the Sea, The (1958)",
+    "stage1_knowledge": {
+      "relation": "dominant_color",
+      "entity": "warm_tones"
+    },
+    "stage3_knowledge": {
+      "relation": "lighting",
+      "entity": "dramatic_lighting"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 230,
+    "title": "Houseguest (1994)",
+    "stage1_knowledge": {
+      "relation": "text_style",
+      "entity": "bold_font"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "group_scenes"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3306,
+    "title": "Black Sabbath (Tre Volti Della Paura, I) (1963)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "expressionist"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "horror_elements"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 701,
+    "title": "Stonewall (1995)",
+    "stage1_knowledge": {
+      "relation": "fashion_style",
+      "entity": "eclectic"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "social"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2208,
+    "title": "Lovers of the Arctic Circle, The (Los Amantes del Círculo Polar) (1998)",
+    "stage1_knowledge": {
+      "relation": "mood",
+      "entity": "dreamy"
+    },
+    "stage3_knowledge": {
+      "relation": "genre",
+      "entity": "drama"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1551,
+    "title": "Deep Impact (1998)",
+    "stage1_knowledge": {
+      "relation": "character_type",
+      "entity": "human_figure"
+    },
+    "stage3_knowledge": {
+      "relation": "genre",
+      "entity": "sci-fi"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1517,
+    "title": "Mercury Rising (1998)",
+    "stage1_knowledge": {
+      "relation": "visual_effect",
+      "entity": "motion_blur"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "asymmetrical"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2300,
+    "title": "Get Bruce (1999)",
+    "stage1_knowledge": {
+      "relation": "text_style",
+      "entity": "bold_font"
+    },
+    "stage3_knowledge": {
+      "relation": "character_type",
+      "entity": "ensemble_cast"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2267,
+    "title": "Son of Dracula (1943)",
+    "stage1_knowledge": {
+      "relation": "mood",
+      "entity": "suspenseful"
+    },
+    "stage3_knowledge": {
+      "relation": "lighting",
+      "entity": "dramatic_lighting"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 900,
+    "title": "Shall We Dance? (1937)",
+    "stage1_knowledge": {
+      "relation": "layout",
+      "entity": "centered_composition"
+    },
+    "stage3_knowledge": {
+      "relation": "color_palette",
+      "entity": "colorful_tones"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1409,
+    "title": "Boogie Nights (1997)",
+    "stage1_knowledge": {
+      "relation": "prominent_symbol",
+      "entity": "iconic_shape"
+    },
+    "stage3_knowledge": {
+      "relation": "text_style",
+      "entity": "bold"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2634,
+    "title": "Experience Preferred... But Not Essential (1982)",
+    "stage1_knowledge": {
+      "relation": "text_style",
+      "entity": "classic_font"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "clarity_and_detail"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1730,
+    "title": "Governess, The (1998)",
+    "stage1_knowledge": {
+      "relation": "texture",
+      "entity": "fabric"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "family_stories"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3096,
+    "title": "Blue Hawaii (1961)",
+    "stage1_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "tropical_landscape"
+    },
+    "stage3_knowledge": {
+      "relation": "mood",
+      "entity": "playful"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 131,
+    "title": "Amazing Panda Adventure, The (1995)",
+    "stage1_knowledge": {
+      "relation": "texture",
+      "entity": "natural_elements"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_elements",
+      "entity": "creature"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1577,
+    "title": "Henry Fool (1997)",
+    "stage1_knowledge": {
+      "relation": "character_type",
+      "entity": "ensemble_cast"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_elements",
+      "entity": "character"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 572,
+    "title": "Two Much (1996)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "modern"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "centered"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1918,
+    "title": "Rush Hour (1998)",
+    "stage1_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "human_portrait"
+    },
+    "stage3_knowledge": {
+      "relation": "lighting",
+      "entity": "bright_lighting"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2419,
+    "title": "In Too Deep (1999)",
+    "stage1_knowledge": {
+      "relation": "graphic_element",
+      "entity": "badge_iconography"
+    },
+    "stage3_knowledge": {
+      "relation": "character_type",
+      "entity": "authority_hero"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2443,
+    "title": "Stir of Echoes (1999)",
+    "stage1_knowledge": {
+      "relation": "text_style",
+      "entity": "bold_font"
+    },
+    "stage3_knowledge": {
+      "relation": "genre",
+      "entity": "psychological_horror"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2473,
+    "title": "Lulu on the Bridge (1998)",
+    "stage1_knowledge": {
+      "relation": "character_type",
+      "entity": "intimate_relationship"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "romance"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 272,
+    "title": "Professional, The (a.k.a. Leon: The Professional) (1994)",
+    "stage1_knowledge": {
+      "relation": "visual_focus",
+      "entity": "central_element"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "centered"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2466,
+    "title": "Sugar Town (1999)",
+    "stage1_knowledge": {
+      "relation": "color_contrast",
+      "entity": "high_contrast"
+    },
+    "stage3_knowledge": {
+      "relation": "character_type",
+      "entity": "ensemble_cast"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3398,
+    "title": "Kronos (1957)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "retro"
+    },
+    "stage3_knowledge": {
+      "relation": "lighting",
+      "entity": "bright_lighting"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1084,
+    "title": "Heathers (1989)",
+    "stage1_knowledge": {
+      "relation": "costume_style",
+      "entity": "retro_fashion"
+    },
+    "stage3_knowledge": {
+      "relation": "genre",
+      "entity": "comedy"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1555,
+    "title": "Quest for Camelot (1998)",
+    "stage1_knowledge": {
+      "relation": "lighting",
+      "entity": "bright_lighting"
+    },
+    "stage3_knowledge": {
+      "relation": "artistic_styles",
+      "entity": "animated"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2365,
+    "title": "Frances (1982)",
+    "stage1_knowledge": {
+      "relation": "text_style",
+      "entity": "bold_typography"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "soft"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 384,
+    "title": "Bad Girls (1994)",
+    "stage1_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "group_of_characters"
+    },
+    "stage3_knowledge": {
+      "relation": "mood",
+      "entity": "adventurous"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 903,
+    "title": "Murder, My Sweet (1944)",
+    "stage1_knowledge": {
+      "relation": "dominant_color",
+      "entity": "warm_tones"
+    },
+    "stage3_knowledge": {
+      "relation": "design_element",
+      "entity": "formal_attire"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 899,
+    "title": "Aladdin and the King of Thieves (1996)",
+    "stage1_knowledge": {
+      "relation": "texture",
+      "entity": "smooth"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "centered"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2685,
+    "title": "Midnight Run (1988)",
+    "stage1_knowledge": {
+      "relation": "genre",
+      "entity": "comedy_action"
+    },
+    "stage3_knowledge": {
+      "relation": "action_behaviors",
+      "entity": "walking_moments"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1621,
+    "title": "Oliver! (1968)",
+    "stage1_knowledge": {
+      "relation": "character_gender",
+      "entity": "mixed_genders"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "family_stories"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 656,
+    "title": "Gold Diggers: The Secret of Bear Mountain (1995)",
+    "stage1_knowledge": {
+      "relation": "texture",
+      "entity": "soft_edges"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "soft"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1729,
+    "title": "Full Tilt Boogie (1997)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "cinematic"
+    },
+    "stage3_knowledge": {
+      "relation": "color_palette",
+      "entity": "warm_colors"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2788,
+    "title": "Odessa File, The (1974)",
+    "stage1_knowledge": {
+      "relation": "lighting",
+      "entity": "dramatic"
+    },
+    "stage3_knowledge": {
+      "relation": "color_palette",
+      "entity": "earthy_palette"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1557,
+    "title": "Bulworth (1998)",
+    "stage1_knowledge": {
+      "relation": "lighting",
+      "entity": "high_contrast"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "smooth"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 193,
+    "title": "White Man's Burden (1995)",
+    "stage1_knowledge": {
+      "relation": "dominant_color",
+      "entity": "monochrome"
+    },
+    "stage3_knowledge": {
+      "relation": "mood",
+      "entity": "serious"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1483,
+    "title": "Ayn Rand: A Sense of Life (1997)",
+    "stage1_knowledge": {
+      "relation": "lighting",
+      "entity": "high_contrast"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "grainy"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2655,
+    "title": "Stand and Deliver (1987)",
+    "stage1_knowledge": {
+      "relation": "dominant_color",
+      "entity": "neutral_tones"
+    },
+    "stage3_knowledge": {
+      "relation": "character_type",
+      "entity": "ensemble_cast"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 397,
+    "title": "Cabin Boy (1994)",
+    "stage1_knowledge": {
+      "relation": "layout",
+      "entity": "layered_composition"
+    },
+    "stage3_knowledge": {
+      "relation": "depicted_subject",
+      "entity": "aquatic_scenes"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2571,
+    "title": "Brother, Can You Spare a Dime? (1975)",
+    "stage1_knowledge": {
+      "relation": "layout",
+      "entity": "asymmetrical"
+    },
+    "stage3_knowledge": {
+      "relation": "color_palette",
+      "entity": "black_and_white"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 627,
+    "title": "Celtic Pride (1996)",
+    "stage1_knowledge": {
+      "relation": "mood",
+      "entity": "playful"
+    },
+    "stage3_knowledge": {
+      "relation": "text_style",
+      "entity": "bold"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 1880,
+    "title": "Lodger, The (1926)",
+    "stage1_knowledge": {
+      "relation": "artistic_style",
+      "entity": "vintage"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "asymmetrical"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3034,
+    "title": "Predator (1987)",
+    "stage1_knowledge": {
+      "relation": "background_texture",
+      "entity": "layered"
+    },
+    "stage3_knowledge": {
+      "relation": "character_type",
+      "entity": "hero"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2045,
+    "title": "Cocoon: The Return (1988)",
+    "stage1_knowledge": {
+      "relation": "character_type",
+      "entity": "solitary_figure"
+    },
+    "stage3_knowledge": {
+      "relation": "color_palette",
+      "entity": "warm_colors"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2873,
+    "title": "Born Yesterday (1950)",
+    "stage1_knowledge": {
+      "relation": "text_layout",
+      "entity": "centered_title"
+    },
+    "stage3_knowledge": {
+      "relation": "mood",
+      "entity": "humorous"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2933,
+    "title": "Crimson Pirate, The (1952)",
+    "stage1_knowledge": {
+      "relation": "theme",
+      "entity": "piracy"
+    },
+    "stage3_knowledge": {
+      "relation": "color_palette",
+      "entity": "colorful_tones"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3367,
+    "title": "Duets (2000)",
+    "stage1_knowledge": {
+      "relation": "text_layout",
+      "entity": "centered"
+    },
+    "stage3_knowledge": {
+      "relation": "text_style",
+      "entity": "bold"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 865,
+    "title": "Sword in the Stone, The (1963)",
+    "stage1_knowledge": {
+      "relation": "texture",
+      "entity": "illustrative"
+    },
+    "stage3_knowledge": {
+      "relation": "lighting",
+      "entity": "bright_lighting"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 3060,
+    "title": "Virgin Suicides, The (1999)",
+    "stage1_knowledge": {
+      "relation": "lighting_style",
+      "entity": "soft_lighting"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "drama"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2088,
+    "title": "Gate II: Trespassers, The (1990)",
+    "stage1_knowledge": {
+      "relation": "character_relationship",
+      "entity": "collaborative"
+    },
+    "stage3_knowledge": null
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 123,
+    "title": "Jade (1995)",
+    "stage1_knowledge": {
+      "relation": "color_palette",
+      "entity": "monochromatic"
+    },
+    "stage3_knowledge": {
+      "relation": "composition_styles",
+      "entity": "asymmetrical"
+    }
+  },
+  {
+    "dataset": "ML-1M",
+    "item_id": 2805,
+    "title": "Wayne's World (1992)",
+    "stage1_knowledge": {
+      "relation": "lighting",
+      "entity": "natural_light"
+    },
+    "stage3_knowledge": {
+      "relation": "design_element",
+      "entity": "modern_casual"
+    }
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 7067,
+    "title": "Major League Baseball 2K9 - PC",
+    "stage1_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "third_person_view"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d"
+    },
+    "asin": "B001SV818I"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 1685,
+    "title": "Jurassic Park: Operation Genesis - PC",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "3D_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "top_down"
+    },
+    "asin": "B00006662V"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 1531,
+    "title": "Phantasy Star Online, Episode I &amp; II",
+    "stage1_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "3D_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_vibrant"
+    },
+    "asin": "B00005RCR0"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 521,
+    "title": "Roll Away",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_yellow_and_orange"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_vibrant"
+    },
+    "asin": "B00002SVMJ"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14738,
+    "title": "SCUF Infinity1 Stealth Soft Touch Controller for Xbox",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d_product_design"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B01FKBN6IQ"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 9261,
+    "title": "uDraw Marvel Super Hero Squad: Comic Combat - Xbox 360",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "cartoonish_3D_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "third_person"
+    },
+    "asin": "B005EW5ZQ8"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 6538,
+    "title": " Shimano Xtreme Fishing",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "green_and_brown_nature_tones"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d"
+    },
+    "asin": "B001DTX1VC"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 12548,
+    "title": "Xbox One with Kinect: Assassin's Creed Unity Bundle, 500GB Hard Drive",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d"
+    },
+    "asin": "B00NFXOQW2"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 5540,
+    "title": "Ghostbusters: The Video Game - PC",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "ghost"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "warm_colors"
+    },
+    "asin": "B000ZK7ZKS"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14370,
+    "title": "Disney Infinity 3.0 Edition: Zootopia Power Disc Pack",
+    "stage1_knowledge": {
+      "relation": "has_ui_elements",
+      "entity": "hexagonal_power_disc"
+    },
+    "stage3_knowledge": {
+      "relation": "has_text_element",
+      "entity": "branding"
+    },
+    "asin": "B01ALRCD38"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 8690,
+    "title": "The Oregon Trail: 40th Anniversary Edition",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "3d_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "top_down"
+    },
+    "asin": "B004Q4PE7U"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 2061,
+    "title": "Operation Flashpoint: Game of the Year Edition - PC",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "military_battlefield"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "pc"
+    },
+    "asin": "B00008K1YM"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 1892,
+    "title": "My Disney Kitchen",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "Minnie_Mouse"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_vibrant"
+    },
+    "asin": "B00006LU9G"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 6127,
+    "title": "Legend of Spyro: Dawn of the Dragon",
+    "stage1_knowledge": {
+      "relation": "atmosphere",
+      "entity": "tense_and_action_packed"
+    },
+    "stage3_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "fantasy"
+    },
+    "asin": "B0018YDKC2"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14469,
+    "title": "Mortal Kombat X: XL Pack - Xbox One Digital Code",
+    "stage1_knowledge": {
+      "relation": "atmosphere",
+      "entity": "intense_and_dramatic"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d"
+    },
+    "asin": "B01BXQWHU0"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 320,
+    "title": "Duck Tales 2",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "Donald_Duck"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "platform_other"
+    },
+    "asin": "B00002ST1F"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 11499,
+    "title": "PS4 Controller Designer Skin for Sony PlayStation 4 DualShock Wireless Controller - Battle Torn Stripes",
+    "stage1_knowledge": {
+      "relation": "features_detail",
+      "entity": "weathered_look"
+    },
+    "stage3_knowledge": {
+      "relation": "has_text_element",
+      "entity": "branding"
+    },
+    "asin": "B00GWX80XS"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 1698,
+    "title": "Kingdom Hearts",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "fantasy_worlds"
+    },
+    "stage3_knowledge": {
+      "relation": "features_character",
+      "entity": "character_other"
+    },
+    "asin": "B000066TS5"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 13410,
+    "title": "Disney Infinity 3.0 Edition: DisneyPixar's Sadness Figure",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "blue_emotional_character"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "cool_colors"
+    },
+    "asin": "B00YZ3UNZK"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 13370,
+    "title": "Skylanders SuperChargers Racing Starter Pack - Nintendo 3DS",
+    "stage1_knowledge": {
+      "relation": "has_graphics_quality",
+      "entity": "bright_and_colorful"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "cartoon"
+    },
+    "asin": "B00YI79BNI"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14747,
+    "title": "KontrolFreek Destiny CQC Signature Edition for PlayStation 4 Controller (PS4)",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "black_and_gray"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "platform_other"
+    },
+    "asin": "B01FSSDOZQ"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 8822,
+    "title": "Nancy Drew: The Captive Curse - PC/Mac",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "indoor_shop_or_cafe"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "pc"
+    },
+    "asin": "B004YQZNFS"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14508,
+    "title": "Kirby: Planet Robobot - Nintendo 3DS Standard Edition",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_pinks_and_blues"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_vibrant"
+    },
+    "asin": "B01CKGI0XA"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 9572,
+    "title": "Tron Evolution [Download]",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "sci-fi_inspired"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "abstract"
+    },
+    "asin": "B00685H1VC"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 1983,
+    "title": "Homeworld 2",
+    "stage1_knowledge": {
+      "relation": "platform",
+      "entity": "PC"
+    },
+    "stage3_knowledge": {
+      "relation": "has_graphics_quality",
+      "entity": "high_fidelity"
+    },
+    "asin": "B000083JXD"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 526,
+    "title": "Decapattack - Sega Genesis",
+    "stage1_knowledge": {
+      "relation": "has_graphics_quality",
+      "entity": "pixel_art"
+    },
+    "stage3_knowledge": {
+      "relation": "features_character",
+      "entity": "cartoon_character"
+    },
+    "asin": "B00002SVO6"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 10715,
+    "title": "Ben 10 Omniverse 2 - Playstation 3",
+    "stage1_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "third_person_view"
+    },
+    "stage3_knowledge": {
+      "relation": "features_character",
+      "entity": "character_other"
+    },
+    "asin": "B00CMD752O"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14457,
+    "title": "NPET K20 Mechanical Gaming Keyboard 104 Key Anti-ghosting LED Backlit Computer Keyboard with Blue Switch Water-Resistant for E-Sport Gamers",
+    "stage1_knowledge": {
+      "relation": "has_ui_elements",
+      "entity": "monitor_displaying_logo"
+    },
+    "stage3_knowledge": {
+      "relation": "has_text_element",
+      "entity": "branding"
+    },
+    "asin": "B01BQ91U9I"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 5169,
+    "title": "Insten Gen 4 Piece Stylus Pen Set Multi Color for Nintendo DS Lite",
+    "stage1_knowledge": {
+      "relation": "platform_era",
+      "entity": "Nintendo_DS_accessory"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "nintendo_ds"
+    },
+    "asin": "B000TZI2FQ"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14109,
+    "title": "TNP PS4 Controller Charge Station - 2x USB Simultaneous Charger Dual Charging Dock Cradle Stand Accessory for Sony Playstation 4 Gaming Control with LED Indicator + Micro Cable (Black) [Playstation 4]",
+    "stage1_knowledge": {
+      "relation": "shows_indicators",
+      "entity": "LED_indicator"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "cool_colors"
+    },
+    "asin": "B0177Q0T8C"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 10685,
+    "title": "GRID 2 [Download]",
+    "stage1_knowledge": {
+      "relation": "has_atmosphere",
+      "entity": "dynamic_and_exhilarating"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d"
+    },
+    "asin": "B00CIBAX1K"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14243,
+    "title": "MLB The Show 16 - PlayStation 3",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "has_graphics_quality",
+      "entity": "high_fidelity"
+    },
+    "asin": "B018WJZK5U"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 4650,
+    "title": "Inspector Parker Unsolved JC - PC",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "detective"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "pc"
+    },
+    "asin": "B000O5HY46"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14578,
+    "title": "Gaming Keyboard, PICTEK Rainbow LED Backlit Keyboard Computer PC Mac Laptop Wired Gaming Keyboard, 26 Keys Anti Ghosting Ergonomic Wrist Rest Waterproof Keyboard for Gamers Typists",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "indoor_gaming_setup"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "lighting_effects"
+    },
+    "asin": "B01DD2SMKQ"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 5805,
+    "title": "Nancy Drew Double Dare 5 (Danger by Design &amp; The Creature of Kapu Cave)",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "large_male_character_with_blue_shirt"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B0013VBKNG"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 6736,
+    "title": "Guitar Hero III: Legends of Rock - Nintendo Wii (Game only)",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "guitarist_with_top_hat"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "warm_colors"
+    },
+    "asin": "B001IKFZII"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 5948,
+    "title": " Deca Sports - Nintendo Wii",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "outdoor_sports_field"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_vibrant"
+    },
+    "asin": "B00168ESPI"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 5978,
+    "title": "Wii Fit Yoga Mat",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_green"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "green_nature"
+    },
+    "asin": "B0016LX6PI"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 5184,
+    "title": "SimCity Societies - PC",
+    "stage1_knowledge": {
+      "relation": "features_environment",
+      "entity": "greenery_and_trees"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_vibrant"
+    },
+    "asin": "B000U88UVS"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 1194,
+    "title": "Kengo: Master of Bushido for PlayStation 2",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "samurai_warrior"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "playstation_2"
+    },
+    "asin": "B000056PJQ"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 2592,
+    "title": "Ratchet &amp; Clank Up Your Arsenal - PlayStation 2",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_and_varied_colors"
+    },
+    "stage3_knowledge": {
+      "relation": "features_character",
+      "entity": "animal_character"
+    },
+    "asin": "B00020LZBG"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 9814,
+    "title": "Insten Game Card Case Compatible with Nintendo 3DS/ DS/ DS Lite/ DSi/ DSi XL/ DSi LL/ Nintendo New 3DS, Black",
+    "stage1_knowledge": {
+      "relation": "shows_purpose",
+      "entity": "game_storage_and_organization"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "monochrome"
+    },
+    "asin": "B007AA0G0C"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 12462,
+    "title": "Tokyo Twilight Ghost Hunters - PlayStation 3",
+    "stage1_knowledge": {
+      "relation": "has_atmosphere",
+      "entity": "tense_and_suspenseful"
+    },
+    "stage3_knowledge": {
+      "relation": "features_character",
+      "entity": "female_character"
+    },
+    "asin": "B00MUTAU40"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 7812,
+    "title": "Rooms: The Main Building - Nintendo Wii",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "mystical_interior"
+    },
+    "stage3_knowledge": {
+      "relation": "has_ui_elements",
+      "entity": "button_prompts"
+    },
+    "asin": "B002TVBU0M"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 6756,
+    "title": " Mystery P.I.  Vegas Heist - PC",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "vibrant_colors"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_vibrant"
+    },
+    "asin": "B001J5SFC0"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 5068,
+    "title": "Dragon Quest Monsters: Joker",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "man_in_business_suit"
+    },
+    "stage3_knowledge": {
+      "relation": "has_genre_indicator",
+      "entity": "rpg"
+    },
+    "asin": "B000SSNCYU"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 13262,
+    "title": "eXuby&reg; Dark Blue Direct Bluetooth Wireless Controller Compatible with Sony PS3 and Playstation 3 (6-Axis and Dual-Vibration)",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "wireless_controller"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d"
+    },
+    "asin": "B00XD8CSQ0"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 2663,
+    "title": "Brothers in Arms: Road to Hill 30 - PC",
+    "stage1_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "first_person_view"
+    },
+    "stage3_knowledge": {
+      "relation": "features_weapon",
+      "entity": "firearms"
+    },
+    "asin": "B0002AL1Z6"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 6217,
+    "title": "Far Cry 2 - Xbox 360",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "features_weapon",
+      "entity": "firearms"
+    },
+    "asin": "B001ASJIRM"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 13117,
+    "title": "500GB PlayStation 4 Console - Batman Arkham Knight Bundle[Discontinued]",
+    "stage1_knowledge": {
+      "relation": "has_logo",
+      "entity": "Batman_Arkham_Knight"
+    },
+    "stage3_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "urban"
+    },
+    "asin": "B00VETEZ16"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 4670,
+    "title": "Logitech Playstation 3 USB Keyboard",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_design"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B000ODP9H2"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 2901,
+    "title": "Asphalt Urban GT - Nintendo DS",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "earthy_tones_with_yellow_highlights"
+    },
+    "stage3_knowledge": {
+      "relation": "has_ui_elements",
+      "entity": "minimap"
+    },
+    "asin": "B0006A9SLQ"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14786,
+    "title": "NBA 2K17 - Legends Gold - PlayStation 4",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "Kobe_Bryant"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "dark_palette"
+    },
+    "asin": "B01GD48X5U"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 2665,
+    "title": "CSI: Miami - PC",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "natural_earthy_colors"
+    },
+    "stage3_knowledge": {
+      "relation": "has_ui_elements",
+      "entity": "ui_other"
+    },
+    "asin": "B0002AL2AU"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 5140,
+    "title": "Rock Band Game Only PS3",
+    "stage1_knowledge": {
+      "relation": "features_equipment",
+      "entity": "drum_set"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_vibrant"
+    },
+    "asin": "B000TSZADA"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14618,
+    "title": "Khanka All-in-one Double Compartment Hard Carry Travel Case Bag For Sony Psvita PS Vita 1000 and PSVita Slim (PSV 2000)/PSP PlayStation 3000 Video Console. Mesh Pocket for Charger cable/Game Cards",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "PSVita_console"
+    },
+    "stage3_knowledge": {
+      "relation": "has_text_element",
+      "entity": "branding"
+    },
+    "asin": "B01DX8B0OU"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 6305,
+    "title": "The Price is Right - Nintendo Wii",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "game_participant"
+    },
+    "stage3_knowledge": {
+      "relation": "has_ui_elements",
+      "entity": "ui_other"
+    },
+    "asin": "B001B1W3J8"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 13698,
+    "title": "Xbox One Limited Edition Halo 5: Guardians Master Chief Wireless Controller",
+    "stage1_knowledge": {
+      "relation": "shows_details",
+      "entity": "textured_surface_pattern"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "platform_other"
+    },
+    "asin": "B0136JP7QI"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 13971,
+    "title": "AMIR Wireless Vertical Mouse, 2.4G USB Ergonomic Mouse High Precision Optical Mouse for PC/Desktop/Laptop/Mac, Adjustable 800/1200/ 1600 DPI, 5 Buttons - Dark Black",
+    "stage1_knowledge": {
+      "relation": "has_shape",
+      "entity": "ergonomic_shape"
+    },
+    "stage3_knowledge": {
+      "relation": "features_weapon",
+      "entity": "weapon_other"
+    },
+    "asin": "B015Q12GR2"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 9460,
+    "title": "Oddly Enough: Pied Piper [Download]",
+    "stage1_knowledge": {
+      "relation": "has_UI_elements",
+      "entity": "inventory_and_menu"
+    },
+    "stage3_knowledge": {
+      "relation": "has_ui_elements",
+      "entity": "menu"
+    },
+    "asin": "B005SV81NE"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 6066,
+    "title": "Mortal Kombat vs. DC Universe - Xbox 360",
+    "stage1_knowledge": {
+      "relation": "has_ui_element",
+      "entity": "health_bars"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "cool_colors"
+    },
+    "asin": "B0017ZDGWG"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 10895,
+    "title": "Yoshi's New Island - Nintendo 3DS",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "fantasy_landscape"
+    },
+    "stage3_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "fantasy"
+    },
+    "asin": "B00DC7G3Q8"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 6597,
+    "title": "Playseat Gearshift Holder Mount",
+    "stage1_knowledge": {
+      "relation": "features_accessory",
+      "entity": "gearshift_holder_mount"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B001ED7EXS"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 5795,
+    "title": "Myst - Nintendo DS",
+    "stage1_knowledge": {
+      "relation": "features_ui_elements",
+      "entity": "inventory_system_with_items"
+    },
+    "stage3_knowledge": {
+      "relation": "has_ui_elements",
+      "entity": "ui_other"
+    },
+    "asin": "B0013M2SJ0"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14118,
+    "title": "Aegis of Earth: Protonovus Assault - PlayStation 4",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "3d_cartoon_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "cartoon"
+    },
+    "asin": "B017BB905Q"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 1404,
+    "title": "Star Trek Voyager: Elite Force",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "graphic_design_with_text"
+    },
+    "stage3_knowledge": {
+      "relation": "has_text_element",
+      "entity": "text_other"
+    },
+    "asin": "B00005NCB6"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 4845,
+    "title": "Soul Calibur Legends",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "male_fighter_in_armor"
+    },
+    "stage3_knowledge": {
+      "relation": "has_text_element",
+      "entity": "game_logo"
+    },
+    "asin": "B000QSE7FK"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 11322,
+    "title": "Alchemy Mysteries: Prague Legends [Download]",
+    "stage1_knowledge": {
+      "relation": "atmosphere",
+      "entity": "dynamic_and_modern"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "abstract_background"
+    },
+    "asin": "B00FVVVSUY"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 12375,
+    "title": "Apple Certified Mad Catz C.T.R.L.i Mobile Gamepad and Game Controller Mfi Made for Apple TV, iPhone, and iPad - Black",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "sleek_modern_design"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "mobile"
+    },
+    "asin": "B00M77US74"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14880,
+    "title": "Xbox One S 2TB Console - Launch Edition [Discontinued]",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "white_and_black"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "platform_other"
+    },
+    "asin": "B01GW3GM7I"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 10961,
+    "title": "Genius GX-Gaming Keyboard with Backlit System and 2 USB Ports (GX-Gaming Manticore)",
+    "stage1_knowledge": {
+      "relation": "features_interface_element",
+      "entity": "USB_ports"
+    },
+    "stage3_knowledge": {
+      "relation": "has_text_element",
+      "entity": "branding"
+    },
+    "asin": "B00DS3MPHM"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 9864,
+    "title": "Bluecell Set of 8 Pcs Game Control/Controller Joystick Pad Cover for Sony Playstation PSV PS Vita",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "no_environment_visible"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B007IDIXBK"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 7008,
+    "title": "Enchanted Cavern [Download]",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "colorful_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B001QTWAIE"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 1425,
+    "title": "Microsoft Sidewinder Force Feedback 2 Joystick",
+    "stage1_knowledge": {
+      "relation": "displays_information",
+      "entity": "product_features"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "other_style"
+    },
+    "asin": "B00005NIMB"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14486,
+    "title": "Mortal Kombat X Kombat Pack 2 - PS4 [Digital Code]",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "dark_and_cold_tones"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "third_person"
+    },
+    "asin": "B01C7I2RX0"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 4093,
+    "title": "Star Wars Empire At War: Forces Of Corruption - PC",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "military_units"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d"
+    },
+    "asin": "B000GG1OVW"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 3854,
+    "title": "Metal Gear Solid: Digital Graphic Novel - Sony PSP",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "Sniper_Wolf"
+    },
+    "stage3_knowledge": {
+      "relation": "has_atmosphere",
+      "entity": "mysterious"
+    },
+    "asin": "B000FDMUSM"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14810,
+    "title": "Watch Dogs 2: Deluxe Edition (Includes Extra Content) - Xbox One",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "urban_hacker_with_backpack"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "bright_vibrant"
+    },
+    "asin": "B01GKF7SOO"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14587,
+    "title": "8Bitdo Retro Receiver - NES",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "functional_design"
+    },
+    "stage3_knowledge": {
+      "relation": "has_text_element",
+      "entity": "branding"
+    },
+    "asin": "B01DJB43R2"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 3729,
+    "title": "Flatout 2 - PlayStation 2",
+    "stage1_knowledge": {
+      "relation": "generational_indicator",
+      "entity": "PlayStation_2"
+    },
+    "stage3_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "urban"
+    },
+    "asin": "B000E9T7L0"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 7750,
+    "title": "Wii &amp; Wii Fit Hands Free Wrist Strap by CTA Digital",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "indoor_gaming_accessory"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B002NNNL1W"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 1201,
+    "title": "Mega Man Xtreme",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "blue_and_white"
+    },
+    "stage3_knowledge": {
+      "relation": "has_genre_indicator",
+      "entity": "platformer"
+    },
+    "asin": "B000056VJU"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 4292,
+    "title": "Unreal Tournament 2004 - PC",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "industrial_ruins"
+    },
+    "stage3_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "fantasy"
+    },
+    "asin": "B000IMNK0C"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14197,
+    "title": "8Bitdo Zero Mini Pocket Bluetooth Gamepad Controller for Android Windows Mac Blue White",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "blue_and_white"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "mobile"
+    },
+    "asin": "B0185M7EVM"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 3471,
+    "title": "Sid Meier's Pirates! - PC",
+    "stage1_knowledge": {
+      "relation": "has_tone",
+      "entity": "adventurous"
+    },
+    "stage3_knowledge": {
+      "relation": "has_text_element",
+      "entity": "branding"
+    },
+    "asin": "B000AOIES6"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14332,
+    "title": "HORI Compact PlayStand - Zelda Edition, Officially Licensed by Nintendo - Nintendo Switch",
+    "stage1_knowledge": {
+      "relation": "features_design_element",
+      "entity": "ornate_patterns"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_platform",
+      "entity": "accessory"
+    },
+    "asin": "B01A9UATJC"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 10988,
+    "title": "Angry Birds Star Wars - Xbox 360",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "cartoon_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "features_vehicle",
+      "entity": "spacecraft"
+    },
+    "asin": "B00DWXV1BE"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 7619,
+    "title": "USB Lan Network Adapter Cable for Nintendo Wii",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "none"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B002ELJ4SM"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 9741,
+    "title": "Stronghold 3 Gold Edition - PC",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d"
+    },
+    "asin": "B006ZPAYJ6"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 9544,
+    "title": "Major League Baseball 2K12 - PC",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "baseball_stadium"
+    },
+    "stage3_knowledge": {
+      "relation": "has_graphics_quality",
+      "entity": "high_fidelity"
+    },
+    "asin": "B006476322"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 1236,
+    "title": "Zone of the Enders",
+    "stage1_knowledge": {
+      "relation": "has_concept",
+      "entity": "mecha_combat"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "third_person"
+    },
+    "asin": "B000059Z8I"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 14834,
+    "title": "PDP Master Sword Stylus Display",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "stylized_master_sword"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B01GOK2F6Q"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 686,
+    "title": "Danger Girl: Playstation 1",
+    "stage1_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "industrial_complex"
+    },
+    "stage3_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "third_person"
+    },
+    "asin": "B000035YC5"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 1105,
+    "title": "Close Combat: Invasion Normandy - PC",
+    "stage1_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_graphics"
+    },
+    "stage3_knowledge": {
+      "relation": "has_visual_style",
+      "entity": "realistic_3d"
+    },
+    "asin": "B00004Y7SY"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 8884,
+    "title": "Wipeout 2048 - PlayStation Vita",
+    "stage1_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "third_person_view"
+    },
+    "stage3_knowledge": {
+      "relation": "has_text_element",
+      "entity": "game_logo"
+    },
+    "asin": "B0050SW8AC"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 7574,
+    "title": "Fabulous Finds - Nintendo DS",
+    "stage1_knowledge": {
+      "relation": "shows_perspective",
+      "entity": "isometric_view"
+    },
+    "stage3_knowledge": {
+      "relation": "has_text_element",
+      "entity": "branding"
+    },
+    "asin": "B002DY9KBG"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 13219,
+    "title": "Call of Duty: Black Ops III - Digital Deluxe Edition - PlayStation 4 [Digital Code]",
+    "stage1_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "dark_with_red_highlights"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "warm_colors"
+    },
+    "asin": "B00WRK1136"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 12058,
+    "title": "Metro Redux - PlayStation 4",
+    "stage1_knowledge": {
+      "relation": "indicates_platform",
+      "entity": "PlayStation_4"
+    },
+    "stage3_knowledge": {
+      "relation": "set_in_environment",
+      "entity": "post_apocalyptic"
+    },
+    "asin": "B00KF7BEFS"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 9198,
+    "title": "Nintendo 3DS Stylus Pack",
+    "stage1_knowledge": {
+      "relation": "features_character",
+      "entity": "stylus_pens"
+    },
+    "stage3_knowledge": {
+      "relation": "has_additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B005917VVG"
+  },
+  {
+    "dataset": "Video Games",
+    "item_id": 11134,
+    "title": "Nintendo 3DS Cosmo Black - Nintendo 3DS",
+    "stage1_knowledge": {
+      "relation": "platform",
+      "entity": "Nintendo_3DS"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color_palette",
+      "entity": "dark_palette"
+    },
+    "asin": "B00EOGDS5U"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 11098,
+    "title": "Pin Spike Genuine Leather Top High Quality Cosplay Headband Goth Style",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "headband"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "hair_accessory"
+    },
+    "asin": "B015EY2LVW"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 12714,
+    "title": "Meiz Hair 4&quot;x4&quot; Free Part Closure Brazilian Human Remy Hair Extension Body Wave Lace Top Closure 8-18 Inch Naturl Black Bleached Knots Size 18&quot;",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday_use"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "creamy"
+    },
+    "asin": "B019Y8MREU"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 11491,
+    "title": "DANCINGNAIL Nail Art Polish Manicure Peel Off Base Coat Nail Art Liquid Tape Palisade Skin Cream Glue",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "clear"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "pink"
+    },
+    "asin": "B016OGYVVM"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 10340,
+    "title": "Dark &amp; Lovely Color Ice Coffee #352 Cool Latte (3 Pack)",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "coffee_brown"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "haircare"
+    },
+    "asin": "B012BKG7KS"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 15220,
+    "title": "UNIMEIX Soft Smooth Large Oval Toothbrush Large Oval Tooth Makeup Brush Cosmetic Foundation Cream Powder Highlight Contour Blush Tooth Makeup Tool",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "minimalist"
+    },
+    "asin": "B01EZWMKMY"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 15515,
+    "title": "Chinatera Clear Acrylic Facial Beauty Makeup Cotton Pads Round Dispenser Container Holder with Lid",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday_use"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "product_other"
+    },
+    "asin": "B01FS4KI40"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 8831,
+    "title": "Detangling Hair Brush &ndash; Gentle Detangler Hairbrush &amp; Comb &ndash; No More Tangle &ndash; Reduce Hair Loss and Breakage &ndash; Great for Adults &amp; Kids &ndash; Bright Pink",
+    "stage1_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "trendy"
+    },
+    "stage3_knowledge": {
+      "relation": "packaging",
+      "entity": "product_other"
+    },
+    "asin": "B00UVZ588I"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 4011,
+    "title": "eFuture(TM) Purple Lovely Vintage Jewelry Crystal Peacock Hair Clips For Hair Clip Beauty Tools +eFuture's nice Keyring",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "hair_clip"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "hair_accessory"
+    },
+    "asin": "B00FDNBIBY"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 10877,
+    "title": "Goege Cute Polka Dot Headband Wrap Hair Scarf",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "headband"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "red"
+    },
+    "asin": "B014PEG1UY"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 12068,
+    "title": "Google Nexus 5X Phone holder crossbody purse w/credit card slots &amp; quick cash slot (Black Desire)",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "black_white"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "artistic"
+    },
+    "asin": "B0186DQ6NC"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 13667,
+    "title": "RUIMIO 20 Colors Makeup Concealer Palette With Brush and Puff",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday"
+    },
+    "stage3_knowledge": null,
+    "asin": "B01C5J7S1M"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 14370,
+    "title": "Bluezoo Nail Stamping Manicure Image Plates Accessories Kit*FLOWER OF LIFE* 2 Stampers and Scrapters Included For Diy Salon",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "nail_stamping_accessory"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "green"
+    },
+    "asin": "B01DBSKV8I"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 7509,
+    "title": "Breast Enlargement Pueraria Mirifica Powder Natural Breast Enhancer Pure Premium Grade from THAILAND 100 g.",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday_use"
+    },
+    "stage3_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "natural_organic"
+    },
+    "asin": "B00P3BOQ1K"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 14243,
+    "title": "Bridalvenus Lace Choker Necklace jewelry for Women and Girls on Wedding, Party and Evening",
+    "stage1_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "elegant"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "black"
+    },
+    "asin": "B01D4IJCX0"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 3612,
+    "title": "Super Cute Sweet Cake Shape Contact Lens Case By U-Beauty",
+    "stage1_knowledge": {
+      "relation": "material_appearance",
+      "entity": "plastic"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_property",
+      "entity": "set_collection"
+    },
+    "asin": "B00E2S02OA"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 11499,
+    "title": "Us Plug 36W Nail Dryer Uv Light/Lamp For Acrylic, Gelish &amp; Shellac Curing",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "minimalist_box"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "nail_product"
+    },
+    "asin": "B016OIKOSY"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 13219,
+    "title": "[Trouble Solution] Propolis Serum for Minimizing Pore,balancing oil-water, Nourishing Skin (1. 01 fl. oz. / 30 ml)",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "clear"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "natural_beauty"
+    },
+    "asin": "B01B694IOW"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 16024,
+    "title": "New York Biology Eyelash Growth Serum - 3.5ml",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "sleek_metallic_bottle"
+    },
+    "stage3_knowledge": {
+      "relation": "finish_type",
+      "entity": "glossy"
+    },
+    "asin": "B01GS9PKJW"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 686,
+    "title": "The Real Shaving Co., Post-shave Daily Anti-wrinkle Cream, 4.23 Fl. Oz.",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "tube"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "creamy"
+    },
+    "asin": "B000UVRW4Q"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 728,
+    "title": "Radius - Soap Case-Assorted Colors - Personal Care Travel Cases",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "plastic_case"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "product_other"
+    },
+    "asin": "B000VUWZCU"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 107,
+    "title": "Shiseido THE SKINCARE Night Essential Moisturizer Enriched 75ml/2.5oz",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "light_pink"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "elegant"
+    },
+    "asin": "B000142SG4"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 5729,
+    "title": "Lise Amy's Neck to Cleavage Firming Cream by Lise Amy Neck to Cleavage Firming Cream",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "skincare"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "creamy"
+    },
+    "asin": "B00KIW6M2U"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 12493,
+    "title": "Franks Deals&reg; Makeup Foundation Sponge Blender Blending Puff Flawless Powder Smooth Beauty",
+    "stage1_knowledge": {
+      "relation": "visual_theme",
+      "entity": "natural_beauty"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "foam"
+    },
+    "asin": "B019CBS8ZG"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 8978,
+    "title": "Best Value And Quality Set of 5 Cute Silver Colored Clip On Pendants / Charms For Bracelets / Bangles In Shapes of Sea Shell, Pink Magic Pumpkin Carriage, Red Dotted Fly Agaric Mushroom, Dolphin And Colorful Balloons By VAGA",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "playful"
+    },
+    "asin": "B00VJZSLRE"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 3263,
+    "title": "Pure Smile Original Mask Sheet 10pcs Set, Vitamin,facial Mask Pack",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "facial_mask"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_property",
+      "entity": "set_collection"
+    },
+    "asin": "B00CPW2PY0"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 5181,
+    "title": "AGPtek 24&quot;Full head clip in Synthetic hair extensions human made hair-light brown (Light brown)",
+    "stage1_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "trendy"
+    },
+    "stage3_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "trendy"
+    },
+    "asin": "B00JA1TWC2"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 1291,
+    "title": "OTF, Brazilian Keratin Hair Tratment (4oz) - Wash Hair the Same Day!!!",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "haircare"
+    },
+    "stage3_knowledge": {
+      "relation": "packaging",
+      "entity": "box"
+    },
+    "asin": "B002U4OZXW"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 10022,
+    "title": "Sch&ouml;ne Bath Bombs, Naughty (Pack of 6)",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "pink"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "playful"
+    },
+    "asin": "B010TQC4R6"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 16115,
+    "title": "Face Cream with Anti Wrinkle Peptide Complex 1.02oz (Set of 3)",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "minimalist"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_property",
+      "entity": "set_collection"
+    },
+    "asin": "B01H23THSS"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 5414,
+    "title": "Bohemia Gold Tone Pink Beads Statement Necklace",
+    "stage1_knowledge": {
+      "relation": "target_occasion",
+      "entity": "special_occasion"
+    },
+    "stage3_knowledge": {
+      "relation": "finish_type",
+      "entity": "shiny"
+    },
+    "asin": "B00JVJUE84"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 1825,
+    "title": "Suave Men 3 in 1 Shampoo Conditioner and Body Wash Citrus Rush 28 Fl Oz(Pack of 2)",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "plastic_bottle"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "masculine"
+    },
+    "asin": "B005LFO2DA"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 12978,
+    "title": "Mary Kay Even Complexion Dark Spot Reducer .34 Fl Oz/10 Ml",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "light_pink"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_property",
+      "entity": "full_size"
+    },
+    "asin": "B01AN90MBE"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 11024,
+    "title": "Tattify Striped Nail Wraps - Stain in the Glass (Set of 22)",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "blue"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "nail_product"
+    },
+    "asin": "B0155UJEC4"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 13906,
+    "title": "Jet Black Synthetic Hair Wig Short Curly Wigs with Side Bangs Heat Resistant Fiber Full Wigs for Woman",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "black"
+    },
+    "asin": "B01CKV2GAS"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 7619,
+    "title": "Efivs Arts Xt Series Classic Temporary Fake Tattoo Arm Sleeves Leg Stockings Accessories for Men Women 10 Pcs (set A)",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "assorted_sleeves"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "product_other"
+    },
+    "asin": "B00PJILKM0"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 1490,
+    "title": "Gillette All Over Clean Hair &amp; Body Wash 16 Fl Oz (Pack of 2)",
+    "stage1_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "trendy"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "grey"
+    },
+    "asin": "B004A7T7A8"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 15223,
+    "title": "Coconut Oil Natural Tropical Shampoo, 32 fl oz.",
+    "stage1_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "natural_organic"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "gold"
+    },
+    "asin": "B01F07NVR6"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 1605,
+    "title": "Osaka French Gel Nail Brush + Dotting Tool (Acrylic Purple Handle) Size # 16, Japan",
+    "stage1_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "trendy"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "sophisticated"
+    },
+    "asin": "B004Q8L6CI"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 401,
+    "title": "Dr Scholl's Massaging Gel Work Insoles - 2 Pack Mens 8-13",
+    "stage1_knowledge": {
+      "relation": "visual_theme",
+      "entity": "comfort_and_support"
+    },
+    "stage3_knowledge": {
+      "relation": "packaging",
+      "entity": "box"
+    },
+    "asin": "B000FKEQL4"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 15347,
+    "title": "Professional 10 Hole Drying Rack Storage Display Bracket Shelf Holder Designed for Toothbrush Shape Soft Oval Makeup Brush Cosmetic Tool Set",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "black"
+    },
+    "stage3_knowledge": {
+      "relation": "packaging",
+      "entity": "property_other"
+    },
+    "asin": "B01FDA0NV2"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 15064,
+    "title": "Full Set of Replacement Shaving Head fit Norelco RQ12XX Series Sensotouch 3D Shavers",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "plastic_container"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "black"
+    },
+    "asin": "B01ENL20AE"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 8752,
+    "title": "Easy lifestyles Womens Adhesive No Show Disposable Breast Petal Pasties(20pcs Flower)",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "white"
+    },
+    "asin": "B00UH9BUWQ"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 15685,
+    "title": "Perepaix RAVE Mens Black Wood Bead Bracelet Silver Plated Alloy Skull &amp; Cross Charm",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "black"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "bold"
+    },
+    "asin": "B01G3NP2BY"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 12347,
+    "title": "CODE FFL Forget Fake Lashes by Code Beautiful",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "sleek_black_tube"
+    },
+    "stage3_knowledge": {
+      "relation": "finish_type",
+      "entity": "glossy"
+    },
+    "asin": "B018Y2HGTI"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 8380,
+    "title": "Tattify Gradient Nail Wraps - Love Like a Sunset (Set of 22)",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday"
+    },
+    "stage3_knowledge": {
+      "relation": "finish_type",
+      "entity": "glossy"
+    },
+    "asin": "B00SUCV8II"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 7178,
+    "title": "100Pcs Tattoo Ink Cups Caps Pigment Supplies Plastic Cups S",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "transparent"
+    },
+    "stage3_knowledge": {
+      "relation": "packaging",
+      "entity": "container"
+    },
+    "asin": "B00NZPZMAK"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 1675,
+    "title": "FOREVER YUNG Unique Chocolate Bar Compact Mirror Cosmetic Accessories",
+    "stage1_knowledge": {
+      "relation": "material",
+      "entity": "plastic"
+    },
+    "stage3_knowledge": {
+      "relation": "packaging",
+      "entity": "compact"
+    },
+    "asin": "B004ZC919U"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 10869,
+    "title": "Ground Plan 24 Hours Secret Mist Korea Cosmetic (60ml)",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday_use"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "liquid"
+    },
+    "asin": "B014O62WQK"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 6756,
+    "title": "BMC 3pc Creamy Blue UV/LED Nail Lacquer Gel Polish w/ Top Base Coat - A Moment In Time Collection, Cotton Tail",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "creamy"
+    },
+    "asin": "B00N57P1OU"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 15449,
+    "title": "Serious Skincare Creamerum Evolve 2oz",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "skincare"
+    },
+    "asin": "B01FL1Q3S0"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 9572,
+    "title": "AW Pink Rolling 2in1 14x9x29&quot; Aluminum Cosmetic Makeup Artist Train Case Hair Style 38&quot; Lockable Box Travel",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "light_pink"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "product_other"
+    },
+    "asin": "B00YBWDW6C"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 6228,
+    "title": "Cosplay Dangan Ronpa Danganronpa Enoshima Junko Mono Kuma Bear Hairpin Hair Clip",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "playful_design"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "playful"
+    },
+    "asin": "B00LQDSJBM"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 12044,
+    "title": "Mini Ionic Facial Massager Machine From Trinicare, with Electronic Pulse and Vibrating Action to Relax Muscles - Easy to Use Galvanic Point Pressure Massager - Slow the Signs of Aging Today",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "smooth_plastic_design"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "hair_tool"
+    },
+    "asin": "B01834O8NO"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 12856,
+    "title": "Orangesky Women Fashion Elegant Angel Wings Wings Earrings Ear Jewelry",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "silver"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B01ABNQZMC"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 2042,
+    "title": "Exclusive By Adrien Arpel Bio Cellular Night Creme 78g/2.75oz",
+    "stage1_knowledge": {
+      "relation": "product_texture",
+      "entity": "creamy"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "creamy"
+    },
+    "asin": "B006ZORGJ8"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 1147,
+    "title": "Ozone Sanitizer",
+    "stage1_knowledge": {
+      "relation": "target_occasion",
+      "entity": "everyday_use"
+    },
+    "stage3_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "professional"
+    },
+    "asin": "B001S9ZJO4"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 11969,
+    "title": "21 drops Transform Essential Oil Blend roll on",
+    "stage1_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "natural"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "yellow"
+    },
+    "asin": "B017VOQ6LO"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 4565,
+    "title": "Fashion Canvas Wrap Roll Stationery Pen Brushes Makeup Pencil Case Pouch Bag Red",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "canvas_roll"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "red"
+    },
+    "asin": "B00HAZ80G4"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 2928,
+    "title": "GREY SILVER HAIR EXTENSION SCRUNCHIE UPDO DOWN DO TOPPER 0N ELASTIC WHIRLY FUN C24",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "grey_silver"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "playful"
+    },
+    "asin": "B00BK5IM6S"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 2548,
+    "title": "SureWells Lacefront Wig Hetali America Golden Short Cosplay Wigs Costume Wigs",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "cosplay"
+    },
+    "stage3_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "trendy"
+    },
+    "asin": "B00A77CA3Q"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 5636,
+    "title": "Shampoo Bowl Faucet H202",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "metallic_design"
+    },
+    "stage3_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "professional"
+    },
+    "asin": "B00KDP5H5U"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 3947,
+    "title": "BMC Shake Pump + Create 4pc Water Base DIY Nail Art Polish Decorating Pens, Colors: WHITE,BLACK,SILVER,RED",
+    "stage1_knowledge": {
+      "relation": "packaging_material",
+      "entity": "plastic"
+    },
+    "stage3_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "trendy"
+    },
+    "asin": "B00F4E23HA"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 9441,
+    "title": "Demarkt 120 Tips Nail Art Design Acrylic Fan Board Display Practice Sticks Wheel",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "fan_board"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "clear"
+    },
+    "asin": "B00XN2HLZE"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 3815,
+    "title": "New 7 Colors Punk Austrian Crystal Rhinestone Gecko Rings Jewelry (White)",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "clear_rhinestone"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_property",
+      "entity": "property_other"
+    },
+    "asin": "B00EJL0TFM"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 4012,
+    "title": "REVLON NAIL ART CHALKBOARD MATTE NAIL ENAMEL HOME-COMING",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "nail_product"
+    },
+    "asin": "B00FDTLGBA"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 16213,
+    "title": "Coconut Oil Ultra Hydrating Tropical Conditioner, 32 fl oz.",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "conditioner"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "black"
+    },
+    "asin": "B01H9073P8"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 4701,
+    "title": "Lace Sheer Appeal Underwear Perspective Of Carve Patterns Or Designs On Woodwork 9225 Underwear",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "black"
+    },
+    "stage3_knowledge": null,
+    "asin": "B00HR27HKU"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 9940,
+    "title": "Herefind Long Lasting Soak Off Nail Polish with 238 Color Choices | 1 bottle with 15ml of UV Gel Polish | #1618 Rockin' The Reef Color",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "liquid"
+    },
+    "asin": "B010FD5KZ6"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 2547,
+    "title": "SureWells Lacefront Wig Hetali Greece Side Bands Short Brown Cosplay Wigs Costume Wigs",
+    "stage1_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "playful"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "playful"
+    },
+    "asin": "B00A77C9L4"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 11413,
+    "title": "Chinatera 15 Colors Contour Face Cream Makeup Concealer Palette + 10Pcs Powder Brushes with Pouch + 1Pcs Orange Makeup Sponge Puff Blender",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "contour_palette"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_property",
+      "entity": "set_collection"
+    },
+    "asin": "B016D83XHY"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 2622,
+    "title": "Nemat Amber Perfume Oil - Leaf Shaped Bottle 7ml",
+    "stage1_knowledge": {
+      "relation": "packaging_material",
+      "entity": "glass"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "natural_beauty"
+    },
+    "asin": "B00AFDOGXE"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 9490,
+    "title": "&quot;iLash&quot;- NEW Formula Best Eyelash Growth Product Longer Thicker Fuller 100% Satisfaction Guaranteed,3ml",
+    "stage1_knowledge": {
+      "relation": "finish_type",
+      "entity": "glossy"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "liquid"
+    },
+    "asin": "B00XZA42TW"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 7455,
+    "title": "BodyJewelryOnline 20, 50 or 100 Belly Ring Assorted Packs - Perfect for Small Shops or Individuals (20)",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "assorted_pack"
+    },
+    "stage3_knowledge": null,
+    "asin": "B00OV4CE5K"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 9978,
+    "title": "2sheets Crystal Yellow Color Single Sheet Design Mix Size Rhinestone Sticker",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "creative_art"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "product_other"
+    },
+    "asin": "B010N1MPDU"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 345,
+    "title": "Lavender Eau de Toilette 100 ml by Provence Sante",
+    "stage1_knowledge": {
+      "relation": "visual_theme",
+      "entity": "sophisticated"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "fragrance"
+    },
+    "asin": "B000BOA3Y8"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 3734,
+    "title": "Zum, Soap Bar Goat Milk Lavender Lemon Patchouli, 3 Ounce",
+    "stage1_knowledge": {
+      "relation": "visual_theme",
+      "entity": "natural_beauty"
+    },
+    "stage3_knowledge": {
+      "relation": "packaging",
+      "entity": "bar"
+    },
+    "asin": "B00ECB4CJI"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 7145,
+    "title": "TR.OD Stretch Black Elastic Tattoo Hippy Chick Henna Choker Necklace Chain Party Cosplay Jewelry",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "party"
+    },
+    "stage3_knowledge": {
+      "relation": "packaging",
+      "entity": "property_other"
+    },
+    "asin": "B00NW5C1H0"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 14104,
+    "title": "Pevonia Men's Toiletry Bag - Dark Brown",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "toiletry_bag"
+    },
+    "stage3_knowledge": {
+      "relation": "packaging",
+      "entity": "pouch"
+    },
+    "asin": "B01CYUTFIG"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 14166,
+    "title": "WINOMO Women's Eyeliner Template Shaper Makeup Tool for Beginners",
+    "stage1_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "trendy"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "pink"
+    },
+    "asin": "B01D13KRVO"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 16121,
+    "title": "Cosmetic Bag in a Glencoe Thistle Design.",
+    "stage1_knowledge": {
+      "relation": "material_type",
+      "entity": "fabric"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "product_other"
+    },
+    "asin": "B01H2EMIWY"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 1041,
+    "title": "Cllinique Medical Dry Spot Balm; Ultra-Hydrating Formula",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday_use"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "minimalist"
+    },
+    "asin": "B001IB236E"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 5618,
+    "title": "Braza Flash Tape - 2 Sided Clothing Tape (4) 20' Rolls",
+    "stage1_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "functional_solution"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "playful"
+    },
+    "asin": "B00KBYFI2A"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 8702,
+    "title": "72 Premium Clear Glass Roll-on 1 oz Cylinder Bottles (Black Caps)",
+    "stage1_knowledge": {
+      "relation": "visual_theme",
+      "entity": "functional"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "clear"
+    },
+    "asin": "B00U6V93RE"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 9639,
+    "title": "Massage Oil Body Oil Fractionated Coconut Oil For Aromatherapy Relaxing Oil Massage - Pure &amp; Natural Carrier Massaging Oils, Hair &amp; Skin Care Benefits, Moisturizer &amp; Softener - 10.2 fl Oz",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "amber_brown"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_property",
+      "entity": "full_size"
+    },
+    "asin": "B00YMMOHU6"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 3270,
+    "title": "SOLAR RECOVER Save Your Skin Moisturizer Travel Size, 2 Ounce",
+    "stage1_knowledge": {
+      "relation": "material",
+      "entity": "plastic"
+    },
+    "stage3_knowledge": {
+      "relation": "texture",
+      "entity": "liquid"
+    },
+    "asin": "B00CQ7UQ0O"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 9296,
+    "title": "Loreal Infallible Mega Gloss 504 My Sky Is The Limit",
+    "stage1_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "drugstore_trendy"
+    },
+    "stage3_knowledge": {
+      "relation": "packaging",
+      "entity": "tube"
+    },
+    "asin": "B00X5F9QG6"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 4564,
+    "title": "ReFaxi&reg;Newest Cute Fashion Cosplay Party Anime Costume Cat Fox Ears Long Fur Hair Clip",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "black_and_pink"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "black"
+    },
+    "asin": "B00HAZ7W7M"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 15944,
+    "title": "Clothing Round Rack Size Dividers PINK with Black Print XXS - XXXL",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "circular_plastic"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "pink"
+    },
+    "asin": "B01GMIIMBM"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 1404,
+    "title": "Jade Facial Roller with Carved Bamboo Design",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "facial_roller"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "natural_beauty"
+    },
+    "asin": "B003QKVCW6"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 13410,
+    "title": "Effect Beauty Neon Lot Nail Polish Full Color Size 12 Pcs Assorted",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "assorted_colors_with_plastic_container"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "playful"
+    },
+    "asin": "B01BNGHJQC"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 6597,
+    "title": "Deo Perfume Candy Sugar-free . Aromatizes skin with a rose fragrance 60g bag",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "deo_perfume"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "fragrance"
+    },
+    "asin": "B00MNITL5M"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 14587,
+    "title": "Tonsee 1PC Cosmetic Makeup Blusher Toothbrush Curve Foundation Brush+15 Colors Concealer",
+    "stage1_knowledge": {
+      "relation": "packaging_style",
+      "entity": "compact_black_palette"
+    },
+    "stage3_knowledge": {
+      "relation": "packaging",
+      "entity": "palette"
+    },
+    "asin": "B01DP8W2L8"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 1050,
+    "title": "Betty Boop Pocker Cosmetic Case + Earrings",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "black_white_red"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "product_other"
+    },
+    "asin": "B001J2UCCO"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 1140,
+    "title": "Cosmetic Weekender Travel Case Bag 3pc Set ~ Black/Beige In Color",
+    "stage1_knowledge": {
+      "relation": "material_appearance",
+      "entity": "velvet_and_polyester"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_property",
+      "entity": "travel_size"
+    },
+    "asin": "B001R9AU5S"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 5311,
+    "title": "Women's Long Soft Summer Scarves Beach Scarf (Black)",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "scarf"
+    },
+    "stage3_knowledge": {
+      "relation": "product_type",
+      "entity": "body_care"
+    },
+    "asin": "B00JO98YI8"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 10814,
+    "title": "NYX Slim Lip Liner Pencil color 830 Currant (Plum)",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "everyday"
+    },
+    "stage3_knowledge": {
+      "relation": "brand_aesthetic",
+      "entity": "drugstore"
+    },
+    "asin": "B014HVN630"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 1613,
+    "title": "Taylor of Old Bond Street St. James Collection Deodorant Stick 2.5 oz stick",
+    "stage1_knowledge": {
+      "relation": "product_type",
+      "entity": "deodorant"
+    },
+    "stage3_knowledge": {
+      "relation": "additional_property",
+      "entity": "full_size"
+    },
+    "asin": "B004RRTLQ6"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 8006,
+    "title": "Coscelia Blue Professional improved Overheat Vibration 30000 RPM Electric Nail Drill Set (Pink)",
+    "stage1_knowledge": {
+      "relation": "has_color",
+      "entity": "pink"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "pink"
+    },
+    "asin": "B00REFEQ04"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 7008,
+    "title": "BLUETTEK 88 Colors Eye Shadow Palette - Matte and Shimmer (#7 Color)",
+    "stage1_knowledge": {
+      "relation": "target_occasion",
+      "entity": "everyday_and_special_occasion"
+    },
+    "stage3_knowledge": {
+      "relation": "visual_theme",
+      "entity": "artistic"
+    },
+    "asin": "B00NL56PUU"
+  },
+  {
+    "dataset": "Beauty",
+    "item_id": 10771,
+    "title": "HailiCare Gold Collagen Moisturizing Neck Lift Masks, 5 Counts, Anti Aging Anti-wrinkle Whitening Skin Care Spa",
+    "stage1_knowledge": {
+      "relation": "occasion",
+      "entity": "spa"
+    },
+    "stage3_knowledge": {
+      "relation": "has_color",
+      "entity": "gold"
+    },
+    "asin": "B014CZL4NU"
+  }
+]
