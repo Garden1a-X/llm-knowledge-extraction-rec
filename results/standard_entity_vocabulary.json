@@ -1,0 +1,404 @@
+{
+  "vocabulary": {
+    "action_behaviors": {
+      "standard_entities": [
+        "action characters",
+        "action poses",
+        "dynamic scenes",
+        "emotional moments",
+        "environment interactions",
+        "intimate moments",
+        "walking moments"
+      ],
+      "noise_entities": [],
+      "total": 7,
+      "in_target_range": false
+    },
+    "additional_elements": {
+      "standard_entities": [
+        "abstract",
+        "action",
+        "art",
+        "casual",
+        "character",
+        "connection",
+        "creature",
+        "drink",
+        "dynamic",
+        "effects",
+        "family",
+        "formal",
+        "hunt",
+        "layered",
+        "music",
+        "sports",
+        "travel",
+        "urban",
+        "weapon"
+      ],
+      "noise_entities": [
+        "other_additional_elements"
+      ],
+      "total": 20,
+      "in_target_range": false
+    },
+    "artistic_styles": {
+      "standard_entities": [
+        "animated",
+        "candid",
+        "contemporary",
+        "cyberpunk",
+        "exaggerated",
+        "expressionist",
+        "illustrated",
+        "layered",
+        "minimal",
+        "realistic",
+        "retro",
+        "surreal",
+        "theatrical",
+        "vintage"
+      ],
+      "noise_entities": [
+        "other_artistic_styles"
+      ],
+      "total": 15,
+      "in_target_range": true
+    },
+    "character_type": {
+      "standard_entities": [
+        "authority figure",
+        "authority hero",
+        "character interaction",
+        "comedic horror",
+        "detective",
+        "ensemble cast",
+        "fantastical creature",
+        "gunslinger",
+        "hero",
+        "mentor and student",
+        "spy",
+        "villain",
+        "youthful character"
+      ],
+      "noise_entities": [
+        "other_character_type"
+      ],
+      "total": 14,
+      "in_target_range": true
+    },
+    "color_palette": {
+      "standard_entities": [
+        "black_and_white",
+        "blue_tones",
+        "colorful_tones",
+        "dark_backgrounds",
+        "earthy_palette",
+        "green_tones",
+        "light_backgrounds",
+        "red_tones",
+        "soft_colors",
+        "vibrant_contrasts",
+        "vivid_colors",
+        "warm_colors"
+      ],
+      "noise_entities": [
+        "other_color_palette"
+      ],
+      "total": 13,
+      "in_target_range": true
+    },
+    "composition_styles": {
+      "standard_entities": [
+        "asymmetrical",
+        "centered",
+        "close-up",
+        "diagonal",
+        "dynamic",
+        "group"
+      ],
+      "noise_entities": [
+        "other_composition_styles"
+      ],
+      "total": 7,
+      "in_target_range": false
+    },
+    "depicted_subject": {
+      "standard_entities": [
+        "abstract art",
+        "action scenes",
+        "animals",
+        "aquatic scenes",
+        "blurred backgrounds",
+        "close-up",
+        "cloudy skies",
+        "disaster scenes",
+        "diverse ensembles",
+        "educational environments",
+        "family stories",
+        "fantasy creatures",
+        "fantasy landscapes",
+        "fantasy vehicles",
+        "group scenes",
+        "horror elements",
+        "human-creature interactions",
+        "law enforcement vehicles",
+        "natural settings",
+        "realistic characters",
+        "romantic outdoors",
+        "style preferences",
+        "time themes",
+        "urban outdoor scenes",
+        "urban settings",
+        "whimsical creatures",
+        "youth themes"
+      ],
+      "noise_entities": [
+        "other_depicted_subject"
+      ],
+      "total": 28,
+      "in_target_range": false
+    },
+    "design_element": {
+      "standard_entities": [
+        "candles",
+        "collage",
+        "curtain",
+        "futuristic",
+        "geometric shapes",
+        "high heels",
+        "modern casual",
+        "period costume"
+      ],
+      "noise_entities": [
+        "other_design_element"
+      ],
+      "total": 9,
+      "in_target_range": false
+    },
+    "genre": {
+      "standard_entities": [
+        "comedy",
+        "fantasy",
+        "horror",
+        "mystery",
+        "psychological horror",
+        "sci-fi",
+        "thriller"
+      ],
+      "noise_entities": [
+        "other_genre"
+      ],
+      "total": 8,
+      "in_target_range": false
+    },
+    "lighting": {
+      "standard_entities": [
+        "bright lighting",
+        "high contrast",
+        "indoor",
+        "low light",
+        "natural light",
+        "night scene",
+        "suburban environment"
+      ],
+      "noise_entities": [
+        "other_lighting"
+      ],
+      "total": 8,
+      "in_target_range": false
+    },
+    "mood": {
+      "standard_entities": [
+        "action",
+        "dark humor",
+        "eerie",
+        "emotional",
+        "energetic",
+        "joyful",
+        "playful",
+        "quirky",
+        "romantic",
+        "serious",
+        "suspense",
+        "thoughtful"
+      ],
+      "noise_entities": [
+        "other_mood"
+      ],
+      "total": 13,
+      "in_target_range": true
+    },
+    "symbolism": {
+      "standard_entities": [
+        "abstract",
+        "afterlife",
+        "hidden",
+        "patriotic",
+        "weapon"
+      ],
+      "noise_entities": [],
+      "total": 5,
+      "in_target_range": false
+    },
+    "text_style": {
+      "standard_entities": [
+        "asymmetrical",
+        "bold",
+        "casual",
+        "centered",
+        "dramatic",
+        "high contrast",
+        "playful",
+        "symmetrical"
+      ],
+      "noise_entities": [
+        "other_text_style"
+      ],
+      "total": 9,
+      "in_target_range": false
+    },
+    "texture": {
+      "standard_entities": [
+        "blood_splatter",
+        "blurred_effect",
+        "clarity_and_detail",
+        "fluid brushstrokes",
+        "glossy",
+        "grainy",
+        "high_contrast",
+        "minimal",
+        "smoke",
+        "smooth",
+        "soft"
+      ],
+      "noise_entities": [
+        "other_texture"
+      ],
+      "total": 12,
+      "in_target_range": true
+    },
+    "visual_theme": {
+      "standard_entities": [
+        "adventure",
+        "autumn",
+        "education",
+        "family",
+        "fantasy",
+        "military",
+        "romance",
+        "satire",
+        "social"
+      ],
+      "noise_entities": [
+        "other_visual_theme"
+      ],
+      "total": 10,
+      "in_target_range": false
+    }
+  },
+  "statistics": {
+    "total_relations": 15,
+    "total_standard_entities": 165,
+    "total_noise_entities": 13,
+    "relations_in_target_range": 5,
+    "per_relation": {
+      "action_behaviors": {
+        "standard_count": 7,
+        "noise_count": 0,
+        "total_count": 7,
+        "in_target_range": false
+      },
+      "additional_elements": {
+        "standard_count": 19,
+        "noise_count": 1,
+        "total_count": 20,
+        "in_target_range": false
+      },
+      "artistic_styles": {
+        "standard_count": 14,
+        "noise_count": 1,
+        "total_count": 15,
+        "in_target_range": true
+      },
+      "character_type": {
+        "standard_count": 13,
+        "noise_count": 1,
+        "total_count": 14,
+        "in_target_range": true
+      },
+      "color_palette": {
+        "standard_count": 12,
+        "noise_count": 1,
+        "total_count": 13,
+        "in_target_range": true
+      },
+      "composition_styles": {
+        "standard_count": 6,
+        "noise_count": 1,
+        "total_count": 7,
+        "in_target_range": false
+      },
+      "depicted_subject": {
+        "standard_count": 27,
+        "noise_count": 1,
+        "total_count": 28,
+        "in_target_range": false
+      },
+      "design_element": {
+        "standard_count": 8,
+        "noise_count": 1,
+        "total_count": 9,
+        "in_target_range": false
+      },
+      "genre": {
+        "standard_count": 7,
+        "noise_count": 1,
+        "total_count": 8,
+        "in_target_range": false
+      },
+      "lighting": {
+        "standard_count": 7,
+        "noise_count": 1,
+        "total_count": 8,
+        "in_target_range": false
+      },
+      "mood": {
+        "standard_count": 12,
+        "noise_count": 1,
+        "total_count": 13,
+        "in_target_range": true
+      },
+      "symbolism": {
+        "standard_count": 5,
+        "noise_count": 0,
+        "total_count": 5,
+        "in_target_range": false
+      },
+      "text_style": {
+        "standard_count": 8,
+        "noise_count": 1,
+        "total_count": 9,
+        "in_target_range": false
+      },
+      "texture": {
+        "standard_count": 11,
+        "noise_count": 1,
+        "total_count": 12,
+        "in_target_range": true
+      },
+      "visual_theme": {
+        "standard_count": 9,
+        "noise_count": 1,
+        "total_count": 10,
+        "in_target_range": false
+      }
+    }
+  },
+  "metadata": {
+    "source": "results/temp_refined_data.json",
+    "description": "Standard entity vocabulary for Phase 3 full extraction",
+    "target_range": "10-15 entities per relation",
+    "noise_pattern": "other_{relation} for outlier entities"
+  }
+}

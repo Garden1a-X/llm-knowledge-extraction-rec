@@ -1,0 +1,715 @@
+{
+  "dataset": "amazon-videogames",
+  "phase": "phase2_constrained_compact",
+  "vocabulary_version": "4.0",
+  "description": "Compact entity vocabulary with ~180 entities for collaborative filtering",
+  "relations": {
+    "features_character": {
+      "total_entities": 369,
+      "unique_entities": 16,
+      "entities": [
+        {
+          "entity": "character_other",
+          "count": 151
+        },
+        {
+          "entity": "male_character",
+          "count": 41
+        },
+        {
+          "entity": "military_soldier",
+          "count": 34
+        },
+        {
+          "entity": "fantasy_warrior",
+          "count": 22
+        },
+        {
+          "entity": "female_character",
+          "count": 22
+        },
+        {
+          "entity": "sports_athlete",
+          "count": 17
+        },
+        {
+          "entity": "armored_character",
+          "count": 17
+        },
+        {
+          "entity": "animal_character",
+          "count": 14
+        },
+        {
+          "entity": "scifi_character",
+          "count": 11
+        },
+        {
+          "entity": "multiple_characters",
+          "count": 10
+        },
+        {
+          "entity": "stealth_character",
+          "count": 9
+        },
+        {
+          "entity": "cartoon_character",
+          "count": 6
+        },
+        {
+          "entity": "monster_enemy",
+          "count": 6
+        },
+        {
+          "entity": "civilian",
+          "count": 5
+        },
+        {
+          "entity": "superhero",
+          "count": 3
+        },
+        {
+          "entity": "race_driver",
+          "count": 1
+        }
+      ]
+    },
+    "features_creature": {
+      "total_entities": 47,
+      "unique_entities": 7,
+      "entities": [
+        {
+          "entity": "creature_other",
+          "count": 18
+        },
+        {
+          "entity": "monsters",
+          "count": 16
+        },
+        {
+          "entity": "animals",
+          "count": 6
+        },
+        {
+          "entity": "dragons",
+          "count": 3
+        },
+        {
+          "entity": "undead",
+          "count": 2
+        },
+        {
+          "entity": "insects",
+          "count": 1
+        },
+        {
+          "entity": "aliens",
+          "count": 1
+        }
+      ]
+    },
+    "features_vehicle": {
+      "total_entities": 87,
+      "unique_entities": 12,
+      "entities": [
+        {
+          "entity": "vehicle_other",
+          "count": 26
+        },
+        {
+          "entity": "race_car",
+          "count": 15
+        },
+        {
+          "entity": "car",
+          "count": 9
+        },
+        {
+          "entity": "spacecraft",
+          "count": 7
+        },
+        {
+          "entity": "tank",
+          "count": 7
+        },
+        {
+          "entity": "watercraft",
+          "count": 6
+        },
+        {
+          "entity": "mech",
+          "count": 5
+        },
+        {
+          "entity": "motorcycle",
+          "count": 4
+        },
+        {
+          "entity": "military_aircraft",
+          "count": 3
+        },
+        {
+          "entity": "military_helicopter",
+          "count": 2
+        },
+        {
+          "entity": "helicopter",
+          "count": 2
+        },
+        {
+          "entity": "aircraft",
+          "count": 1
+        }
+      ]
+    },
+    "features_weapon": {
+      "total_entities": 98,
+      "unique_entities": 9,
+      "entities": [
+        {
+          "entity": "firearms",
+          "count": 37
+        },
+        {
+          "entity": "weapon_other",
+          "count": 22
+        },
+        {
+          "entity": "swords",
+          "count": 17
+        },
+        {
+          "entity": "futuristic_weapons",
+          "count": 9
+        },
+        {
+          "entity": "explosives",
+          "count": 4
+        },
+        {
+          "entity": "melee_weapons",
+          "count": 3
+        },
+        {
+          "entity": "ranged_projectile",
+          "count": 2
+        },
+        {
+          "entity": "heavy_weapons",
+          "count": 2
+        },
+        {
+          "entity": "various_weapons",
+          "count": 2
+        }
+      ]
+    },
+    "has_additional_property": {
+      "total_entities": 449,
+      "unique_entities": 11,
+      "entities": [
+        {
+          "entity": "property_other",
+          "count": 316
+        },
+        {
+          "entity": "game_controller",
+          "count": 35
+        },
+        {
+          "entity": "abstract_background",
+          "count": 28
+        },
+        {
+          "entity": "dynamic_lines",
+          "count": 16
+        },
+        {
+          "entity": "physical_media",
+          "count": 15
+        },
+        {
+          "entity": "gaming_headset",
+          "count": 10
+        },
+        {
+          "entity": "gaming_keyboard",
+          "count": 8
+        },
+        {
+          "entity": "textures",
+          "count": 7
+        },
+        {
+          "entity": "gaming_mouse",
+          "count": 7
+        },
+        {
+          "entity": "lighting_effects",
+          "count": 4
+        },
+        {
+          "entity": "animation",
+          "count": 3
+        }
+      ]
+    },
+    "has_atmosphere": {
+      "total_entities": 174,
+      "unique_entities": 11,
+      "entities": [
+        {
+          "entity": "whimsical",
+          "count": 36
+        },
+        {
+          "entity": "dark",
+          "count": 29
+        },
+        {
+          "entity": "intense_action",
+          "count": 24
+        },
+        {
+          "entity": "gritty",
+          "count": 24
+        },
+        {
+          "entity": "atmosphere_other",
+          "count": 21
+        },
+        {
+          "entity": "mysterious",
+          "count": 13
+        },
+        {
+          "entity": "tense",
+          "count": 11
+        },
+        {
+          "entity": "dark_gritty",
+          "count": 7
+        },
+        {
+          "entity": "vibrant",
+          "count": 5
+        },
+        {
+          "entity": "epic",
+          "count": 3
+        },
+        {
+          "entity": "calm",
+          "count": 1
+        }
+      ]
+    },
+    "has_color_palette": {
+      "total_entities": 594,
+      "unique_entities": 13,
+      "entities": [
+        {
+          "entity": "warm_colors",
+          "count": 144
+        },
+        {
+          "entity": "bright_vibrant",
+          "count": 90
+        },
+        {
+          "entity": "dark_palette",
+          "count": 86
+        },
+        {
+          "entity": "green_nature",
+          "count": 66
+        },
+        {
+          "entity": "cool_colors",
+          "count": 61
+        },
+        {
+          "entity": "multicolor",
+          "count": 47
+        },
+        {
+          "entity": "neutral_colors",
+          "count": 26
+        },
+        {
+          "entity": "dark_warm",
+          "count": 15
+        },
+        {
+          "entity": "bright_warm",
+          "count": 14
+        },
+        {
+          "entity": "monochrome",
+          "count": 13
+        },
+        {
+          "entity": "muted_pastel",
+          "count": 12
+        },
+        {
+          "entity": "dark_cool",
+          "count": 12
+        },
+        {
+          "entity": "bright_cool",
+          "count": 8
+        }
+      ]
+    },
+    "has_genre_indicator": {
+      "total_entities": 68,
+      "unique_entities": 9,
+      "entities": [
+        {
+          "entity": "sports",
+          "count": 15
+        },
+        {
+          "entity": "racing",
+          "count": 12
+        },
+        {
+          "entity": "rpg",
+          "count": 9
+        },
+        {
+          "entity": "strategy",
+          "count": 7
+        },
+        {
+          "entity": "genre_other",
+          "count": 7
+        },
+        {
+          "entity": "fps",
+          "count": 6
+        },
+        {
+          "entity": "fighting",
+          "count": 6
+        },
+        {
+          "entity": "action_adventure",
+          "count": 5
+        },
+        {
+          "entity": "platformer",
+          "count": 1
+        }
+      ]
+    },
+    "has_graphics_quality": {
+      "total_entities": 156,
+      "unique_entities": 5,
+      "entities": [
+        {
+          "entity": "high_fidelity",
+          "count": 128
+        },
+        {
+          "entity": "quality_other",
+          "count": 11
+        },
+        {
+          "entity": "stylized",
+          "count": 10
+        },
+        {
+          "entity": "low_fidelity",
+          "count": 5
+        },
+        {
+          "entity": "simple",
+          "count": 2
+        }
+      ]
+    },
+    "has_text_element": {
+      "total_entities": 406,
+      "unique_entities": 7,
+      "entities": [
+        {
+          "entity": "text_other",
+          "count": 184
+        },
+        {
+          "entity": "branding",
+          "count": 146
+        },
+        {
+          "entity": "game_title",
+          "count": 38
+        },
+        {
+          "entity": "game_logo",
+          "count": 21
+        },
+        {
+          "entity": "instructions",
+          "count": 10
+        },
+        {
+          "entity": "description",
+          "count": 4
+        },
+        {
+          "entity": "rating",
+          "count": 3
+        }
+      ]
+    },
+    "has_ui_elements": {
+      "total_entities": 196,
+      "unique_entities": 10,
+      "entities": [
+        {
+          "entity": "ui_other",
+          "count": 69
+        },
+        {
+          "entity": "scoreboard",
+          "count": 36
+        },
+        {
+          "entity": "logo",
+          "count": 24
+        },
+        {
+          "entity": "menu",
+          "count": 13
+        },
+        {
+          "entity": "button_prompts",
+          "count": 11
+        },
+        {
+          "entity": "status_bars",
+          "count": 11
+        },
+        {
+          "entity": "minimal_ui",
+          "count": 9
+        },
+        {
+          "entity": "minimap",
+          "count": 9
+        },
+        {
+          "entity": "hud",
+          "count": 7
+        },
+        {
+          "entity": "icons",
+          "count": 7
+        }
+      ]
+    },
+    "has_visual_style": {
+      "total_entities": 513,
+      "unique_entities": 9,
+      "entities": [
+        {
+          "entity": "realistic_3d",
+          "count": 270
+        },
+        {
+          "entity": "cartoon",
+          "count": 96
+        },
+        {
+          "entity": "abstract",
+          "count": 32
+        },
+        {
+          "entity": "anime",
+          "count": 31
+        },
+        {
+          "entity": "realistic",
+          "count": 27
+        },
+        {
+          "entity": "other_style",
+          "count": 26
+        },
+        {
+          "entity": "pixel_art",
+          "count": 12
+        },
+        {
+          "entity": "3d",
+          "count": 12
+        },
+        {
+          "entity": "stylized",
+          "count": 7
+        }
+      ]
+    },
+    "set_in_environment": {
+      "total_entities": 340,
+      "unique_entities": 14,
+      "entities": [
+        {
+          "entity": "urban",
+          "count": 93
+        },
+        {
+          "entity": "fantasy",
+          "count": 69
+        },
+        {
+          "entity": "environment_other",
+          "count": 56
+        },
+        {
+          "entity": "scifi_space",
+          "count": 33
+        },
+        {
+          "entity": "nature_outdoor",
+          "count": 23
+        },
+        {
+          "entity": "sports_venue",
+          "count": 19
+        },
+        {
+          "entity": "indoor",
+          "count": 18
+        },
+        {
+          "entity": "military_warzone",
+          "count": 13
+        },
+        {
+          "entity": "ocean_underwater",
+          "count": 5
+        },
+        {
+          "entity": "post_apocalyptic",
+          "count": 3
+        },
+        {
+          "entity": "snow_ice",
+          "count": 3
+        },
+        {
+          "entity": "historical",
+          "count": 2
+        },
+        {
+          "entity": "desert",
+          "count": 2
+        },
+        {
+          "entity": "underground",
+          "count": 1
+        }
+      ]
+    },
+    "shows_perspective": {
+      "total_entities": 213,
+      "unique_entities": 6,
+      "entities": [
+        {
+          "entity": "third_person",
+          "count": 158
+        },
+        {
+          "entity": "top_down",
+          "count": 27
+        },
+        {
+          "entity": "first_person",
+          "count": 11
+        },
+        {
+          "entity": "side_scrolling",
+          "count": 11
+        },
+        {
+          "entity": "isometric",
+          "count": 4
+        },
+        {
+          "entity": "perspective_other",
+          "count": 2
+        }
+      ]
+    },
+    "shows_platform": {
+      "total_entities": 242,
+      "unique_entities": 15,
+      "entities": [
+        {
+          "entity": "pc",
+          "count": 44
+        },
+        {
+          "entity": "platform_other",
+          "count": 39
+        },
+        {
+          "entity": "playstation_2",
+          "count": 29
+        },
+        {
+          "entity": "playstation_4",
+          "count": 16
+        },
+        {
+          "entity": "playstation",
+          "count": 15
+        },
+        {
+          "entity": "playstation_3",
+          "count": 13
+        },
+        {
+          "entity": "nintendo_ds",
+          "count": 13
+        },
+        {
+          "entity": "accessory",
+          "count": 12
+        },
+        {
+          "entity": "wii",
+          "count": 12
+        },
+        {
+          "entity": "xbox_one",
+          "count": 12
+        },
+        {
+          "entity": "xbox_360",
+          "count": 11
+        },
+        {
+          "entity": "game_boy",
+          "count": 9
+        },
+        {
+          "entity": "retro_console",
+          "count": 8
+        },
+        {
+          "entity": "xbox",
+          "count": 5
+        },
+        {
+          "entity": "mobile",
+          "count": 4
+        }
+      ]
+    }
+  },
+  "total_unique_entities": 154
+}
